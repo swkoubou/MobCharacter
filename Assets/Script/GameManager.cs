@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         mapGenerator = GetComponent<MapGenerator>();
-        mapGenerator.SetupScene(2);
+        mapGenerator.SetupScene(100);
     }
 
 
