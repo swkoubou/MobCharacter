@@ -22,8 +22,8 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    public Count wallCount = new Count(5, 9);
     public Count foodCount = new Count(1, 5);
+    public GameObject player;
     public GameObject exit;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
@@ -38,20 +38,18 @@ public class MapGenerator : MonoBehaviour
     //マップ生成するときの全てのオブジェクト情報、位置情報をここに保存する
     private GameObject[,] allObjectData;
 
-    //マス目
-    private List<Vector3> gridPos = new List<Vector3>();
-
     //生成したマップの親になる
     private Transform mapHolder;
 
     //読み込んだテキストを保存
     private List<string> textBuffer = new List<string>();
 
+    //列(縦orY)軸
+    private int rows;
+
     //行(横orX)軸
     private int columns;
 
-    //列(縦orY)軸
-    private int rows;
 
 
     void Start()
@@ -76,6 +74,9 @@ public class MapGenerator : MonoBehaviour
         FileInfo fi = new FileInfo(@foldaPath + mapText[Random.Range(0, mapText.Length)].name + ".txt");
         try
         {
+            //前回のものに追加読み込みしないように初期化
+            textBuffer.Clear();
+
             using (StreamReader sr = new StreamReader(fi.OpenRead(), Encoding.UTF8))
             {
                 //最後尾まで一行ずつ取り出す
@@ -92,24 +93,14 @@ public class MapGenerator : MonoBehaviour
             print(e.Message);
         }
 
-        //x軸なので横
-        columns = textBuffer[0].Length;
-
         //y軸なので縦
         rows = textBuffer.Count;
 
+        //x軸なので横
+        columns = textBuffer[0].Length;
+
         //配列の上限が分かったので初期化をする
         allObjectData = new GameObject[rows, columns];
-
-        gridPos.Clear();
-        for (int y = 1; y < rows - 1; y++)
-        {
-            for (int x = 1; x < columns - 1; x++)
-            {
-                //左から右、上から下にテキストを読み込んでいくので、xは+軸、yは-軸に配置する
-                gridPos.Add(new Vector3(x, -y, 0f));
-            }
-        }
     }
 
 
@@ -168,8 +159,8 @@ public class MapGenerator : MonoBehaviour
             //tagがFloorが出るまで繰り返す
             do
             {
-                randomX = Random.Range(0, columns);
                 randomY = Random.Range(0, rows);
+                randomX = Random.Range(0, columns);
                 randomObject = allObjectData[randomY, randomX];
             }
             while (randomObject.tag != "Floor");
@@ -192,8 +183,8 @@ public class MapGenerator : MonoBehaviour
         //tagがFloorが出るまで繰り返す
         do
         {
-            randomX = Random.Range(0, columns);
             randomY = Random.Range(0, rows);
+            randomX = Random.Range(0, columns);
             randomObject = allObjectData[randomY, randomX];
         }
         while (randomObject.tag != "Floor");
@@ -208,11 +199,19 @@ public class MapGenerator : MonoBehaviour
     //ここにアクセスするとマップ作成開始
     public void SetupScene(int level)
     {
+        //マス目とマップサイズを初期化・設定
         Initialized();
+
+        //マップを生成
         MapGenerate();
 
+        //敵は対数的に増加
         int enemyCount = (int)Mathf.Log(level, 2f);
+
+        //ランダムに位置を決める
         LayoutObjectRandom(enemyTiles, enemyCount, enemyCount);
+        LayoutObjectRandom(foodTiles, foodCount.min, foodCount.max);
+        LayoutObjectRandom(player);
         LayoutObjectRandom(exit);
     }
 }
