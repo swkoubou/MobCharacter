@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class MapGenerator : MonoBehaviour
@@ -32,7 +33,9 @@ public class MapGenerator : MonoBehaviour
     public GameObject[] outerWallTiles;
     public TextAsset[] mapText;
 
-    //読み込み用テキストのフォルダパス
+    private Text errorText;
+
+    //読み込み用テキストのフォルダ名 *Build後にフォルダごと直接コピーする必要あり
     public string defaultPath = "MapText";
 
     //マップ生成するときの全てのオブジェクト情報、位置情報をここに保存する
@@ -54,7 +57,7 @@ public class MapGenerator : MonoBehaviour
 
     void Start()
     {
-
+        
     }
 
 
@@ -67,8 +70,41 @@ public class MapGenerator : MonoBehaviour
     //マス目とマップサイズを初期化・設定
     void Initialized()
     {
+        //プラットフォームでフォルダ階層が違うので切り替える
+        string url = null;
+        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            url = Application.dataPath;
+        }
+        else
+        {
+            url = "";
+        }
+
+        //Func<bool> CanThrowPath = () =>
+        //{
+        //    bool canPath;
+        //    if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WebGLPlayer)
+        //    {
+        //        canPath = true;
+        //    }
+        //    else
+        //    {
+        //        canPath = false;
+        //    }
+        //    return canPath;
+        //};
+
+        //if (CanThrowPath())
+        //{
+        //    url = Application.dataPath;
+        //}
+
+        //errorText = GameObject.Find("UI/ErrorText").GetComponent<Text>();
+        //errorText.text = url;
+
         //パスを獲得
-        string foldaPath = Application.dataPath + "/" + defaultPath + "/";
+        string foldaPath = url + "/" + defaultPath + "/";
 
         //mapTextの配列からランダムに取得
         FileInfo fi = new FileInfo(@foldaPath + mapText[Random.Range(0, mapText.Length)].name + ".txt");
