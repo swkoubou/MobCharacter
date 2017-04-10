@@ -25,6 +25,7 @@ public class MapGenerator : MonoBehaviour
 
     public Count foodCount = new Count(1, 5);
     public GameObject player;
+    public GameObject Braver;
     public GameObject exit;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
@@ -35,8 +36,11 @@ public class MapGenerator : MonoBehaviour
 
     private Text errorText;
 
+    //ref修飾子で使う用の、一時変数
+    private GameObject tmpTile;
+
     //読み込み用テキストのフォルダ名 *Build後にフォルダごと直接コピーする必要あり
-    public string defaultPath = "MapText";
+    public string foldaName = "MapText";
 
     //マップ生成するときの全てのオブジェクト情報、位置情報をここに保存する
     private GameObject[,] allObjectData;
@@ -57,7 +61,7 @@ public class MapGenerator : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
 
@@ -70,63 +74,20 @@ public class MapGenerator : MonoBehaviour
     //マス目とマップサイズを初期化・設定
     void Initialized()
     {
-        //プラットフォームでフォルダ階層が違うので切り替える
-        string url = null;
-        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WebGLPlayer)
-        {
-            url = Application.dataPath;
-        }
-        else
-        {
-            url = "";
-        }
-
-        //Func<bool> CanThrowPath = () =>
-        //{
-        //    bool canPath;
-        //    if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WebGLPlayer)
-        //    {
-        //        canPath = true;
-        //    }
-        //    else
-        //    {
-        //        canPath = false;
-        //    }
-        //    return canPath;
-        //};
-
-        //if (CanThrowPath())
-        //{
-        //    url = Application.dataPath;
-        //}
-
-        //errorText = GameObject.Find("UI/ErrorText").GetComponent<Text>();
-        //errorText.text = url;
-
-        //パスを獲得
-        string foldaPath = url + "/" + defaultPath + "/";
+        //前回のものに追加読み込みしないように初期化
+        textBuffer.Clear();
 
         //mapTextの配列からランダムに取得
-        FileInfo fi = new FileInfo(@foldaPath + mapText[Random.Range(0, mapText.Length)].name + ".txt");
-        try
-        {
-            //前回のものに追加読み込みしないように初期化
-            textBuffer.Clear();
+        var mapInfo = Resources.Load(foldaName +"/"+ mapText[Random.Range(0, mapText.Length)].name) as TextAsset;
 
-            using (StreamReader sr = new StreamReader(fi.OpenRead(), Encoding.UTF8))
-            {
-                //最後尾まで一行ずつ取り出す
-                while (sr.Peek() >= 0)
-                {
-                    textBuffer.Add(sr.ReadLine());
-                }
-            }
-        }
-        //エラーが出たら
-        catch (Exception e)
+        //try catchは使わずにusingを使う
+        using (StringReader sr = new StringReader(mapInfo.text))
         {
-            //エラーメッセージを表示する
-            print(e.Message);
+            //最後尾まで一行ずつ取り出す
+            while (sr.Peek() >= 0)
+            {
+                textBuffer.Add(sr.ReadLine());
+            }
         }
 
         //y軸なので縦
@@ -210,7 +171,7 @@ public class MapGenerator : MonoBehaviour
 
 
     //単体用ランダムに位置を決める　*ただし何もないところにしか出現させない
-    void LayoutObjectRandom(GameObject tile)
+    void LayoutObjectRandom(ref GameObject tile)
     {
         int randomX;
         int randomY;
@@ -228,7 +189,15 @@ public class MapGenerator : MonoBehaviour
         //同じ場所に出現させないよう、存在を上書き
         allObjectData[randomY, randomX] = tile;
 
-        Instantiate(tile, randomObject.transform.position, Quaternion.identity);
+        //位置情報を取得し、中身を更新
+        GameObject instance = Instantiate(tile, randomObject.transform.position, Quaternion.identity);
+        tile = instance;
+    }
+
+
+    public GameObject GetExit()
+    {
+        return tmpTile;
     }
 
 
@@ -244,10 +213,16 @@ public class MapGenerator : MonoBehaviour
         //敵は対数的に増加
         int enemyCount = (int)Mathf.Log(level, 2f);
 
+        //ref修飾子を使うのでtmpを使い初期化してから
+        tmpTile = player;
+        LayoutObjectRandom(ref tmpTile);
+        tmpTile = Braver;
+        LayoutObjectRandom(ref tmpTile);
+        tmpTile = exit;
+        LayoutObjectRandom(ref tmpTile);
+
         //ランダムに位置を決める
         LayoutObjectRandom(enemyTiles, enemyCount, enemyCount);
         LayoutObjectRandom(foodTiles, foodCount.min, foodCount.max);
-        LayoutObjectRandom(player);
-        LayoutObjectRandom(exit);
     }
 }
