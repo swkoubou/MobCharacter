@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1897115922381214}
+  m_IsPrefabParent: 1
+--- !u!1 &1897115922381214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4644990151797826}
+  - component: {fileID: 114754180833410524}
+  - component: {fileID: 114716011148791286}
+  m_Layer: 0
+  m_Name: BoardManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4644990151797826
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1897115922381214}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114716011148791286
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1897115922381214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a73abd722c3ea154d92ac433aa53855b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  foodCount:
+    min: 1
+    max: 5
+  player: {fileID: 1000010436180218, guid: 7c81f5a7d0bb2d14d9ec09181566279f, type: 2}
+  Braver: {fileID: 1130044153631480, guid: a653e89c9e295ed499f05f2090e8af77, type: 2}
+  exit: {fileID: 1000010582145160, guid: 208f59688c089224b9d0659bde0f076b, type: 2}
+  floorTiles:
+  - {fileID: 1000010895860934, guid: d3726324286d2a446a4d7d4d88c46dac, type: 2}
+  - {fileID: 1000010974470842, guid: 74ff3f74b00949d40b94b74ff9ed7a23, type: 2}
+  - {fileID: 1000011662971032, guid: 518636fee284d8a45a1f918aadff10e4, type: 2}
+  - {fileID: 1000011910923142, guid: f5b0b8cbc89cc824998f026a84614ee7, type: 2}
+  - {fileID: 1000012429428530, guid: d5b270af3cca9294ea1a5df39b752bd9, type: 2}
+  - {fileID: 1000013510592602, guid: 23844612ae5d8bc4ca9822e8ce6e67ae, type: 2}
+  - {fileID: 1000012293746524, guid: 99b74e18f1d4abb439b91b44bda976d2, type: 2}
+  - {fileID: 1000014280885886, guid: f568b415282a4bb47b910e5191ca2956, type: 2}
+  wallTiles:
+  - {fileID: 1000011692232816, guid: 9406feb541c477041be6d5a8b8f64ea8, type: 2}
+  - {fileID: 1000012393127582, guid: a2bf389f14413284da8751272474e970, type: 2}
+  - {fileID: 1000014151214820, guid: f68d1347fb5cd3747bce68fbb8a18985, type: 2}
+  - {fileID: 1000011353093110, guid: 773335c984d75704bbc647ae00a29725, type: 2}
+  - {fileID: 1000010142524940, guid: 8afa4294852883b42af17660e7bf0654, type: 2}
+  - {fileID: 1000010762604674, guid: c589e1a0be5aed449965ec4a710c9baf, type: 2}
+  - {fileID: 1000010408482246, guid: a96166727ad4fc247939276b9a1fbd74, type: 2}
+  - {fileID: 1000012376815632, guid: 10803c427e255394abed3423bfebcb73, type: 2}
+  foodTiles:
+  - {fileID: 1000012928487008, guid: 2de47643295ebbd4b8c6c9c68a933b9e, type: 2}
+  - {fileID: 1000013556751996, guid: 72f91fa12dd998c44ba75b93226fadf9, type: 2}
+  enemyTiles:
+  - {fileID: 1000013351432694, guid: 76b973af7ab95b34bbdc665cfcbf2134, type: 2}
+  - {fileID: 1000010727205398, guid: d70ca8dcb5fbdd3428f151c59373e2ca, type: 2}
+  outerWallTiles:
+  - {fileID: 1000011915103272, guid: b2a66b55304f5ef4aad28454d31ee28a, type: 2}
+  - {fileID: 1000013276696084, guid: 2c79c14d89dba0740818668daecfd265, type: 2}
+  - {fileID: 1000012214845826, guid: 850eb9fc3b99d7c49a12535495597ae4, type: 2}
+  mapText:
+  - {fileID: 4900000, guid: 9c535de9243ebb7429d17e44e0075e1d, type: 3}
+  - {fileID: 4900000, guid: 28202efbb0629fa4ea57db4c6c643bec, type: 3}
+  foldaName: MapText
+--- !u!114 &114754180833410524
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1897115922381214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cdba684c49efc4cb2571b62f7ac7f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelStartDelay: 2
+  turnDelay: 0.1
+  mapGenerator: {fileID: 0}
+  playerFoodPoints: 100
+  playersTurn: 1
+  braversTurn: 0
+  braver: {fileID: 0}
