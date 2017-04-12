@@ -8,12 +8,18 @@ public class Loader : MonoBehaviour
     readonly public static string boardSceneName = "BoardScene";
     readonly public static string battleSceneName = "BattleScene";
 
+    public static Loader instance = null;
     public BoardManager boardManager;
     public BattleManager battleManager;
 
 
     void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
+
         DontDestroyOnLoad(gameObject);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -21,17 +27,17 @@ public class Loader : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             SceneManager.LoadScene(battleSceneName);
         }
-        else if (Input.GetKeyDown(KeyCode.Return))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             SceneManager.LoadScene(boardSceneName);
         }

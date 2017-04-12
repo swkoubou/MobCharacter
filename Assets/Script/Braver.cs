@@ -11,6 +11,7 @@ public class Braver : MovingObject
     private MapGenerator mapGenerator;
     private List<GameObject> targets = new List<GameObject>();
     public float searchRange = 10f;
+    private bool skipMove;
 
 
     void Awake()
@@ -79,7 +80,14 @@ public class Braver : MovingObject
 
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
+        if (skipMove)
+        {
+            skipMove = false;
+            return;
+        }
+
         base.AttemptMove<T>(xDir, yDir);
+        skipMove = true;
     }
 
 
@@ -116,6 +124,11 @@ public class Braver : MovingObject
         {
             Enemy other = component as Enemy;
             other.LoseHP(attackDamage);
+        }
+        else if (component.GetComponent<Wall>())
+        {
+            Wall other = component as Wall;
+            //other.DamageWall(attackDamage);
         }
     }
 
