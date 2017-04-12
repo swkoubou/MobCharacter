@@ -120,8 +120,8 @@ public class MapGenerator : MonoBehaviour
                     allObjectData[y, x] = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
 
                 //wallTilesを生成
-                else if (textMark == 'o')
-                    allObjectData[y, x] = wallTiles[Random.Range(0, wallTiles.Length)];
+                //else if (textMark == 'o')
+                //    allObjectData[y, x] = wallTiles[Random.Range(0, wallTiles.Length)];
 
                 //-のとき floorTilesを生成
                 else

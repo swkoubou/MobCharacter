@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+
+//動かしたい矢印キーのオブジェクトにアタッチする
 public class SelectArrow : MonoBehaviour
 {
     //選択ボタン
@@ -78,11 +80,12 @@ public class SelectArrow : MonoBehaviour
             eventSystem.enabled = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetKeyDown(KeyCode.T))
         {
             StopSelect();
         }
-        else if (Input.GetKeyDown(KeyCode.Return))
+        else if (Input.GetKeyDown(KeyCode.S))
         {
             StartSelect();
         }
@@ -109,19 +112,16 @@ public class SelectArrow : MonoBehaviour
     //ここにアクセスすると実行される
     public void StartSelect()
     {
-        GameObject selectArrow = GetComponent<SelectArrow>().gameObject;
-        selectArrow.GetComponent<Image>().enabled = true;
-        eventSystem.enabled = true;
         isStartSelect = true;
+        GetComponent<Image>().enabled = true;
+        eventSystem.enabled = true;
     }
 
 
     //ここにアクセスすると停止する
     public void StopSelect()
     {
-        GameObject selectArrow = GetComponent<SelectArrow>().gameObject;
-        selectArrow.GetComponent<Image>().enabled = false;
-        eventSystem.enabled = false;
         isStartSelect = false;
+        GetComponent<Image>().enabled = false;
     }
 }
