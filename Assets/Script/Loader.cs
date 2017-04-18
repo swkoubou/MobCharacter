@@ -1,16 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Loader : MonoBehaviour
 {
-    public GameManager gameManager;
+    readonly public static string boardSceneName = "BoardScene";
+    readonly public static string battleSceneName = "BattleScene";
+
+    public static Loader instance = null;
+    public BoardManager boardManager;
+    public BattleManager battleManager;
 
 
-    private void Awake()
+    void Awake()
     {
-        if (GameManager.instance == null)
-            Instantiate(gameManager);
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 
@@ -22,6 +33,24 @@ public class Loader : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SceneManager.LoadScene(battleSceneName);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SceneManager.LoadScene(boardSceneName);
+        }
+    }
 
+
+    //シーンロード時のデリゲート
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (BoardManager.instance == null && SceneManager.GetActiveScene().name == boardSceneName)
+            DontDestroyOnLoad(Instantiate(boardManager));
+
+        if (BattleManager.instance == null && SceneManager.GetActiveScene().name == battleSceneName)
+            DontDestroyOnLoad(Instantiate(battleManager));
     }
 }
