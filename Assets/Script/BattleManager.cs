@@ -7,8 +7,15 @@ using UnityEngine.UI;
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance = null;
-    public float panelMoveSpeed = 0.1f;
+
+    [Range(0, 1)]
+    public float panelMoveTime = 0.2f;
     public float panelMoveValue = -200f;
+    public bool isPushed = false;
+
+    [HideInInspector]
+    public RectTransform mainCommand;
+
 
 
     void Awake()
@@ -17,17 +24,28 @@ public class BattleManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+
+        instance.isPushed = false;
     }
 
     void Start()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        mainCommand = GameObject.Find("Canvas/Command/Main").GetComponent<RectTransform>();
     }
 
 
     void Update()
     {
-
+        if (instance.isPushed)
+        {
+            if (Input.GetKeyDown(KeyCode.Backspace) && !FindObjectOfType<iTween>())
+            {
+                instance.isPushed = false;
+                iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - panelMoveValue, "time", panelMoveTime));
+                //TransObject.MoveTo(mainCommand.gameObject, new Vector3(-panelMoveValue, 0, 0), panelMoveTime);
+            }
+        }
     }
 
 
@@ -40,16 +58,24 @@ public class BattleManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        instance.isPushed = false;
     }
 
 
     /*以下ボタン関数*/
     public void OnCommandPushed()
     {
-        GameObject mainCommand = GameObject.Find("Canvas/Command/Main");
-        iTween.MoveTo(mainCommand, iTween.Hash("x", mainCommand.transform.position.x + panelMoveValue, "time", panelMoveSpeed));
-        GlobalCoroutine.Go(WaitTime(), panelMoveSpeed);
+        if (!instance.isPushed && !FindObjectOfType<iTween>())
+        {
+            instance.isPushed = true;
+            iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x + panelMoveValue, "time", panelMoveTime));
+            //TransObject.MoveTo(mainCommand.gameObject, new Vector3(panelMoveValue, 0, 0), panelMoveTime);
+            GlobalCoroutine.Go(WaitTime(), panelMoveTime);
+        }
     }
+
+
 
     IEnumerator WaitTime()
     {
