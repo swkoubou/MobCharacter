@@ -3,9 +3,10 @@ using System.Collections;
 
 public class GlobalCoroutine : MonoBehaviour
 {
-    public static void Go(IEnumerator coroutine, float time)
+    public static void Go(IEnumerator coroutine, float time = 0)
     {
-        GameObject obj = new GameObject();     // コルーチン実行用オブジェクト作成
+        // コルーチン実行用オブジェクト作成
+        GameObject obj = new GameObject();
         obj.name = "GlobalCoroutine";
 
         GlobalCoroutine component = obj.AddComponent<GlobalCoroutine>();
@@ -14,6 +15,7 @@ public class GlobalCoroutine : MonoBehaviour
             component.StartCoroutine(component.Do(coroutine, time));
         }
     }
+
 
     IEnumerator Do(IEnumerator src, float time)
     {
@@ -26,6 +28,6 @@ public class GlobalCoroutine : MonoBehaviour
         }
 
         // コルーチン実行用オブジェクトを破棄
-        Destroy(this.gameObject);              
+        Destroy(gameObject);
     }
 }
