@@ -16,6 +16,9 @@ public class BattleManager : MonoBehaviour
     [HideInInspector]
     public RectTransform mainCommand;
 
+    [HideInInspector]
+    public RectTransform subCommand;
+
 
 
     void Awake()
@@ -24,14 +27,12 @@ public class BattleManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
-
-        instance.isPushed = false;
     }
 
     void Start()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-        mainCommand = GameObject.Find("Canvas/Command/Main").GetComponent<RectTransform>();
+        Initialized();
     }
 
 
@@ -43,9 +44,26 @@ public class BattleManager : MonoBehaviour
             {
                 instance.isPushed = false;
                 iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - panelMoveValue, "time", panelMoveTime));
-                //TransObject.MoveTo(mainCommand.gameObject, new Vector3(-panelMoveValue, 0, 0), panelMoveTime);
+                subCommand.gameObject.SetActive(false);
             }
         }
+
+        SelectArrow selectArrow = FindObjectOfType<SelectArrow>();
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            selectArrow.StopSelect();
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            selectArrow.StartSelect();
+        }
+    }
+
+    void Initialized()
+    {
+        instance.isPushed = false;
+        instance.mainCommand = GameObject.Find("Canvas/Command/Main").GetComponent<RectTransform>();
+        instance.subCommand = GameObject.Find("Canvas/Command/Detail").GetComponent<RectTransform>();
     }
 
 
@@ -59,7 +77,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        instance.isPushed = false;
+        Initialized();
     }
 
 
