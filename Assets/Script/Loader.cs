@@ -27,7 +27,7 @@ public class Loader : MonoBehaviour
 
     void Start()
     {
-
+        
     }
 
 
@@ -35,11 +35,15 @@ public class Loader : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SceneManager.LoadScene(battleSceneName);
+            FadeManager.Execute(battleSceneName);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SceneManager.LoadScene(boardSceneName);
+            FadeManager.Execute(boardSceneName);
+        }
+        else if (Input.GetKey(KeyCode.Alpha3))
+        {
+            FadeManager.Destroy();
         }
     }
 

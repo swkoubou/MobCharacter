@@ -79,16 +79,6 @@ public class SelectArrow : MonoBehaviour
         {
             eventSystem.enabled = false;
         }
-
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            StopSelect();
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            StartSelect();
-        }
     }
 
 

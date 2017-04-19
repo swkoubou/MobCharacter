@@ -11,10 +11,12 @@ public class FadeManager : MonoBehaviour
     private float alpha;
 
     //フェードしているか否か
+    [HideInInspector]
     public bool isFading = false;
 
     //フェードが終わったか否か
-    public bool isFadeFinished = false;
+    [HideInInspector]
+    public bool isFadeFinished = true;
 
     //遷移するシーンの番号
     private int sceneIndex = -1;
@@ -23,32 +25,26 @@ public class FadeManager : MonoBehaviour
     private string sceneName = null;
 
     //値が大きいほど早くフェードする
-    private float fadeSpeed = 0.5f;    
+    private float fadeSpeed;
+    private const float FADE_SPEED = 0.5f;
 
     //コルーチンの待ち時間
-    private float waitForSeconds = 0f;
+    private float waitForSeconds;
+    private const float WAIT_FOR_SECONDS = 0f;
 
 
     public enum FadeMode
     {
         none = -1,  //すぐに遷移する
-        open,       //黒から白へ+遷移しない
-        close       //白から黒へ+遷移する
+        open,       //黒から透明へ+遷移しない
+        close       //透明から黒へ+遷移する
     }
-    public FadeMode fadeMode = FadeMode.open;
+    private FadeMode fadeMode = FadeMode.open;
 
 
     void Start()
     {
-        if (fadeMode == FadeMode.open)
-        {
-            alpha = 1f; //黒から始まる
-            isFading = true;
-        }
-        else if (fadeMode == FadeMode.close)
-        {
-            alpha = 0f; //透明から始まる
-        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Update()
@@ -81,29 +77,22 @@ public class FadeManager : MonoBehaviour
         }
     }
 
-    //ここにシーン番号を引数にしてアクセスするとフェードが始まる
-    public void FadeStart(int sceneIndex, float fadeSpeed = 0.5f, float waitForSeconds = 0f)
+    //シーンが読み込まれる度に呼ばれる
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //フェード中に干渉しないように
-        if (this.sceneIndex == -1 && this.sceneName == null)
-        {
-            this.sceneIndex = sceneIndex;           //シーン遷移の番号
-            this.fadeSpeed = fadeSpeed;             //フェードする速さ
-            this.waitForSeconds = waitForSeconds;   //シーン遷移までの時間
-            StartCoroutine(FadeStop());
-        }
-    }
+        fadeMode = FadeMode.open;
+        sceneIndex = -1;
+        sceneName = null;
+        isFadeFinished = false;
 
-    //ここにシーン名前を引数にしてアクセスするとフェードが始まる
-    public void FadeStart(string sceneName, float fadeSpeed = 0.5f, float waitForSeconds = 0f)
-    {
-        //フェード中に干渉しないように
-        if (this.sceneIndex == -1 && this.sceneName == null)
+        if (fadeMode == FadeMode.open)
         {
-            this.sceneName = sceneName;             //シーン遷移の名前
-            this.fadeSpeed = fadeSpeed;             //フェードする速さ
-            this.waitForSeconds = waitForSeconds;   //シーン遷移までの時間
-            StartCoroutine(FadeStop());
+            alpha = 1f; //黒から始まる
+            isFading = true;
+        }
+        else if (fadeMode == FadeMode.close)
+        {
+            alpha = 0f; //透明から始まる
         }
     }
 
@@ -127,6 +116,7 @@ public class FadeManager : MonoBehaviour
             //シーン遷移
             TransitionScene();
         }
+
         isFadeFinished = true;
     }
 
@@ -151,5 +141,44 @@ public class FadeManager : MonoBehaviour
         fadeColor.a = alpha;
         GUI.color = fadeColor;
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+    }
+
+
+    //必要な変数に値を格納しフェードを始める
+    void FadeStart<T>(T scene, float fadeSpeed, float waitForSeconds)
+    {
+        if (isFadeFinished)
+        {
+            if (typeof(T) == typeof(int))
+                sceneIndex = System.Convert.ToInt32(scene);
+            else if (typeof(T) == typeof(string))
+                sceneName = scene as string;
+
+            this.fadeSpeed = fadeSpeed;             //フェードする速さ
+            this.waitForSeconds = waitForSeconds;   //シーン遷移までの時間
+            fadeMode = FadeMode.close;
+            StartCoroutine(FadeStop());
+        }
+    }
+
+    //ここにアクセスすると実行
+    public static void Execute<T>( T scene, float fadeSpeed = FADE_SPEED, float waitForSeconds = WAIT_FOR_SECONDS)
+    {
+        if (!FindObjectOfType<FadeManager>())
+        {
+            GameObject fadeManager = new GameObject();
+            fadeManager.name = "FadeManager";
+            DontDestroyOnLoad(fadeManager);
+            fadeManager.AddComponent<FadeManager>();
+        }
+
+        FindObjectOfType<FadeManager>().FadeStart(scene, fadeSpeed, waitForSeconds);
+    }
+
+    //不要になったら削除する
+    public static void Destroy()
+    {
+        if(FindObjectOfType<FadeManager>())
+            Destroy(FindObjectOfType<FadeManager>().gameObject);
     }
 }
