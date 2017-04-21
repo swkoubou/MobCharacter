@@ -8,9 +8,15 @@ public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance = null;
 
+    //trueならPlayerターン, falseならEnemyターン
+    public bool isTurn = true;
+
     [Range(0, 1)]
-    public float panelMoveTime = 0.2f;
-    public float panelMoveValue = -200f;
+    public float panelMoveTime;
+
+    [Range(-10, 10)]
+    public float panelMoveValue;
+    
     public bool isPushed = false;
 
     [HideInInspector]
@@ -43,7 +49,7 @@ public class BattleManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Backspace) && !FindObjectOfType<iTween>())
             {
                 instance.isPushed = false;
-                iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - panelMoveValue, "time", panelMoveTime));
+                iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
                 subCommand.gameObject.SetActive(false);
             }
         }
@@ -87,8 +93,7 @@ public class BattleManager : MonoBehaviour
         if (!instance.isPushed && !FindObjectOfType<iTween>())
         {
             instance.isPushed = true;
-            iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x + panelMoveValue, "time", panelMoveTime));
-            //TransObject.MoveTo(mainCommand.gameObject, new Vector3(panelMoveValue, 0, 0), panelMoveTime);
+            iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x + ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
             GlobalCoroutine.Go(WaitTime(), panelMoveTime);
         }
     }

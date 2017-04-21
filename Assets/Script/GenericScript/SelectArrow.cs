@@ -29,7 +29,8 @@ public class SelectArrow : MonoBehaviour
     protected GameObject lastSelected;
 
     //画像を表示し、選択を開始して良いか
-    public bool isStartSelect;   
+    [HideInInspector]
+    public bool isStartSelect;
 
 
     void Awake()
@@ -87,7 +88,7 @@ public class SelectArrow : MonoBehaviour
     {
         //カーソルの位置調整
         Vector3 pos = newPos.transform.position;
-        transform.position = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+        transform.position = new Vector3(pos.x + ConvertAspect.GetWidth(offset.x), pos.y + ConvertAspect.GetHeight(offset.y), pos.z + offset.z);
 
         if (currentSelected != lastSelected)
         {
