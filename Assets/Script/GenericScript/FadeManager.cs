@@ -24,16 +24,16 @@ public class FadeManager : MonoBehaviour
     //遷移するシーンの名前
     private string sceneName = null;
 
-    //値が大きいほど早くフェードする
-    private float fadeSpeed;
-    private const float FADE_SPEED = 0.5f;
-
     //コルーチンの待ち時間
     private float waitForSeconds;
     private const float WAIT_FOR_SECONDS = 0f;
 
+    //値が大きいほど早くフェードする
+    private float fadeSpeed;
+    private const float FADE_SPEED = 0.5f;
 
-    public enum FadeMode
+
+    private enum FadeMode
     {
         none = -1,  //すぐに遷移する
         open,       //黒から透明へ+遷移しない
@@ -145,7 +145,7 @@ public class FadeManager : MonoBehaviour
 
 
     //必要な変数に値を格納しフェードを始める
-    void FadeStart<T>(T scene, float fadeSpeed, float waitForSeconds)
+    void FadeStart<T>(T scene, float waitForSeconds, float fadeSpeed)
     {
         if (isFadeFinished)
         {
@@ -154,15 +154,15 @@ public class FadeManager : MonoBehaviour
             else if (typeof(T) == typeof(string))
                 sceneName = scene as string;
 
-            this.fadeSpeed = fadeSpeed;             //フェードする速さ
             this.waitForSeconds = waitForSeconds;   //シーン遷移までの時間
+            this.fadeSpeed = fadeSpeed;             //フェードする速さ
             fadeMode = FadeMode.close;
             StartCoroutine(FadeStop());
         }
     }
 
     //ここにアクセスすると実行
-    public static void Execute<T>( T scene, float fadeSpeed = FADE_SPEED, float waitForSeconds = WAIT_FOR_SECONDS)
+    public static void Execute<T>( T scene, float waitForSeconds = WAIT_FOR_SECONDS, float fadeSpeed = FADE_SPEED)
     {
         if (!FindObjectOfType<FadeManager>())
         {
@@ -172,7 +172,7 @@ public class FadeManager : MonoBehaviour
             fadeManager.AddComponent<FadeManager>();
         }
 
-        FindObjectOfType<FadeManager>().FadeStart(scene, fadeSpeed, waitForSeconds);
+        FindObjectOfType<FadeManager>().FadeStart(scene, waitForSeconds, fadeSpeed);
     }
 
     //不要になったら削除する
