@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GlobalCoroutine : MonoBehaviour
 {
-    public static void Go(IEnumerator coroutine, float time = 0)
+    public static void Go(IEnumerator coroutine, float time = 0f)
     {
         // コルーチン実行用オブジェクト作成
         GameObject obj = new GameObject();

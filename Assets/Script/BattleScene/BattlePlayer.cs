@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattlePlayer : MonoBehaviour
+public class BattlePlayer : BaseOperator
 {
+    
 
     
     void Start()
@@ -18,28 +19,41 @@ public class BattlePlayer : MonoBehaviour
     }
 
 
-    bool CheckTurn()
+    /*以下ボタン関数*/
+
+    //攻撃コマンド
+    public void OnAttack()
     {
-        if (BattleManager.instance.isTurn)
+        BattleManager.instance.OnCommandPushed();
+
+        //実験用
+        Invoke("OnAttackDetails", 2f);
+    }
+
+    public void OnAttackDetails()
+    {
+        if (BattleManager.instance.isPushed)
         {
-            StartCoroutine(Wait(5f));
-            return true;
-        }
-        else
-        {
-            return false;
+            StartCoroutine(BattleManager.instance.ChangeTurnEnemy());
+
+            BattleManager.instance.OnCommandBaack();
+            BattleManager.instance.mainCommand.gameObject.SetActive(false);
         }
     }
 
-    IEnumerator Wait(float time)
+    //道具コマンド
+    public void OnTool()
     {
-        yield return new WaitForSeconds(time);
-        BattleManager.instance.isTurn = false;
+        BattleManager.instance.OnCommandPushed();
     }
 
-
-    public void OnAttackButton()
+    public void OnToolDetails()
     {
 
+    }
+
+    public void OnEscape()
+    {
+        FadeSceneManager.Execute("BoardScene");
     }
 }

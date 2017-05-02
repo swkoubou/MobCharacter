@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class FadeManager : MonoBehaviour
+public class FadeSceneManager : MonoBehaviour
 {
     //どの色でフェードするか
     public Color fadeColor = Color.black;
@@ -12,11 +12,11 @@ public class FadeManager : MonoBehaviour
 
     //フェードしているか否か
     [HideInInspector]
-    public bool isFading = false;
+    private static bool isFading = false;
 
     //フェードが終わったか否か
     [HideInInspector]
-    public bool isFadeFinished = true;
+    private static bool isFadeFinished = true;
 
     //遷移するシーンの番号
     private int sceneIndex = -1;
@@ -44,6 +44,7 @@ public class FadeManager : MonoBehaviour
 
     void Start()
     {
+        DontDestroyOnLoad(this);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -83,6 +84,7 @@ public class FadeManager : MonoBehaviour
         fadeMode = FadeMode.open;
         sceneIndex = -1;
         sceneName = null;
+        isFading = false;
         isFadeFinished = false;
 
         if (fadeMode == FadeMode.open)
@@ -143,6 +145,15 @@ public class FadeManager : MonoBehaviour
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
     }
 
+    public static bool IsFading()
+    {
+        return isFading;
+    }
+
+    public static bool IsFadeFinished()
+    {
+        return isFadeFinished;
+    }
 
     //必要な変数に値を格納しフェードを始める
     void FadeStart<T>(T scene, float waitForSeconds, float fadeSpeed)
@@ -164,21 +175,21 @@ public class FadeManager : MonoBehaviour
     //ここにアクセスすると実行
     public static void Execute<T>( T scene, float waitForSeconds = WAIT_FOR_SECONDS, float fadeSpeed = FADE_SPEED)
     {
-        if (!FindObjectOfType<FadeManager>())
+        if (!FindObjectOfType<FadeSceneManager>())
         {
             GameObject fadeManager = new GameObject();
-            fadeManager.name = "FadeManager";
+            fadeManager.name = "FadeSceneManager";
             DontDestroyOnLoad(fadeManager);
-            fadeManager.AddComponent<FadeManager>();
+            fadeManager.AddComponent<FadeSceneManager>();
         }
 
-        FindObjectOfType<FadeManager>().FadeStart(scene, waitForSeconds, fadeSpeed);
+        FindObjectOfType<FadeSceneManager>().FadeStart(scene, waitForSeconds, fadeSpeed);
     }
 
     //不要になったら削除する
     public static void Destroy()
     {
-        if(FindObjectOfType<FadeManager>())
-            Destroy(FindObjectOfType<FadeManager>().gameObject);
+        if(FindObjectOfType<FadeSceneManager>())
+            Destroy(FindObjectOfType<FadeSceneManager>().gameObject);
     }
 }
