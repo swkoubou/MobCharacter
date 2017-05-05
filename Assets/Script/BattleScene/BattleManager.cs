@@ -10,8 +10,16 @@ public class BattleManager : MonoBehaviour
     public static BattleManager instance = null;
 
     //trueならPlayerターン, falseならEnemyターン
-    [SerializeField]
-    private bool isTurn;
+    //[SerializeField]
+    //private bool isTurn;
+
+    public enum WhoseTurn
+    {
+        player,
+        braver,
+        enemy
+    };
+    private WhoseTurn whoseTurn = WhoseTurn.player;
 
     [Range(0, 1)]
     public float panelMoveTime;
@@ -62,6 +70,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        //実験用
         SelectArrow selectArrow = FindObjectOfType<SelectArrow>();
         if (Input.GetKeyDown(KeyCode.T))
         {
@@ -75,7 +84,8 @@ public class BattleManager : MonoBehaviour
 
     void Initialized()
     {
-        instance.isTurn = true;
+        //instance.isTurn = true;
+        whoseTurn = WhoseTurn.player;
         instance.isPushed = false;
         instance.mainCommand = GameObject.Find("Canvas/Command/Main").GetComponent<RectTransform>();
         instance.mainCommand.gameObject.SetActive(true);
@@ -98,24 +108,31 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    public bool GetTurn()
+    public WhoseTurn GetTurn()
     {
-        return instance.isTurn;
+        return instance.whoseTurn;
     }
 
     //Playerのターンにする+初期化
     public IEnumerator ChangeTurnPlayer(float time = 1f)
     {
         yield return new WaitForSeconds(time);
-        instance.isTurn = true;
+        instance.whoseTurn = WhoseTurn.player;
         instance.mainCommand.gameObject.SetActive(true);
+    }
+
+    //Braverのターンにする+初期化
+    public IEnumerator ChangeTurnBraver(float time = 1f)
+    {
+        yield return new WaitForSeconds(time);
+        instance.whoseTurn = WhoseTurn.braver;
     }
 
     //Enemyのターンにする+初期化
     public IEnumerator ChangeTurnEnemy(float time = 1f)
     {
         yield return new WaitForSeconds(time);
-        instance.isTurn = false;
+        instance.whoseTurn = WhoseTurn.enemy;
     }
 
 
@@ -124,7 +141,7 @@ public class BattleManager : MonoBehaviour
     {
         instance.isPushed = false;
         iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
-        subCommand.gameObject.SetActive(false);
+        instance.subCommand.gameObject.SetActive(false);
     }
 
 
@@ -145,8 +162,7 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator WaitTime()
     {
-        GameObject subCommand = GameObject.Find("Canvas/Command/Detail");
-        subCommand.SetActive(true);
+        instance.subCommand.gameObject.SetActive(true);
 
         yield break;
     }

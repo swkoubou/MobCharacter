@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Oak : BattleEnemy
+public class Oak : BattleAI
 {
 
 
-    void Start()
+    new void Start()
     {
-
+        base.Start();
     }
 
 
@@ -28,9 +28,10 @@ public class Oak : BattleEnemy
 
             default:
                 if (!FindObjectOfType<iTween>())
-                    iTween.MoveFrom(gameObject, iTween.Hash("y", -2f, "time", 1f));
+                    iTween.MoveFrom(gameObject, iTween.Hash("y", transform.position.y - 100f, "time", 0.5f));
                 break;
         }
+        print("Oak");
         StartCoroutine(BattleManager.instance.ChangeTurnPlayer());
     }
 }

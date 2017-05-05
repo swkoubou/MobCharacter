@@ -1,15 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattlePlayer : BaseOperator
+public class BattlePlayer : BattleAI
 {
-    
 
-    
-    void Start()
+    new void Start()
     {
-
+        base.Start();
     }
 
     
@@ -17,7 +16,6 @@ public class BattlePlayer : BaseOperator
     {
         
     }
-
 
     /*以下ボタン関数*/
 
@@ -34,7 +32,7 @@ public class BattlePlayer : BaseOperator
     {
         if (BattleManager.instance.isPushed)
         {
-            StartCoroutine(BattleManager.instance.ChangeTurnEnemy());
+            StartCoroutine(BattleManager.instance.ChangeTurnBraver());
 
             BattleManager.instance.OnCommandBaack();
             BattleManager.instance.mainCommand.gameObject.SetActive(false);
@@ -54,6 +52,12 @@ public class BattlePlayer : BaseOperator
 
     public void OnEscape()
     {
-        FadeSceneManager.Execute("BoardScene");
+        FadeSceneManager.Execute(Loader.battleSceneName);
+    }
+
+    //このクラスではなにもしない
+    protected override void SwitchCommand(int rand)
+    {
+        throw new NotImplementedException();
     }
 }
