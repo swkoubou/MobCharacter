@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Loader : MonoBehaviour
 {
@@ -35,15 +36,21 @@ public class Loader : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            FadeManager.Execute(battleSceneName);
+            FadeSceneManager.Execute(battleSceneName);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            FadeManager.Execute(boardSceneName);
+            FadeSceneManager.Execute(boardSceneName);
         }
         else if (Input.GetKey(KeyCode.Alpha3))
         {
-            FadeManager.Destroy();
+            FadeSceneManager.Destroy();
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Image tmp = GameObject.Find("Canvas/Enemy/Image").GetComponent<Image>();
+            FlashManager.Excute(tmp);
         }
     }
 

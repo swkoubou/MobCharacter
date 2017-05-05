@@ -1,14 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattlePlayer : MonoBehaviour
+public class BattlePlayer : BattleAI
 {
 
-    
-    void Start()
+    new void Start()
     {
-
+        base.Start();
     }
 
     
@@ -17,29 +17,47 @@ public class BattlePlayer : MonoBehaviour
         
     }
 
+    /*以下ボタン関数*/
 
-    bool CheckTurn()
+    //攻撃コマンド
+    public void OnAttack()
     {
-        if (BattleManager.instance.isTurn)
+        BattleManager.instance.OnCommandPushed();
+
+        //実験用
+        Invoke("OnAttackDetails", 2f);
+    }
+
+    public void OnAttackDetails()
+    {
+        if (BattleManager.instance.isPushed)
         {
-            StartCoroutine(Wait(5f));
-            return true;
-        }
-        else
-        {
-            return false;
+            StartCoroutine(BattleManager.instance.ChangeTurnBraver());
+
+            BattleManager.instance.OnCommandBaack();
+            BattleManager.instance.mainCommand.gameObject.SetActive(false);
         }
     }
 
-    IEnumerator Wait(float time)
+    //道具コマンド
+    public void OnTool()
     {
-        yield return new WaitForSeconds(time);
-        BattleManager.instance.isTurn = false;
+        BattleManager.instance.OnCommandPushed();
     }
 
-
-    public void OnAttackButton()
+    public void OnToolDetails()
     {
 
+    }
+
+    public void OnEscape()
+    {
+        FadeSceneManager.Execute(Loader.battleSceneName);
+    }
+
+    //このクラスではなにもしない
+    protected override void SwitchCommand(int rand)
+    {
+        throw new NotImplementedException();
     }
 }

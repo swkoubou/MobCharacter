@@ -3,27 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance = null;
 
     //trueならPlayerターン, falseならEnemyターン
-    public bool isTurn = true;
+    //[SerializeField]
+    //private bool isTurn;
+
+    public enum WhoseTurn
+    {
+        player,
+        braver,
+        enemy
+    };
+    private WhoseTurn whoseTurn = WhoseTurn.player;
 
     [Range(0, 1)]
     public float panelMoveTime;
 
     [Range(-10, 10)]
     public float panelMoveValue;
-    
-    public bool isPushed = false;
+
+    public bool isPushed;
 
     [HideInInspector]
     public RectTransform mainCommand;
 
     [HideInInspector]
     public RectTransform subCommand;
+
+    private EventSystem eventSystem;
 
 
 
@@ -44,16 +56,21 @@ public class BattleManager : MonoBehaviour
 
     void Update()
     {
-        if (instance.isPushed)
+        //シーン遷移時は十字キーで動作させない
+        if (FadeSceneManager.IsFading())
+            instance.eventSystem.enabled = false;
+        else
+            instance.eventSystem.enabled = true;
+
+        if (instance.isPushed && FadeSceneManager.IsFadeFinished())
         {
             if (Input.GetKeyDown(KeyCode.Backspace) && !FindObjectOfType<iTween>())
             {
-                instance.isPushed = false;
-                iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
-                subCommand.gameObject.SetActive(false);
+                OnCommandBaack();
             }
         }
 
+        //実験用
         SelectArrow selectArrow = FindObjectOfType<SelectArrow>();
         if (Input.GetKeyDown(KeyCode.T))
         {
@@ -67,9 +84,13 @@ public class BattleManager : MonoBehaviour
 
     void Initialized()
     {
+        //instance.isTurn = true;
+        whoseTurn = WhoseTurn.player;
         instance.isPushed = false;
         instance.mainCommand = GameObject.Find("Canvas/Command/Main").GetComponent<RectTransform>();
+        instance.mainCommand.gameObject.SetActive(true);
         instance.subCommand = GameObject.Find("Canvas/Command/Detail").GetComponent<RectTransform>();
+        instance.eventSystem = FindObjectOfType<EventSystem>();
     }
 
 
@@ -87,10 +108,49 @@ public class BattleManager : MonoBehaviour
     }
 
 
+    public WhoseTurn GetTurn()
+    {
+        return instance.whoseTurn;
+    }
+
+    //Playerのターンにする+初期化
+    public IEnumerator ChangeTurnPlayer(float time = 1f)
+    {
+        yield return new WaitForSeconds(time);
+        instance.whoseTurn = WhoseTurn.player;
+        instance.mainCommand.gameObject.SetActive(true);
+    }
+
+    //Braverのターンにする+初期化
+    public IEnumerator ChangeTurnBraver(float time = 1f)
+    {
+        yield return new WaitForSeconds(time);
+        instance.whoseTurn = WhoseTurn.braver;
+    }
+
+    //Enemyのターンにする+初期化
+    public IEnumerator ChangeTurnEnemy(float time = 1f)
+    {
+        yield return new WaitForSeconds(time);
+        instance.whoseTurn = WhoseTurn.enemy;
+    }
+
+
+    //サブコマンドからメインコマンドに戻るとき
+    public void OnCommandBaack()
+    {
+        instance.isPushed = false;
+        iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x - ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
+        instance.subCommand.gameObject.SetActive(false);
+    }
+
+
     /*以下ボタン関数*/
+
+    //メインコマンドが押されたら
     public void OnCommandPushed()
     {
-        if (!instance.isPushed && !FindObjectOfType<iTween>())
+        if (!instance.isPushed && !FindObjectOfType<iTween>() && FadeSceneManager.IsFadeFinished())
         {
             instance.isPushed = true;
             iTween.MoveTo(instance.mainCommand.gameObject, iTween.Hash("x", instance.mainCommand.position.x + ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
@@ -102,8 +162,7 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator WaitTime()
     {
-        GameObject subCommand = GameObject.Find("Canvas/Command/Detail");
-        subCommand.SetActive(true);
+        instance.subCommand.gameObject.SetActive(true);
 
         yield break;
     }
