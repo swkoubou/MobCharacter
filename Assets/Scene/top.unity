@@ -435,7 +435,7 @@ GameObject:
   - component: {fileID: 586253578}
   - component: {fileID: 586253581}
   - component: {fileID: 586253580}
-  - component: {fileID: 586253579}
+  - component: {fileID: 586253582}
   m_Layer: 5
   m_Name: Arrows
   m_TagString: Untagged
@@ -461,25 +461,6 @@ RectTransform:
   m_AnchoredPosition: {x: -200, y: -50}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &586253579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 586253577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b89882898e979741a830e3ffff331d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectButton:
-  - {fileID: 1563266288}
-  - {fileID: 1854546956}
-  - {fileID: 746322566}
-  soundBox: {fileID: 0}
-  selectSE: {fileID: 0}
-  offset: {x: -200, y: 0, z: 0}
-  isStartSelect: 1
 --- !u!114 &586253580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,6 +494,25 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 586253577}
+--- !u!114 &586253582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 586253577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0ce525b19f1f404b9e8848b0e3b195c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectButton:
+  - {fileID: 1563266288}
+  - {fileID: 1854546956}
+  - {fileID: 746322566}
+  soundBox: {fileID: 0}
+  selectSE: {fileID: 0}
+  offset: {x: -200, y: 0, z: 0}
+  isStartSelect: 0
 --- !u!1 &746322564
 GameObject:
   m_ObjectHideFlags: 0
