@@ -8,6 +8,8 @@ public class BattlePlayer : BattleAI
 
     new void Start()
     {
+        HP = 10;
+        attack = 0;
         base.Start();
     }
 

@@ -9,6 +9,8 @@ public class Oak : BattleAI
 
     new void Start()
     {
+        HP = 10;
+        attack = 1;
         base.Start();
     }
 

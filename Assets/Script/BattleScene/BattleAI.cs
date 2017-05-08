@@ -8,8 +8,8 @@ public abstract class BattleAI : MonoBehaviour
     protected BattlePlayer player;
     protected BattleBraver braver;
     protected GameObject[] enemies;
-    public int HP;
-    public int attack;
+    protected int HP;
+    protected int attack;
 
     //一度だけupdate関数内で使いたいので
     //protected bool isBraverOnce;
