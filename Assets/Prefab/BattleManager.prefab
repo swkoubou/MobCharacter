@@ -51,7 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7e82635631e2749a1334d508b1e570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTurn: 1
   panelMoveTime: 0.2
-  panelMoveValue: -200
+  panelMoveValue: -3
   isPushed: 0
   mainCommand: {fileID: 0}
+  subCommand: {fileID: 0}
