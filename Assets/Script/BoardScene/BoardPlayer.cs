@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 //MovingObjectクラスを継承する
-public class Player : MovingObject
+public class BoardPlayer : MovingObject
 {
 
     public int wallDamage = 1; //壁へのダメージ量
@@ -15,7 +15,6 @@ public class Player : MovingObject
     public float restartlevelDelay = 0.5f; //次レベルへ行く時の時間差
 
     private Animator animator; //PlayerChop, PlayerHit用
-    private int food; //プレイヤーの体力
 
 
     //MovingObjectのStartメソッドを継承　baseで呼び出し
@@ -23,10 +22,7 @@ public class Player : MovingObject
     {
         //Animatorをキャッシュしておく
         animator = GetComponent<Animator>();
-
-        //シングルトンであるGameManagerのplayerFoodPointsを使うことに
-        //よって、レベルを跨いでも値を保持しておける
-        food = BoardManager.instance.playerFoodPoints;
+        HP = 1;
 
         //MovingObjectのStartメソッド呼び出し
         base.Start();
@@ -37,50 +33,59 @@ public class Player : MovingObject
     //UnityのAPIメソッド(Unityに標準で用意された機能)
     private void OnDisable()
     {
-        BoardManager.instance.playerFoodPoints = food;
+        BoardManager.instance.playerHP = HP;
     }
 
 
     void Update()
     {
-        //プレイヤーの順番じゃない時Updateは実行しない
-        if (!BoardManager.instance.playersTurn)
-            return;
-
-        int horizontal = 0; //-1: 左移動, 1: 右移動
-        int vertical = 0; //-1: 下移動, 1: 上移動
-
-        horizontal = (int)Input.GetAxisRaw("Horizontal");
-        vertical = (int)Input.GetAxisRaw("Vertical");
-
-        //上下もしくは左右に移動を制限
-        if (horizontal != 0)
+        //Playerの順番かつPlayerが動き終わっているとき実行する
+        if (BoardManager.instance.GetWhoseTurn() == BoardManager.WhoseTurn.player && !isMoving)
         {
-            vertical = 0;
-        }
-        //上下左右どれかに移動する時
-        if (horizontal != 0 || vertical != 0)
-        {
-            //Wall: ジェネリックパラメーター<T>に渡す型引数
-            //Playerの場合はWall以外判定する必要はない
-            AttemptMove<Wall>(horizontal, vertical);
+            //Enterボタンを押すとPlayerはその場から動かず、ターンをスキップする
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                BoardManager.instance.ChangeTurnBraver();
+            }
+            else
+            {
+
+                int horizontal = 0; //-1: 左移動, 1: 右移動
+                int vertical = 0; //-1: 下移動, 1: 上移動
+
+                horizontal = (int)Input.GetAxisRaw("Horizontal");
+                vertical = (int)Input.GetAxisRaw("Vertical");
+
+                //上下もしくは左右に移動を制限
+                if (horizontal != 0)
+                {
+                    vertical = 0;
+                }
+                else if (vertical != 0)
+                {
+                    horizontal = 0;
+                }
+
+                //上下左右どれかに移動する時
+                if (horizontal != 0 || vertical != 0)
+                {
+                    //Wall: ジェネリックパラメーター<T>に渡す型引数
+                    //Playerの場合はWall以外判定する必要はない
+                    AttemptMove<Wall>(horizontal, vertical);
+                }
+            }
         }
     }
 
 
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
-        //移動1回につき1ポイント失う
-        food--;
-
         //MovingObjectのAttemptMove呼び出し
         base.AttemptMove<T>(xDir, yDir);
 
-        //RaycastHit2D hit;
-
-        CheckIfGameOver();
-        //プレイヤーの順番終了
-        BoardManager.instance.playersTurn = false;
+        //壁向かって移動できないときはターン遷移しない
+        if(isMoving)
+            BoardManager.instance.ChangeTurnBraver(); 
     }
 
     
@@ -111,13 +116,11 @@ public class Player : MovingObject
         else if (other.tag == "Food")
         {
             //体力を回復しotherオブジェクトを削除
-            food += pointsPerFood;
             other.gameObject.SetActive(false);
         }
         else if (other.tag == "Soda")
         {
             //体力を回復しotherオブジェクトを削除
-            food += pointsPerSoda;
             other.gameObject.SetActive(false);
         }
     }
@@ -125,26 +128,25 @@ public class Player : MovingObject
 
     private void Restart()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        FadeSceneManager.Execute(SceneManager.GetActiveScene().name);
     }
 
 
     //敵キャラがプレイヤーを攻撃した時のメソッド
-    public override void LoseHP(int loss)
+    public override void LoseHP(int dmg)
     {
         animator.SetTrigger("PlayerHit");
-        food -= loss;
-        CheckIfGameOver();
+        HP -= dmg;
     }
 
 
     private void CheckIfGameOver()
     {
-        if (food <= 0)
+        if (HP <= 0)
         {
             //GameManagerのGameOverメソッド実行
             //public staticな変数なのでこのような簡単な形でメソッドを呼び出せる
-            BoardManager.instance.GameOver();
+            //BoardManager.instance.GameOver();
         }
     }
 }

@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4644990151797826}
-  - component: {fileID: 114754180833410524}
+  - component: {fileID: 114495202622571110}
   - component: {fileID: 114716011148791286}
   m_Layer: 0
   m_Name: BoardManager
@@ -41,6 +41,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114495202622571110
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1897115922381214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64b354b4b8b15554cbfbf2738645f90d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnDelay: 0.1
+  playerHP: 0
+  braverHP: 0
+  braver: {fileID: 0}
 --- !u!114 &114716011148791286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -86,25 +101,10 @@ MonoBehaviour:
   - {fileID: 1000011915103272, guid: b2a66b55304f5ef4aad28454d31ee28a, type: 2}
   - {fileID: 1000013276696084, guid: 2c79c14d89dba0740818668daecfd265, type: 2}
   - {fileID: 1000012214845826, guid: 850eb9fc3b99d7c49a12535495597ae4, type: 2}
+  backgroundTile: {fileID: 1026903277946022, guid: 60e644b2b9a17cf46876ee1eddabede9,
+    type: 2}
   mapText:
   - {fileID: 4900000, guid: 9c535de9243ebb7429d17e44e0075e1d, type: 3}
   - {fileID: 4900000, guid: 28202efbb0629fa4ea57db4c6c643bec, type: 3}
+  - {fileID: 4900000, guid: 0e5711bb0a8b3dc45a0a049d11968679, type: 3}
   foldaName: MapText
---- !u!114 &114754180833410524
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1897115922381214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0cdba684c49efc4cb2571b62f7ac7f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelStartDelay: 2
-  turnDelay: 0.1
-  mapGenerator: {fileID: 0}
-  playerFoodPoints: 100
-  playersTurn: 1
-  braversTurn: 0
-  braver: {fileID: 0}

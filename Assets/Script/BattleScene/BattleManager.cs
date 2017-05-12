@@ -108,7 +108,7 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    public WhoseTurn GetTurn()
+    public WhoseTurn GetWhoseTurn()
     {
         return instance.whoseTurn;
     }

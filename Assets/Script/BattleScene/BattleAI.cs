@@ -31,7 +31,7 @@ public abstract class BattleAI : MonoBehaviour
     protected void BraverTurn()
     {
         //Braverターンじゃないなら
-        if (BattleManager.instance.GetTurn() != BattleManager.WhoseTurn.braver)
+        if (BattleManager.instance.GetWhoseTurn() != BattleManager.WhoseTurn.braver)
         {
             isOnce = false;
             return;
@@ -48,7 +48,7 @@ public abstract class BattleAI : MonoBehaviour
     protected void EnemyTurn()
     {
         //Enemyターンじゃないなら
-        if (BattleManager.instance.GetTurn() != BattleManager.WhoseTurn.enemy)
+        if (BattleManager.instance.GetWhoseTurn() != BattleManager.WhoseTurn.enemy)
         {
             isOnce = false;
             return;

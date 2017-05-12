@@ -1,0 +1,10 @@
+﻿xxxxxxxxxxxxx
+x--------xx00
+x--------xx00
+x--o-----xx00
+x----oo--xx00
+xoo------000x
+x--------xx00
+x---ooo--xx00
+x-o-----oxx00
+xxxxxxxxxxxxx

@@ -5,11 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Exit
-  - Food
-  - Soda
   - Enemy
   - Floor
   - Braver
+  - Inmortal
   layers:
   - Default
   - TransparentFX

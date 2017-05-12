@@ -469,7 +469,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 586253577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b89882898e979741a830e3ffff331d1, type: 3}
+  m_Script: {fileID: 11500000, guid: 377c966458cc1d2488419b89201f6856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selectButton:
@@ -478,8 +478,8 @@ MonoBehaviour:
   - {fileID: 746322566}
   soundBox: {fileID: 0}
   selectSE: {fileID: 0}
-  offset: {x: -200, y: 0, z: 0}
-  isStartSelect: 1
+  offset: {x: -3, y: 0, z: 0}
+  isStartSelect: 0
 --- !u!114 &586253580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -562,9 +562,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 1854546956}
+    m_SelectOnDown: {fileID: 1563266288}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -891,7 +891,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -990,9 +990,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 746322566}
+    m_SelectOnDown: {fileID: 1854546956}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
