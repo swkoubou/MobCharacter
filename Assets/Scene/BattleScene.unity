@@ -710,8 +710,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904b6ca1a455e594793056158a6b0805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 0
-  attack: 0
 --- !u!1 &466312894
 GameObject:
   m_ObjectHideFlags: 0
@@ -853,8 +851,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82ae9ba6b45a3034dbdd24e9c128ea68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 0
-  attack: 0
+  mainArrow: {fileID: 1474050210}
+  subArrow: {fileID: 1183872298}
 --- !u!114 &540633049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -866,8 +864,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d458d2901faf49429e8e42d3c0fe7ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 0
-  attack: 0
 --- !u!81 &540633050
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1167,7 +1163,7 @@ RectTransform:
   m_Children:
   - {fileID: 2019489194}
   m_Father: {fileID: 2073264908}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1186,9 +1182,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 1186849803}
+    m_SelectOnDown: {fileID: 2064070076}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -1419,6 +1415,94 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1179234099}
+--- !u!1 &1183872297
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1183872301}
+  - component: {fileID: 1183872300}
+  - component: {fileID: 1183872299}
+  - component: {fileID: 1183872298}
+  m_Layer: 5
+  m_Name: Arrow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1183872298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1183872297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b89882898e979741a830e3ffff331d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectButton:
+  - {fileID: 2064070076}
+  - {fileID: 1186849803}
+  - {fileID: 966884020}
+  soundBox: {fileID: 466312895}
+  selectSE: {fileID: 0}
+  offset: {x: -17, y: 0, z: 0}
+  isStartSelect: 0
+--- !u!114 &1183872299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1183872297}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: 244cdeb46c6517640926246a2ecc2873, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &1183872300
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1183872297}
+--- !u!224 &1183872301
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1183872297}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2073264908}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -857.00006, y: 81.999985}
+  m_SizeDelta: {x: 20, y: 20}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1186849801
 GameObject:
   m_ObjectHideFlags: 0
@@ -1449,7 +1533,7 @@ RectTransform:
   m_Children:
   - {fileID: 1518034413}
   m_Father: {fileID: 2073264908}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1468,9 +1552,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 2064070076}
+    m_SelectOnDown: {fileID: 966884020}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -1758,7 +1842,7 @@ GameObject:
   - component: {fileID: 1474050213}
   - component: {fileID: 1474050210}
   m_Layer: 5
-  m_Name: Arrows
+  m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2448,7 +2532,7 @@ GameObject:
   - component: {fileID: 2064070077}
   - component: {fileID: 2064070076}
   m_Layer: 5
-  m_Name: Button
+  m_Name: NormalAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2466,7 +2550,7 @@ RectTransform:
   m_Children:
   - {fileID: 1229042379}
   m_Father: {fileID: 2073264908}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2485,9 +2569,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 966884020}
+    m_SelectOnDown: {fileID: 1186849803}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -2585,6 +2669,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1183872301}
   - {fileID: 2064070075}
   - {fileID: 1186849802}
   - {fileID: 966884019}

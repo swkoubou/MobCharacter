@@ -9,6 +9,8 @@ public class BattleBraver : BattleAI
 
     new void Start()
     {
+        HP = 30;
+        attack = 3;
         base.Start();
     }
 

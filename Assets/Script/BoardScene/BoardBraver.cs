@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Braver : MovingObject
+public class BoardBraver : MovingObject
 {
-    public int attackDamage;
     private Animator animator;
     private MapGenerator mapGenerator;
     private List<GameObject> targets = new List<GameObject>();
@@ -22,6 +21,8 @@ public class Braver : MovingObject
 
     protected override void Start()
     {
+        HP = 50;
+        attack = 50;
         BoardManager.instance.AddBraver(this);
         animator = GetComponent<Animator>();
         mapGenerator = FindObjectOfType<MapGenerator>();
@@ -32,6 +33,11 @@ public class Braver : MovingObject
     void Update()
     {
         
+    }
+
+    private void OnDisable()
+    {
+        BoardManager.instance.braverHP = HP;
     }
 
 
@@ -71,14 +77,14 @@ public class Braver : MovingObject
             }
         }
 
-        for(int i = 0; i < serchCount; i++)
-        {
-           print(targets[i]);
-        }
+        //for(int i = 0; i < serchCount; i++)
+        //{
+        //   print(targets[i]);
+        //}
     }
 
 
-    protected override void AttemptMove<T>(int xDir, int yDir)
+    protected override void AttemptMove<T, U>(int xDir, int yDir)
     {
         if (skipMove)
         {
@@ -86,7 +92,8 @@ public class Braver : MovingObject
             return;
         }
 
-        base.AttemptMove<T>(xDir, yDir);
+        base.AttemptMove<T, U>(xDir, yDir);
+        BoardManager.instance.ChangeTurnEnemy();
         skipMove = true;
     }
 
@@ -114,21 +121,25 @@ public class Braver : MovingObject
             xDir = targets[0].transform.position.x > transform.position.x ? 1 : -1;
         }
         //ジェネリック機能　攻撃対象はEnemyのみなので、型引数はEnemy
-        AttemptMove<Enemy>(xDir, yDir);
+        AttemptMove<BoardEnemy, Wall>(xDir, yDir);
     }
 
 
     protected override void OnCantMove<T>(T component)
     {
-        if(component.GetComponent<Enemy>())
+        if(component.GetComponent<BoardEnemy>())
         {
-            Enemy other = component as Enemy;
-            other.LoseHP(attackDamage);
+            BoardEnemy other = component as BoardEnemy;
+            other.LoseHP(attack);
+            print("OnCantMove: Enemy");
         }
         else if (component.GetComponent<Wall>())
         {
             Wall other = component as Wall;
-            //other.DamageWall(attackDamage);
+
+            //WallスクリプトのDamageWallメソッド呼び出し
+            other.DamageWall(attack);
+            print("OnCantMove: Wall");
         }
     }
 

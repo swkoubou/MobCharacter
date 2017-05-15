@@ -177,10 +177,10 @@ public class FadeSceneManager : MonoBehaviour
     {
         if (!FindObjectOfType<FadeSceneManager>())
         {
-            GameObject fadeManager = new GameObject();
-            fadeManager.name = "FadeSceneManager";
-            DontDestroyOnLoad(fadeManager);
-            fadeManager.AddComponent<FadeSceneManager>();
+            GameObject fadeSceneManager = new GameObject();
+            fadeSceneManager.name = "FadeSceneManager";
+            DontDestroyOnLoad(fadeSceneManager);
+            fadeSceneManager.AddComponent<FadeSceneManager>();
         }
 
         FindObjectOfType<FadeSceneManager>().FadeStart(scene, waitForSeconds, fadeSpeed);

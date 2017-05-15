@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MovingObject
+public class BoardEnemy : MovingObject
 {
     public int attackDamage;
     private Animator animator;
@@ -13,7 +13,9 @@ public class Enemy : MovingObject
 
     protected override void Start()
     {
-        BoardManager.instance.AddEnemyToList(this);
+        HP = 3;
+        attack = 1;
+        BoardManager.instance.AddEnemy(this);
         animator = GetComponent<Animator>();
         target = GameObject.FindGameObjectWithTag("Braver").transform;
         base.Start();
@@ -30,7 +32,7 @@ public class Enemy : MovingObject
         if (HP <= 0)
         {
             HP = 0;
-            Braver braver = BoardManager.instance.braver;
+            BoardBraver braver = BoardManager.instance.braver;
             braver.TargetDied();
 
             Destroy(gameObject);
@@ -47,6 +49,7 @@ public class Enemy : MovingObject
         }
 
         base.AttemptMove<T>(xDir, yDir);
+        BoardManager.instance.ChangeTurnPlayer();
         skipMove = true;
     }
 
@@ -78,21 +81,21 @@ public class Enemy : MovingObject
         }
 
         //ジェネリック機能　攻撃対象はPlayerのみなので、型引数はPlayer
-        AttemptMove<Player>(xDir, yDir);
+        AttemptMove<BoardPlayer>(xDir, yDir);
     }
 
 
     //MovingObjectの抽象メソッドのため必ず必要
     protected override void OnCantMove<T>(T component)
     {
-        if (component.GetComponent<Player>())
+        if (component.GetComponent<BoardPlayer>())
         {
-            Player other = component as Player;
+            BoardPlayer other = component as BoardPlayer;
             other.LoseHP(attackDamage);
         }
-        else if (component.GetComponent<Braver>())
+        else if (component.GetComponent<BoardBraver>())
         {
-            Braver other = component as Braver;
+            BoardBraver other = component as BoardBraver;
             other.LoseHP(attackDamage);
         }
     }

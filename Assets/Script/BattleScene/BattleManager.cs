@@ -71,12 +71,12 @@ public class BattleManager : MonoBehaviour
         }
 
         //実験用
-        SelectArrow selectArrow = FindObjectOfType<SelectArrow>();
+        SelectArrow selectArrow = GameObject.Find("Canvas/Command/Main/MainArrow").GetComponent<SelectArrow>();
         if (Input.GetKeyDown(KeyCode.T))
         {
             selectArrow.StopSelect();
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.Y))
         {
             selectArrow.StartSelect();
         }
@@ -85,12 +85,13 @@ public class BattleManager : MonoBehaviour
     void Initialized()
     {
         //instance.isTurn = true;
-        whoseTurn = WhoseTurn.player;
+        //instance.whoseTurn = WhoseTurn.player;
         instance.isPushed = false;
         instance.mainCommand = GameObject.Find("Canvas/Command/Main").GetComponent<RectTransform>();
-        instance.mainCommand.gameObject.SetActive(true);
+        //instance.mainCommand.gameObject.SetActive(true);
         instance.subCommand = GameObject.Find("Canvas/Command/Detail").GetComponent<RectTransform>();
         instance.eventSystem = FindObjectOfType<EventSystem>();
+        StartCoroutine(ChangeTurnPlayer());
     }
 
 
@@ -108,7 +109,7 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    public WhoseTurn GetTurn()
+    public WhoseTurn GetWhoseTurn()
     {
         return instance.whoseTurn;
     }
@@ -119,6 +120,7 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(time);
         instance.whoseTurn = WhoseTurn.player;
         instance.mainCommand.gameObject.SetActive(true);
+        instance.mainCommand.FindChild("MainArrow").gameObject.GetComponent<SelectArrow>().StartSelect();
     }
 
     //Braverのターンにする+初期化
