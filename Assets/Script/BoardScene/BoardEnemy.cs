@@ -13,6 +13,8 @@ public class BoardEnemy : MovingObject
 
     protected override void Start()
     {
+        HP = 3;
+        attack = 1;
         BoardManager.instance.AddEnemy(this);
         animator = GetComponent<Animator>();
         target = GameObject.FindGameObjectWithTag("Braver").transform;

@@ -21,11 +21,11 @@ public class BoardBraver : MovingObject
 
     protected override void Start()
     {
+        HP = 50;
+        attack = 50;
         BoardManager.instance.AddBraver(this);
         animator = GetComponent<Animator>();
         mapGenerator = FindObjectOfType<MapGenerator>();
-        HP = 50;
-        attack = 50;
         base.Start();
     }
 

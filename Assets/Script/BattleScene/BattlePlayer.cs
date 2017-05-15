@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class BattlePlayer : BattleAI
 {
+    public SelectArrow mainArrow;
+    public SelectArrow subArrow;
 
     new void Start()
     {
@@ -25,9 +27,13 @@ public class BattlePlayer : BattleAI
     public void OnAttack()
     {
         BattleManager.instance.OnCommandPushed();
+        mainArrow.StopSelect();
+        //BattleManager.instance.subCommand.gameObject.SetActive(true);
+        subArrow.StartSelect();
+        //BattleManager.instance.subCommand.gameObject.SetActive(false);
 
-        //実験用
-        Invoke("OnAttackDetails", 2f);
+        ////実験用
+        //Invoke("OnAttackDetails", 2f);
     }
 
     public void OnAttackDetails()

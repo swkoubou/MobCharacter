@@ -123,15 +123,21 @@ public class MapGenerator : MonoBehaviour
                 if (textMark == 'x')
                     allObjectData[y, x] = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
 
-                //wallTilesを生成
+                //wallTilesを生成+下には床を設置
                 else if (textMark == 'o')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
                     allObjectData[y, x] = wallTiles[Random.Range(0, wallTiles.Length)];
+                }
 
                 //-のとき floorTilesを生成
                 else if (textMark == '-')
                     allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
 
-                else if (textMark == '0')
+                //0のときbackgroundTilesを生成
+                else
                     allObjectData[y, x] = backgroundTile;
 
                 //左から右、上から下にテキストを読み込んでいくので、xは+軸、yは-軸に配置する

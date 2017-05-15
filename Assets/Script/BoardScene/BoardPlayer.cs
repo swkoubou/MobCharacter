@@ -20,9 +20,11 @@ public class BoardPlayer : MovingObject
     //MovingObjectのStartメソッドを継承　baseで呼び出し
     protected override void Start()
     {
+        HP = 1;
+        attack = 0;
+
         //Animatorをキャッシュしておく
         animator = GetComponent<Animator>();
-        HP = 1;
 
         //MovingObjectのStartメソッド呼び出し
         base.Start();
