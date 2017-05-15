@@ -192,6 +192,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8151c997fdffb044aff70ec7da96280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectButton: []
+  soundBox: {fileID: 0}
+  selectSE: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
+  isStartSelect: 0
   startScene: BattleScene
 --- !u!4 &220765835
 Transform:
@@ -435,7 +440,7 @@ GameObject:
   - component: {fileID: 586253578}
   - component: {fileID: 586253581}
   - component: {fileID: 586253580}
-  - component: {fileID: 586253582}
+  - component: {fileID: 586253579}
   m_Layer: 5
   m_Name: Arrows
   m_TagString: Untagged
@@ -458,9 +463,28 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: -50}
+  m_AnchoredPosition: {x: -180.25, y: -50}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &586253579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 586253577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b89882898e979741a830e3ffff331d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectButton:
+  - {fileID: 1563266288}
+  - {fileID: 1854546956}
+  - {fileID: 746322566}
+  soundBox: {fileID: 0}
+  selectSE: {fileID: 0}
+  offset: {x: -4, y: 0, z: 0}
+  isStartSelect: 0
 --- !u!114 &586253580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -494,25 +518,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 586253577}
---- !u!114 &586253582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 586253577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0ce525b19f1f404b9e8848b0e3b195c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectButton:
-  - {fileID: 1563266288}
-  - {fileID: 1854546956}
-  - {fileID: 746322566}
-  soundBox: {fileID: 0}
-  selectSE: {fileID: 0}
-  offset: {x: -200, y: 0, z: 0}
-  isStartSelect: 0
 --- !u!1 &746322564
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,9 +567,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 1854546956}
+    m_SelectOnDown: {fileID: 1563266288}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -990,9 +995,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_Mode: 4
+    m_SelectOnUp: {fileID: 746322566}
+    m_SelectOnDown: {fileID: 1854546956}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1

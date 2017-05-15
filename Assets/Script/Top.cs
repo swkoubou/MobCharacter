@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Top : MonoBehaviour
+public class Top : SelectArrow
 {
     public string startScene = "";
 
     // Use this for initialization
-    void Start()
-    {
-
-    }
 
     // Update is called once per frame
-    void Update()
+    new void Update()
     {
-
+        SelectArrow selectArrow = FindObjectOfType<SelectArrow>();
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            selectArrow.StopSelect();
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            selectArrow.StartSelect();
+        }
     }
 
     public void startButton()
