@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Top : SelectArrow
+public class Top : MonoBehaviour
 {
     public string startScene = "";
 
     // Use this for initialization
 
     // Update is called once per frame
-    new void Update()
+    void Update()
     {
         SelectArrow selectArrow = FindObjectOfType<SelectArrow>();
         if (Input.GetKeyDown(KeyCode.T))

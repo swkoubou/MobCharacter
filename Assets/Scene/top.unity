@@ -192,11 +192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8151c997fdffb044aff70ec7da96280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectButton: []
-  soundBox: {fileID: 0}
-  selectSE: {fileID: 0}
-  offset: {x: 0, y: 0, z: 0}
-  isStartSelect: 0
   startScene: BattleScene
 --- !u!4 &220765835
 Transform:
