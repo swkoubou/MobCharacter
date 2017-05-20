@@ -2,15 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
-public class BattleBraver : BattleAI
+public class BattleBraver : CommonBattleChar
 {
-    
+    private Vector2 defaultBraverPos = new Vector2(1, 2);
+    public Vector2 defaultOffset = new Vector2(0, 15);
+    public Button[] buttonsObject;
+    public string[] buttonsText;
+
 
     new void Start()
     {
         HP = 30;
-        attack = 3;
+        attack = 5;
+        //BattleManager.instance.AddGridPos(gameObject, defaultBraverPos);
         base.Start();
     }
 
@@ -20,19 +27,30 @@ public class BattleBraver : BattleAI
         BraverTurn();
     }
 
+    public void SetOnClick()
+    {
+        UnityAction[] method = new UnityAction[] { OnMoveAttackVertical};
+        SetMethod(buttonsObject, buttonsText, method);
+        //for (int i = 0; i < buttonsObject.Length; i++)
+        //{
+        //    buttonsObject[i].onClick.RemoveAllListeners();
+        //    buttonsObject[i].onClick.AddListener(method[i]);
+        //    buttonsObject[i].transform.FindChild("Text").GetComponent<Text>().text = buttonsText[i];
+        //}
+    }
+
+    /*以下ボタン関数*/
+    void OnMoveAttackVertical()
+    {
+
+    }
+
+
+
+    //このクラスではなにもしない
     protected override void SwitchCommand(int rand)
     {
-        switch (rand)
-        {
-            case 0:
-                break;
-
-            default:
-                if (!FindObjectOfType<iTween>())
-                    iTween.ShakePosition(enemies[0].gameObject, iTween.Hash("x", 10f, "time", 0.5f));
-                break;
-        }
-        print("Braver");
-        StartCoroutine(BattleManager.instance.ChangeTurnEnemy());
+        StartCoroutine(BattleManager.instance.ChangeTurnPlayer());
+        //throw new NotImplementedException();
     }
 }

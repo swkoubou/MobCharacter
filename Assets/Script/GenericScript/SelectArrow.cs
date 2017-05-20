@@ -44,6 +44,7 @@ public class SelectArrow : MonoBehaviour
 
         selectButton[0].Select();
         lastSelected = selectButton[0].gameObject;
+        AjustPosition(selectButton[0].gameObject);
     }
 
 

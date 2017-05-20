@@ -51,9 +51,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7e82635631e2749a1334d508b1e570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTurn: 1
   panelMoveTime: 0.2
   panelMoveValue: -3
   isPushed: 0
+  commandPanel: {fileID: 0}
+  commandPanelPath: Canvas/Command/
   mainCommand: {fileID: 0}
   subCommand: {fileID: 0}
+  playerCommand: {fileID: 0}
+  braverCommand: {fileID: 0}
+  princessCommand: {fileID: 0}
+  whoseNameText: {fileID: 0}
+  whoseNameTextPath: Canvas/Command/Main/WhoseNameText
+  mainArrow: {fileID: 0}
+  subArrow: {fileID: 0}
