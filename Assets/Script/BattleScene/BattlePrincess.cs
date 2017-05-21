@@ -8,7 +8,6 @@ public class BattlePrincess : CommonBattleChar
 {
     private Vector2 defaultPrincessPos = new Vector2(2, 2);
     public Vector2 defaultOffset = new Vector2(0, 15);
-    public Button[] commandButtons;
 
 
     new void Start()

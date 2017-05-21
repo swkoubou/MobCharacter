@@ -15,6 +15,9 @@ public abstract class CommonBattleChar : MonoBehaviour
     protected int attack;
     private float charMoveTime = 1f;
 
+    public Button[] buttonsObject;
+    public string[] buttonsText;
+
     //一度だけupdate関数内で使いたいので
     protected bool isOnce;
 
@@ -27,8 +30,6 @@ public abstract class CommonBattleChar : MonoBehaviour
         //enemies = GameObject.FindGameObjectsWithTag("Enemy");
         //enemies = enemies.OrderBy(e => Vector2.Distance(e.transform.position, transform.position)).ToArray();
         isOnce = false;
-
-
     }
 
     protected void BraverTurn()
@@ -126,7 +127,7 @@ public abstract class CommonBattleChar : MonoBehaviour
     //    return diff.y;
     //}
 
-    protected void SetMethod(Button[] buttonsObject, string[] buttonsText,UnityAction[] method)
+    protected void SetMethod(UnityAction[] method)
     {
         for (int i = 0; i < buttonsObject.Length; i++)
         {
@@ -144,16 +145,7 @@ public abstract class CommonBattleChar : MonoBehaviour
     {
         BattleManager.instance.OnCommandPushed();
         BattleManager.instance.mainArrow.StopSelect();
-
-        //if (BattleManager.instance.playerCommand)
-        //    BattleManager.instance.playerArrow.StartSelect();
-
-        //if (BattleManager.instance.braverCommand)
-        //    BattleManager.instance.braverArrow.StartSelect();
-
-        //if (BattleManager.instance.princessCommand)
-        //    BattleManager.instance.princessArrow.StartSelect();
-
+        
         if(BattleManager.instance.GetWhoseTurn() == BattleManager.WhoseTurn.player)
             BattleManager.instance.subArrow.RebootSelectButton(player.buttonsObject);
         else if (BattleManager.instance.GetWhoseTurn() == BattleManager.WhoseTurn.braver)

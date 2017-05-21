@@ -9,8 +9,8 @@ public class BattlePlayer : CommonBattleChar
 {
     private Vector2 defaultPlayerPos = new Vector2(0, 2);
     public Vector2 defaultOffset = new Vector2(0, 15);
-    public Button[] buttonsObject;
-    public string[] buttonsText;
+    //public Button[] buttonsObject;
+    //public string[] buttonsText;
     
 
     new void Start()
@@ -29,13 +29,7 @@ public class BattlePlayer : CommonBattleChar
     public void SetOnClick()
     {
         UnityAction[] method = new UnityAction[] { OnMoveAttackVertical, OnTool, OnEscape };
-        SetMethod(buttonsObject, buttonsText, method);
-        //for(int i=0; i<buttonsObject.Length; i++)
-        //{
-        //    buttonsObject[i].onClick.RemoveAllListeners();
-        //    buttonsObject[i].onClick.AddListener(method[i]);
-        //    buttonsObject[i].transform.FindChild("Text").GetComponent<Text>().text = buttonsText[i];
-        //}
+        SetMethod(method);
     }
 
     /*以下ボタン関数*/

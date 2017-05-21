@@ -40,12 +40,6 @@ public class BattleManager : MonoBehaviour
 
     [HideInInspector]
     public GameObject subCommand;
-    [HideInInspector]
-    public GameObject playerCommand;
-    [HideInInspector]
-    public GameObject braverCommand;
-    [HideInInspector]
-    public GameObject princessCommand;
 
     [HideInInspector]
     public Text whoseNameText;
@@ -117,9 +111,6 @@ public class BattleManager : MonoBehaviour
         instance.commandPanel = GameObject.Find(commandPanelPath);
         instance.mainCommand = GameObject.Find(commandPanelPath + "Main");
         instance.subCommand = GameObject.Find(commandPanelPath + "Sub");
-        instance.playerCommand = GameObject.Find(commandPanelPath + "Player");
-        instance.braverCommand = GameObject.Find(commandPanelPath + "Braver");
-        instance.princessCommand = GameObject.Find(commandPanelPath + "Princess");
         instance.whoseNameText = GameObject.Find(whoseNameTextPath).GetComponent<Text>();
         instance.mainArrow = instance.mainCommand.transform.FindChild("MainArrow").GetComponent<SelectArrow>();
         instance.subArrow = instance.commandPanel.transform.FindChild("SubArrow").GetComponent<SubArrow>();

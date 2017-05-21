@@ -13,7 +13,7 @@ public class SubArrow : SelectArrow
         
     }
 
-
+    //ボタンのOnClikeを再設定し
     public void RebootSelectButton(Button[] newButton)
     {
         selectButton = new Button[newButton.Length];
