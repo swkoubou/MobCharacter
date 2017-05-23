@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -10,8 +11,9 @@ public class SubArrow : SelectArrow
 
     void Start()
     {
-        
+
     }
+
 
     //ボタンのOnClikeを再設定し
     public void RebootSelectButton(Button[] newButton)
@@ -21,6 +23,6 @@ public class SubArrow : SelectArrow
         {
             selectButton[i] = newButton[i];
         }
-        StartSelect();
+        //StartSelect();
     }
 }

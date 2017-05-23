@@ -7,17 +7,15 @@ using UnityEngine.UI;
 
 public class BattleBraver : CommonBattleChar
 {
-    private Vector2 defaultBraverPos = new Vector2(1, 2);
-    public Vector2 defaultOffset = new Vector2(0, 15);
-    //public Button[] buttonsObject;
-    //public string[] buttonsText;
-
 
     new void Start()
     {
         HP = 30;
         attack = 5;
-        //BattleManager.instance.AddGridPos(gameObject, defaultBraverPos);
+        defaultPos = new Vector2(1, 2);
+        defaultOffset = new Vector2(0, 1);
+        AddGrid(gameObject, defaultPos);
+        MoveGrid(gameObject, defaultPos);
         base.Start();
     }
 

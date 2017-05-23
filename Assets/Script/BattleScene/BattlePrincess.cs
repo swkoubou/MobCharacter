@@ -6,15 +6,15 @@ using UnityEngine.UI;
 
 public class BattlePrincess : CommonBattleChar
 {
-    private Vector2 defaultPrincessPos = new Vector2(2, 2);
-    public Vector2 defaultOffset = new Vector2(0, 15);
-
 
     new void Start()
     {
         HP = 30;
         attack = 2;
-        //BattleManager.instance.AddGridPos(gameObject, defaultPrincessPos);
+        defaultPos = new Vector2(2, 0);
+        defaultOffset = new Vector2(0, 1);
+        AddGrid(gameObject, defaultPos);
+        MoveGrid(gameObject, defaultPos);
         base.Start();
     }
 

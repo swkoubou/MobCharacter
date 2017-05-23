@@ -6,18 +6,16 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class BattlePlayer : CommonBattleChar
-{
-    private Vector2 defaultPlayerPos = new Vector2(0, 2);
-    public Vector2 defaultOffset = new Vector2(0, 15);
-    //public Button[] buttonsObject;
-    //public string[] buttonsText;
-    
+{    
 
     new void Start()
     {
         HP = 10;
         attack = 0;
-        BattleManager.instance.AddGridPos(gameObject, defaultPlayerPos);
+        defaultPos = new Vector2(0, 2);
+        defaultOffset = new Vector2(0, 1);
+        AddGrid(gameObject, defaultPos);
+        MoveGrid(gameObject, defaultPos);
         base.Start();
     }
     
@@ -28,7 +26,7 @@ public class BattlePlayer : CommonBattleChar
 
     public void SetOnClick()
     {
-        UnityAction[] method = new UnityAction[] { OnMoveAttackVertical, OnTool, OnEscape };
+        UnityAction[] method = new UnityAction[] { OnMoveAttackVertical, OnMoveAttackSlash, OnEscape };
         SetMethod(method);
     }
 
@@ -36,18 +34,13 @@ public class BattlePlayer : CommonBattleChar
 
     public void OnMoveAttackVertical()
     {
-        base.OnMoveAttackVertical(gameObject, defaultOffset);
+        base.OnMoveAttackVertical(gameObject);
     }
 
-    //道具コマンド
-    public void OnTool()
+    public void OnMoveAttackSlash()
     {
-        BattleManager.instance.OnCommandPushed();
-    }
-
-    public void OnToolDetails()
-    {
-
+        Vector2 nowPos = GetGridVector2(gameObject);
+        base.OnMoveAttackSlash(gameObject, nowPos);
     }
 
     public void OnEscape()

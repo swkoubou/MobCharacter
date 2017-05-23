@@ -40,9 +40,10 @@ public class SelectArrow : MonoBehaviour
         isStartSelect = true;
         eventSystem = FindObjectOfType<EventSystem>();
         GetComponent<Image>().enabled = true;
-        eventSystem.enabled = true;
+        eventSystem.enabled = true;        
 
         selectButton[0].Select();
+        currentSelected = selectButton[0].gameObject;
         lastSelected = selectButton[0].gameObject;
         AjustPosition(selectButton[0].gameObject);
     }
@@ -91,7 +92,7 @@ public class SelectArrow : MonoBehaviour
     {
         //カーソルの位置調整
         Vector3 pos = newPos.transform.position;
-        transform.position = new Vector3(pos.x + ConvertAspect.GetWidth(offset.x), pos.y + ConvertAspect.GetHeight(offset.y), pos.z + offset.z);
+        transform.position = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
         if (currentSelected != lastSelected)
         {

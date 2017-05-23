@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 //画面サイズを変更してもアスペクト比が崩れない
+//CanvasのScreenSpace-Cameraの場合は逆効果
 public class ConvertAspect : MonoBehaviour
 {
 

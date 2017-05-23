@@ -7,14 +7,13 @@ using UnityEngine.UI;
 
 public abstract class CommonBattleChar : MonoBehaviour
 {
-    protected BattlePlayer player;
-    protected BattleBraver braver;
-    protected BattlePrincess princess;
     protected GameObject[] enemies;
     protected int HP;
     protected int attack;
     private float charMoveTime = 1f;
 
+    protected Vector2 defaultPos;
+    public Vector2 defaultOffset;
     public Button[] buttonsObject;
     public string[] buttonsText;
 
@@ -24,9 +23,6 @@ public abstract class CommonBattleChar : MonoBehaviour
 
     protected void Start()
     {
-        player = FindObjectOfType<BattlePlayer>();
-        braver = FindObjectOfType<BattleBraver>();
-        princess = FindObjectOfType<BattlePrincess>();
         //enemies = GameObject.FindGameObjectsWithTag("Enemy");
         //enemies = enemies.OrderBy(e => Vector2.Distance(e.transform.position, transform.position)).ToArray();
         isOnce = false;
@@ -72,13 +68,31 @@ public abstract class CommonBattleChar : MonoBehaviour
     }
 
     //グリッド配列にキャラクタを設置
-    protected void AddGridPos(GameObject obj, Vector2 pos)
+    protected void AddGrid(GameObject obj, Vector2 pos)
     {
+        //なにも入っていないなら何もしない
+        if (obj != null)
+        {
+            CommonBattleChar component = obj.GetComponent<CommonBattleChar>();
+            Vector2 offset = component.defaultOffset;
+        }
         BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = obj;
+        //MoveGrid(obj, pos);
+    }
+
+    //入れ替え
+    public void ChangeGridPos(GameObject obj, Vector2 end)
+    {
+        print(GetGridVector2(obj) + ":" + end);
+        AddGrid(GetGridGameObject(end), GetGridVector2(obj));
+        MoveGrid(GetGridGameObject(end), GetGridVector2(obj));
+        MoveGrid(obj, end);
+        AddGrid(obj, end);
+        print(GetGridVector2(obj) + ":" + end);
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
-    protected Vector2 GetGridPosVector2(GameObject obj)
+    protected Vector2 GetGridVector2(GameObject obj)
     {
         for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
         {
@@ -95,37 +109,24 @@ public abstract class CommonBattleChar : MonoBehaviour
         return new Vector2(-1, -1);
     }
 
-    //キャラクターを指定先のグリッドに移動する
-    protected void MoveGrid(GameObject obj, Vector2 target, Vector2 offset = default(Vector2))
+    //指定した位置情報に何が設置されているか調べて返す
+    protected GameObject GetGridGameObject(Vector2 target)
     {
+        return BattleManager.instance.gridPositions[(int)target.x, (int)target.y];
+    }
+
+    //キャラクターを指定先のグリッドに移動する
+    protected void MoveGrid(GameObject obj, Vector2 target)
+    {
+        Vector2 offset = obj.GetComponent<CommonBattleChar>().defaultOffset;
         Vector2 end = BattleManager.instance.basePositions[(int)target.x, (int)target.y].transform.position;
-        end += new Vector2(ConvertAspect.GetWidth(offset.x), ConvertAspect.GetHeight(offset.y));
+        end += new Vector2(offset.x, offset.y);
 
         var moveHash = new Hashtable();
         moveHash.Add("position", new Vector3(end.x, end.y, 0));
         moveHash.Add("time", charMoveTime);
         iTween.MoveTo(obj, moveHash);
     }
-
-    ////今居る位置から移動先の位置までの距離を求める
-    //public float GetGridDiffX(Vector2 start, Vector2 end)
-    //{
-    //    if (start.y != end.y)
-    //        return -1;
-
-    //    Vector2 diff = instance.basePositions[(int)end.x, (int)end.y].transform.position - instance.basePositions[(int)start.x, (int)start.y].transform.position;
-    //    return diff.x;
-    //}
-
-    ////今居る位置から移動先の位置までの距離を求める
-    //public float GetGridDiffY(Vector2 start, Vector2 end)
-    //{
-    //    if (start.x != end.x)
-    //        return -1;
-
-    //    Vector2 diff = instance.basePositions[(int)end.x, (int)end.y].transform.position - instance.basePositions[(int)start.x, (int)start.y].transform.position;
-    //    return diff.y;
-    //}
 
     protected void SetMethod(UnityAction[] method)
     {
@@ -138,62 +139,80 @@ public abstract class CommonBattleChar : MonoBehaviour
     }
 
 
-    /*以下ボタン関数*/
+    /*以下ボタン関数*/    
 
-    //攻撃コマンド
-    public void OnAttack()
+    protected void OnMoveAttackVertical(GameObject obj)
     {
-        BattleManager.instance.OnCommandPushed();
-        BattleManager.instance.mainArrow.StopSelect();
-        
-        if(BattleManager.instance.GetWhoseTurn() == BattleManager.WhoseTurn.player)
-            BattleManager.instance.subArrow.RebootSelectButton(player.buttonsObject);
-        else if (BattleManager.instance.GetWhoseTurn() == BattleManager.WhoseTurn.braver)
-            BattleManager.instance.subArrow.RebootSelectButton(braver.buttonsObject);
-        //else if (BattleManager.instance.GetWhoseTurn() == BattleManager.WhoseTurn.princess)
-        //    BattleManager.instance.subArrow.ResetSelectButton(princess.buttonsObject);
-    }
-
-    //準備ができているならtrue, できていないならfalsaeを返す
-    public bool OnAttackDetails()
-    {
-        if (BattleManager.instance.isPushed && !FindObjectOfType<iTween>())
+        if (BattleManager.instance.OnReadyDetails())
         {
-            StartCoroutine(BattleManager.instance.ChangeTurnBraver());
-
-            BattleManager.instance.OnCommandBaack();
-            BattleManager.instance.mainCommand.SetActive(false);
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    protected void OnMoveAttackVertical(GameObject obj, Vector2 offset)
-    {
-        if (OnAttackDetails())
-        {
-            Vector2 nowPos = BattleManager.instance.GetGridPosVector2(obj);
-            print(nowPos);
+            Vector2 nowPos = GetGridVector2(obj);
             for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
             {
                 if (nowPos == new Vector2(i, 2))
                 {
                     Vector2 movedPos = new Vector2(i, 0);
-                    BattleManager.instance.ChangeGridPos(obj, movedPos);
-                    MoveGrid(obj, movedPos, offset);
+                    ChangeGridPos(obj, movedPos);
+                    MoveGrid(obj, movedPos);
+
+                    //向き反転
+                    var tmp = obj.transform.localScale;
+                    tmp.x *= -1;
+                    obj.transform.localScale = tmp;
                 }
                 else if (nowPos == new Vector2(i, 0))
                 {
                     Vector2 movedPos = new Vector2(i, 2);
-                    BattleManager.instance.ChangeGridPos(obj, movedPos);
-                    MoveGrid(obj, movedPos, offset);
+                    ChangeGridPos(obj, movedPos);
+                    MoveGrid(obj, movedPos);
+
+                    //向き反転
+                    var tmp = obj.transform.localScale;
+                    tmp.x *= -1;
+                    obj.transform.localScale = tmp;
                 }
             }
         }
+    }
+
+    protected void OnMoveAttackSlash(GameObject obj, Vector2 newPos)
+    {
+        //対角に移動するので0と2を反転
+        if (newPos.x == 0)
+            newPos.x = 2;
+        else if (newPos.x == 2)
+            newPos.x = 0;
+        else
+            newPos.x = -1;
+
+        if (newPos.y == 0)
+            newPos.y = 2;
+        else if (newPos.y == 2)
+            newPos.y = 0;
+        else
+            newPos.y = -1;
+
+        //対角に居ない場合は実行しない
+        if (newPos.x == -1 || newPos.y == -1)
+        {
+            return;
+        }
+
+        if (BattleManager.instance.OnReadyDetails())
+        {
+            Vector2 movedPos = newPos;
+            ChangeGridPos(obj, movedPos);
+            MoveGrid(obj, movedPos);
+
+            //向き反転
+            var tmp = obj.transform.localScale;
+            tmp.x *= -1;
+            obj.transform.localScale = tmp;
+        }
+    }
+
+    public void OnLocateMove()
+    {
+
     }
 
     //EnemyのAI用

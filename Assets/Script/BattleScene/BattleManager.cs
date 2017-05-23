@@ -9,9 +9,9 @@ public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance = null;
 
-    private BattlePlayer player;
-    private BattleBraver braver;
-    private BattlePrincess princess;
+    public BattlePlayer player;
+    public BattleBraver braver;
+    public BattlePrincess princess;
 
     public enum WhoseTurn
     {
@@ -25,7 +25,7 @@ public class BattleManager : MonoBehaviour
     [Range(0, 1)]
     public float panelMoveTime;
 
-    [Range(-10, 10)]
+    [Range(-30, 0)]
     public float panelMoveValue;
 
     [HideInInspector]
@@ -55,6 +55,7 @@ public class BattleManager : MonoBehaviour
     public const int COUNT_BASE_POS = 3;
     public GameObject[,] basePositions = new GameObject[COUNT_BASE_POS, COUNT_BASE_POS];
     public GameObject[,] gridPositions = new GameObject[COUNT_BASE_POS, COUNT_BASE_POS];
+    public string basePositionsPath;
 
 
     void Awake()
@@ -63,12 +64,14 @@ public class BattleManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+
+        //他のスクリプトからStart()でアクセスするため、準備をAwake()でする
+        Initialized();
     }
 
     void Start()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-        Initialized();
     }
 
 
@@ -117,7 +120,7 @@ public class BattleManager : MonoBehaviour
         instance.eventSystem = FindObjectOfType<EventSystem>();
 
         //BasePositionsを左上[0, 0]を起点に取得
-        foreach (Transform obj in GameObject.Find("Canvas/BasePositions").GetComponent<Transform>())
+        foreach (Transform obj in GameObject.Find(basePositionsPath).GetComponent<Transform>())
         {
             int index = obj.transform.GetSiblingIndex();
             basePositions[index / COUNT_BASE_POS % COUNT_BASE_POS, index % COUNT_BASE_POS] = obj.gameObject;
@@ -141,37 +144,6 @@ public class BattleManager : MonoBehaviour
         Initialized();
     }
 
-    //グリッド配列にキャラクタを設置
-    public void AddGridPos(GameObject obj, Vector2 pos)
-    {
-        gridPositions[(int)pos.x, (int)pos.y] = obj;
-    }
-
-    public void ChangeGridPos(GameObject obj, Vector2 pos)
-    {
-        Vector2 lastPos = GetGridPosVector2(obj);
-        gridPositions[(int)lastPos.x, (int)lastPos.y] = null;
-        gridPositions[(int)pos.x, (int)pos.y] = obj;
-    }
-
-    //指定したオブジェクトがどこに設置されているか調べて返す
-    public Vector2 GetGridPosVector2(GameObject obj)
-    {
-        for (int i = 0; i < COUNT_BASE_POS; i++)
-        {
-            for (int j = 0; j < COUNT_BASE_POS; j++)
-            {
-                if (gridPositions[i, j] == obj)
-                {
-                    return new Vector2(i, j);
-                }
-            }
-        }
-
-        //一致しなかったら-1, -1を返す
-        return new Vector2(-1, -1);
-    }
-
     //今誰のターンなのか取得
     public WhoseTurn GetWhoseTurn()
     {
@@ -183,6 +155,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         instance.whoseTurn = WhoseTurn.player;
+        instance.subArrow.RebootSelectButton(instance.player.buttonsObject);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = "モブ";
         instance.player.SetOnClick();
@@ -194,6 +167,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         instance.whoseTurn = WhoseTurn.braver;
+        instance.subArrow.RebootSelectButton(instance.braver.buttonsObject);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = "勇者";
         instance.braver.SetOnClick();
@@ -203,10 +177,9 @@ public class BattleManager : MonoBehaviour
     //Princesのターンにする+初期化
     public IEnumerator ChangeTurnPrincess(float time = 1f)
     {
-        //instance.princess.SetOnClick();
-
         yield return new WaitForSeconds(time);
         instance.whoseTurn = WhoseTurn.princess;
+        instance.subArrow.RebootSelectButton(instance.princess.buttonsObject);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = "姫";
     }
@@ -218,19 +191,38 @@ public class BattleManager : MonoBehaviour
         instance.whoseTurn = WhoseTurn.enemy;
     }
 
+    public void ChangeTurnNext()
+    {
+        switch (GetWhoseTurn())
+        {
+            case WhoseTurn.player:
+                StartCoroutine(ChangeTurnBraver());
+                break;
+
+            case WhoseTurn.braver:
+                StartCoroutine(ChangeTurnPrincess());
+                break;
+
+            case WhoseTurn.princess:
+                StartCoroutine(ChangeTurnEnemy());
+                break;
+
+            case WhoseTurn.enemy:
+                StartCoroutine(ChangeTurnPlayer());
+                break;
+        }
+    }
+
 
     //サブコマンドからメインコマンドに戻るとき
     public void OnCommandBaack()
     {
         instance.isPushed = false;
-        iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
+        iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
         instance.subCommand.SetActive(false);
         instance.mainArrow.StartSelect();
         instance.subArrow.StopSelect();
     }
-
-
-    /*以下ボタン関数*/
 
     //メインコマンドが押されたら
     public void OnCommandPushed()
@@ -238,17 +230,46 @@ public class BattleManager : MonoBehaviour
         if (!instance.isPushed && !FindObjectOfType<iTween>() && FadeSceneManager.IsFadeFinished())
         {
             instance.isPushed = true;
-            iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x + ConvertAspect.GetWidth(instance.panelMoveValue), "time", instance.panelMoveTime));
+            iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x + instance.panelMoveValue, "time", instance.panelMoveTime));
             GlobalCoroutine.Go(WaitTime(), panelMoveTime);
         }
     }
-
-
 
     IEnumerator WaitTime()
     {
         instance.subCommand.gameObject.SetActive(true);
 
         yield break;
+    }
+
+    //メインコマンド決定
+    public void OnReady()
+    {
+        instance.OnCommandPushed();
+        instance.mainArrow.StopSelect();
+        instance.subArrow.StartSelect();
+    }
+
+    //準備ができているならtrue, できていないならfalsaeを返す
+    public bool OnReadyDetails()
+    {
+        if (instance.isPushed && !FindObjectOfType<iTween>())
+        {
+            ChangeTurnNext();
+
+            instance.OnCommandBaack();
+            instance.mainCommand.SetActive(false);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void OnEscape()
+    {
+
     }
 }
