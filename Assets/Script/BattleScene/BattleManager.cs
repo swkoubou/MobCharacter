@@ -102,6 +102,21 @@ public class BattleManager : MonoBehaviour
                 instance.commandPanel.SetActive(true);
             }
         }
+
+        //実験用
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            //実験用
+            string buff = "";
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    buff += "(" + i + "," + j + ")" + gridPositions[i, j] + "\n";
+                }
+            }
+            print(buff);
+        }
     }
 
     void Initialized()

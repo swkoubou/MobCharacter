@@ -14,8 +14,7 @@ public class BattleBraver : CommonBattleChar
         attack = 5;
         defaultPos = new Vector2(1, 2);
         defaultOffset = new Vector2(0, 1);
-        AddGrid(gameObject, defaultPos);
-        MoveGrid(gameObject, defaultPos);
+        SetGrid(gameObject, defaultPos);
         base.Start();
     }
 

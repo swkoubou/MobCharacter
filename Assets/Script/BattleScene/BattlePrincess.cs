@@ -13,8 +13,7 @@ public class BattlePrincess : CommonBattleChar
         attack = 2;
         defaultPos = new Vector2(2, 0);
         defaultOffset = new Vector2(0, 1);
-        AddGrid(gameObject, defaultPos);
-        MoveGrid(gameObject, defaultPos);
+        SetGrid(gameObject, defaultPos);
         base.Start();
     }
 

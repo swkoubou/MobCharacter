@@ -14,8 +14,7 @@ public class BattlePlayer : CommonBattleChar
         attack = 0;
         defaultPos = new Vector2(0, 2);
         defaultOffset = new Vector2(0, 1);
-        AddGrid(gameObject, defaultPos);
-        MoveGrid(gameObject, defaultPos);
+        SetGrid(gameObject, defaultPos);
         base.Start();
     }
     
@@ -39,7 +38,7 @@ public class BattlePlayer : CommonBattleChar
 
     public void OnMoveAttackSlash()
     {
-        Vector2 nowPos = GetGridVector2(gameObject);
+        Vector2 nowPos = ConvertObjectToVector(gameObject);
         base.OnMoveAttackSlash(gameObject, nowPos);
     }
 

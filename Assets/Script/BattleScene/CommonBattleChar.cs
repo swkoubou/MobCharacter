@@ -68,31 +68,47 @@ public abstract class CommonBattleChar : MonoBehaviour
     }
 
     //グリッド配列にキャラクタを設置
-    protected void AddGrid(GameObject obj, Vector2 pos)
+    protected void SetGrid(GameObject obj, Vector2 pos)
     {
-        //なにも入っていないなら何もしない
-        if (obj != null)
+        if(obj == null)
+        {
+            BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = null;
+            //var moveHash = new Hashtable();
+            //moveHash.Add("position", new Vector3(pos.x, pos.y, 0));
+            //moveHash.Add("time", charMoveTime);
+            //iTween.MoveTo(obj, moveHash);
+        }
+        else
         {
             CommonBattleChar component = obj.GetComponent<CommonBattleChar>();
             Vector2 offset = component.defaultOffset;
+            BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = obj;
+            MoveGrid(obj, pos);
         }
-        BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = obj;
-        //MoveGrid(obj, pos);
     }
 
     //入れ替え
     public void ChangeGridPos(GameObject obj, Vector2 end)
     {
-        print(GetGridVector2(obj) + ":" + end);
-        AddGrid(GetGridGameObject(end), GetGridVector2(obj));
-        MoveGrid(GetGridGameObject(end), GetGridVector2(obj));
-        MoveGrid(obj, end);
-        AddGrid(obj, end);
-        print(GetGridVector2(obj) + ":" + end);
+        SetGrid(ConvertVectorToObject(end), ConvertObjectToVector(obj));
+        SetGrid(obj, end);
+    }
+
+    //キャラクターを指定先のグリッドに移動する
+    protected void MoveGrid(GameObject obj, Vector2 target)
+    {
+        Vector2 offset = obj.GetComponent<CommonBattleChar>().defaultOffset;
+        Vector2 end = BattleManager.instance.basePositions[(int)target.x, (int)target.y].transform.position;
+        end += new Vector2(offset.x, offset.y);
+
+        var moveHash = new Hashtable();
+        moveHash.Add("position", new Vector3(end.x, end.y, 0));
+        moveHash.Add("time", charMoveTime);
+        iTween.MoveTo(obj, moveHash);
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
-    protected Vector2 GetGridVector2(GameObject obj)
+    protected Vector2 ConvertObjectToVector(GameObject obj)
     {
         for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
         {
@@ -110,22 +126,9 @@ public abstract class CommonBattleChar : MonoBehaviour
     }
 
     //指定した位置情報に何が設置されているか調べて返す
-    protected GameObject GetGridGameObject(Vector2 target)
+    protected GameObject ConvertVectorToObject(Vector2 target)
     {
         return BattleManager.instance.gridPositions[(int)target.x, (int)target.y];
-    }
-
-    //キャラクターを指定先のグリッドに移動する
-    protected void MoveGrid(GameObject obj, Vector2 target)
-    {
-        Vector2 offset = obj.GetComponent<CommonBattleChar>().defaultOffset;
-        Vector2 end = BattleManager.instance.basePositions[(int)target.x, (int)target.y].transform.position;
-        end += new Vector2(offset.x, offset.y);
-
-        var moveHash = new Hashtable();
-        moveHash.Add("position", new Vector3(end.x, end.y, 0));
-        moveHash.Add("time", charMoveTime);
-        iTween.MoveTo(obj, moveHash);
     }
 
     protected void SetMethod(UnityAction[] method)
@@ -145,7 +148,7 @@ public abstract class CommonBattleChar : MonoBehaviour
     {
         if (BattleManager.instance.OnReadyDetails())
         {
-            Vector2 nowPos = GetGridVector2(obj);
+            Vector2 nowPos = ConvertObjectToVector(obj);
             for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
             {
                 if (nowPos == new Vector2(i, 2))
