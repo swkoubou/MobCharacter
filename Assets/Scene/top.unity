@@ -469,7 +469,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 586253577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b89882898e979741a830e3ffff331d1, type: 3}
+  m_Script: {fileID: 11500000, guid: 377c966458cc1d2488419b89201f6856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selectButton:
@@ -478,7 +478,11 @@ MonoBehaviour:
   - {fileID: 746322566}
   soundBox: {fileID: 0}
   selectSE: {fileID: 0}
+<<<<<<< HEAD
   offset: {x: -4, y: 0, z: 0}
+=======
+  offset: {x: -3, y: 0, z: 0}
+>>>>>>> 6304db53af89f03f2a2660787ede46ed3d6f246a
   isStartSelect: 0
 --- !u!114 &586253580
 MonoBehaviour:
@@ -891,7 +895,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}

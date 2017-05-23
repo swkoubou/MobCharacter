@@ -2,52 +2,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
 
-public class BattlePlayer : BattleAI
-{
+public class BattlePlayer : CommonBattleChar
+{    
 
     new void Start()
     {
+        HP = 10;
+        attack = 0;
+        defaultPos = new Vector2(0, 2);
+        defaultOffset = new Vector2(0, 1);
+        AddGrid(gameObject, defaultPos);
+        MoveGrid(gameObject, defaultPos);
         base.Start();
     }
-
     
     void Update()
     {
         
     }
 
+    public void SetOnClick()
+    {
+        UnityAction[] method = new UnityAction[] { OnMoveAttackVertical, OnMoveAttackSlash, OnEscape };
+        SetMethod(method);
+    }
+
     /*以下ボタン関数*/
 
-    //攻撃コマンド
-    public void OnAttack()
+    public void OnMoveAttackVertical()
     {
-        BattleManager.instance.OnCommandPushed();
-
-        //実験用
-        Invoke("OnAttackDetails", 2f);
+        base.OnMoveAttackVertical(gameObject);
     }
 
-    public void OnAttackDetails()
+    public void OnMoveAttackSlash()
     {
-        if (BattleManager.instance.isPushed)
-        {
-            StartCoroutine(BattleManager.instance.ChangeTurnBraver());
-
-            BattleManager.instance.OnCommandBaack();
-            BattleManager.instance.mainCommand.gameObject.SetActive(false);
-        }
-    }
-
-    //道具コマンド
-    public void OnTool()
-    {
-        BattleManager.instance.OnCommandPushed();
-    }
-
-    public void OnToolDetails()
-    {
-
+        Vector2 nowPos = GetGridVector2(gameObject);
+        base.OnMoveAttackSlash(gameObject, nowPos);
     }
 
     public void OnEscape()

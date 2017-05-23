@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Oak : BattleAI
+public class Oak : CommonBattleChar
 {
 
 
     new void Start()
     {
+        HP = 10;
+        attack = 1;
         base.Start();
     }
 

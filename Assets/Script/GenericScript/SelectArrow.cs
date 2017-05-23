@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 
 //動かしたい矢印キーのオブジェクトにアタッチする
+//事前に矢印ImageとScriptはenabled = falseにしておく
 public class SelectArrow : MonoBehaviour
 {
     //選択ボタン
@@ -33,21 +34,24 @@ public class SelectArrow : MonoBehaviour
     public bool isStartSelect;
 
 
-    void Awake()
+    //初期化
+    void Initialized()
     {
-        isStartSelect = false;
-    }
-
-    protected void Start()
-    {
+        isStartSelect = true;
         eventSystem = FindObjectOfType<EventSystem>();
-        eventSystem.enabled = false;
-
-        //初期状態ではカーソルを見せない
-        GetComponent<Image>().enabled = false;
+        GetComponent<Image>().enabled = true;
+        eventSystem.enabled = true;        
 
         selectButton[0].Select();
+        currentSelected = selectButton[0].gameObject;
         lastSelected = selectButton[0].gameObject;
+        AjustPosition(selectButton[0].gameObject);
+    }
+
+
+    protected void OnEnable()
+    {
+        Initialized();
     }
 
 
@@ -88,7 +92,7 @@ public class SelectArrow : MonoBehaviour
     {
         //カーソルの位置調整
         Vector3 pos = newPos.transform.position;
-        transform.position = new Vector3(pos.x + ConvertAspect.GetWidth(offset.x), pos.y + ConvertAspect.GetHeight(offset.y), pos.z + offset.z);
+        transform.position = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
         if (currentSelected != lastSelected)
         {
@@ -103,9 +107,7 @@ public class SelectArrow : MonoBehaviour
     //ここにアクセスすると実行される
     public void StartSelect()
     {
-        isStartSelect = true;
-        GetComponent<Image>().enabled = true;
-        eventSystem.enabled = true;
+        GetComponent<SelectArrow>().enabled = true;
     }
 
 
@@ -114,5 +116,6 @@ public class SelectArrow : MonoBehaviour
     {
         isStartSelect = false;
         GetComponent<Image>().enabled = false;
+        GetComponent<SelectArrow>().enabled = false; 
     }
 }

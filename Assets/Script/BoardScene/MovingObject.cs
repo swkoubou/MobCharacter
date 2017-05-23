@@ -5,10 +5,12 @@ using UnityEngine;
 public abstract class MovingObject : MonoBehaviour
 {
     public int HP;
+    public int attack;
     public float moveTime = 0.1f;
     public LayerMask blockingLayer;
     private BoxCollider2D boxCollider;
     private Rigidbody2D rb2D;
+    protected bool isMoving;
 
     //moveTimeを計算するのを単純化するための変数
     private float inverseMoveTime;
@@ -19,6 +21,7 @@ public abstract class MovingObject : MonoBehaviour
         //BoxCollider2DとRigidbody2Dを何度もGetComponentしなくて済むようStartメソッドにてキャッシュしておく
         boxCollider = GetComponent<BoxCollider2D>();
         rb2D = GetComponent<Rigidbody2D>();
+        isMoving = false;
         inverseMoveTime = 1f / moveTime;
     }
 
@@ -67,6 +70,8 @@ public abstract class MovingObject : MonoBehaviour
     //現在地から目的地(引数end)へ移動するためのメソッド
     protected IEnumerator SmoothMovement(Vector3 end)
     {
+        isMoving = true;
+
         //現在地から目的地を引き、2点間の距離を求める(Vector3型)
         //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
         float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
@@ -88,6 +93,7 @@ public abstract class MovingObject : MonoBehaviour
             //1フレーム待ってから、while文の先頭へ戻る
             yield return null;
         }
+        isMoving = false;
     }
 
 
@@ -122,6 +128,36 @@ public abstract class MovingObject : MonoBehaviour
         if (!canMove && hitComponent != null)
         {
             OnCantMove(hitComponent);
+        }
+    }
+
+    //攻撃対象が2つの場合
+    protected virtual void AttemptMove<T, U>(int xDir, int yDir)
+        where T : Component
+        where U : Component
+    {
+        if (this == null)
+            return;
+
+        RaycastHit2D hit;
+
+        bool canMove = Move(xDir, yDir, out hit);
+
+        if (hit.transform == null)
+        {
+            return;
+        }
+
+        T hitComponent1 = hit.transform.GetComponent<T>();
+        U hitComponent2 = hit.transform.GetComponent<U>();
+
+        if (!canMove && hitComponent1 != null)
+        {
+            OnCantMove(hitComponent1);
+        }
+        else if (!canMove && hitComponent2 != null)
+        {
+            OnCantMove(hitComponent2);
         }
     }
 
