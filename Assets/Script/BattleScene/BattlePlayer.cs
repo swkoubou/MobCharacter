@@ -8,14 +8,13 @@ using UnityEngine.Events;
 public class BattlePlayer : CommonBattleChar
 {    
 
-    new void Start()
+    void Start()
     {
         HP = 10;
         attack = 0;
         defaultPos = new Vector2(0, 2);
         defaultOffset = new Vector2(0, 1);
         SetGrid(gameObject, defaultPos);
-        base.Start();
     }
     
     void Update()
@@ -25,31 +24,24 @@ public class BattlePlayer : CommonBattleChar
 
     public void SetOnClick()
     {
-        UnityAction[] method = new UnityAction[] { OnMoveAttackVertical, OnMoveAttackSlash, OnEscape };
+        UnityAction[] method = new UnityAction[] { OnAttackMoveVertical, OnAttackMoveSlash, OnEscape };
         SetMethod(method);
     }
 
     /*以下ボタン関数*/
 
-    public void OnMoveAttackVertical()
+    public void OnAttackMoveVertical()
     {
-        base.OnMoveAttackVertical(gameObject);
+        base.OnAttackMoveVertical(gameObject);
     }
 
-    public void OnMoveAttackSlash()
+    public void OnAttackMoveSlash()
     {
-        Vector2 nowPos = ConvertObjectToVector(gameObject);
-        base.OnMoveAttackSlash(gameObject, nowPos);
+        base.OnAttackMoveSlash(gameObject);
     }
 
     public void OnEscape()
     {
         FadeSceneManager.Execute(Loader.battleSceneName);
-    }
-
-    //このクラスではなにもしない
-    protected override void SwitchCommand(int rand)
-    {
-        throw new NotImplementedException();
     }
 }

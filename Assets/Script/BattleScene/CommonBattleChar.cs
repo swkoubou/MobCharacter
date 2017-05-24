@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public abstract class CommonBattleChar : MonoBehaviour
+public class CommonBattleChar : MonoBehaviour
 {
     protected GameObject[] enemies;
     protected int HP;
@@ -17,50 +17,12 @@ public abstract class CommonBattleChar : MonoBehaviour
     public Button[] buttonsObject;
     public string[] buttonsText;
 
-    //一度だけupdate関数内で使いたいので
-    protected bool isOnce;
 
-
-    protected void Start()
-    {
-        //enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        //enemies = enemies.OrderBy(e => Vector2.Distance(e.transform.position, transform.position)).ToArray();
-        isOnce = false;
-    }
-
-    protected void BraverTurn()
-    {
-        //Braverターンじゃないなら
-        if (BattleManager.instance.GetWhoseTurn() != BattleManager.WhoseTurn.braver)
-        {
-            isOnce = false;
-            return;
-        }
-
-        int rand = Random.Range(0, 10);
-        if (!isOnce)
-        {
-            isOnce = true;
-            SwitchCommand(rand);
-        }
-    }
-
-    protected void EnemyTurn()
-    {
-        //Enemyターンじゃないなら
-        if (BattleManager.instance.GetWhoseTurn() != BattleManager.WhoseTurn.enemy)
-        {
-            isOnce = false;
-            return;
-        }
-
-        int rand = Random.Range(0, 10);
-        if (!isOnce)
-        {
-            isOnce = true;
-            SwitchCommand(rand);
-        }
-    }
+    //protected void Start()
+    //{
+    //    enemies = GameObject.FindGameObjectsWithTag("Enemy");
+    //    enemies = enemies.OrderBy(e => Vector2.Distance(e.transform.position, transform.position)).ToArray();
+    //}   
 
     public void LoseHP(int dmg)
     {
@@ -73,10 +35,6 @@ public abstract class CommonBattleChar : MonoBehaviour
         if(obj == null)
         {
             BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = null;
-            //var moveHash = new Hashtable();
-            //moveHash.Add("position", new Vector3(pos.x, pos.y, 0));
-            //moveHash.Add("time", charMoveTime);
-            //iTween.MoveTo(obj, moveHash);
         }
         else
         {
@@ -88,10 +46,28 @@ public abstract class CommonBattleChar : MonoBehaviour
     }
 
     //入れ替え
-    public void ChangeGridPos(GameObject obj, Vector2 end)
+    protected void ChangeGrid(GameObject obj, Vector2 target)
     {
-        SetGrid(ConvertVectorToObject(end), ConvertObjectToVector(obj));
-        SetGrid(obj, end);
+        SetGrid(ConvertVectorToObject(target), ConvertObjectToVector(obj));
+        SetGrid(obj, target);   
+    }
+
+    //移動先がEnemyでなかったら移動可能
+    protected bool CanChangeGrid(Vector2 target)
+    {
+        GameObject obj = ConvertVectorToObject(target);
+        if(obj == null)
+        {
+            return true;
+        }
+        else if(obj.tag != "Enemy")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     //キャラクターを指定先のグリッドに移動する
@@ -142,82 +118,144 @@ public abstract class CommonBattleChar : MonoBehaviour
     }
 
 
-    /*以下ボタン関数*/    
+    /*以下ボタン関数*/
 
-    protected void OnMoveAttackVertical(GameObject obj)
+    protected void OnNormalAttack()
     {
-        if (BattleManager.instance.OnReadyDetails())
-        {
-            Vector2 nowPos = ConvertObjectToVector(obj);
-            for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
-            {
-                if (nowPos == new Vector2(i, 2))
-                {
-                    Vector2 movedPos = new Vector2(i, 0);
-                    ChangeGridPos(obj, movedPos);
-                    MoveGrid(obj, movedPos);
 
-                    //向き反転
-                    var tmp = obj.transform.localScale;
-                    tmp.x *= -1;
-                    obj.transform.localScale = tmp;
-                }
-                else if (nowPos == new Vector2(i, 0))
-                {
-                    Vector2 movedPos = new Vector2(i, 2);
-                    ChangeGridPos(obj, movedPos);
-                    MoveGrid(obj, movedPos);
-
-                    //向き反転
-                    var tmp = obj.transform.localScale;
-                    tmp.x *= -1;
-                    obj.transform.localScale = tmp;
-                }
-            }
-        }
     }
 
-    protected void OnMoveAttackSlash(GameObject obj, Vector2 newPos)
+    protected void OnAttackMoveVertical(GameObject obj)
     {
-        //対角に移動するので0と2を反転
-        if (newPos.x == 0)
-            newPos.x = 2;
-        else if (newPos.x == 2)
-            newPos.x = 0;
-        else
-            newPos.x = -1;
+        Vector2 movedPos = ConvertObjectToVector(obj);
 
-        if (newPos.y == 0)
-            newPos.y = 2;
-        else if (newPos.y == 2)
-            newPos.y = 0;
+        //向かい側に移動するのでyだけ動かす
+        if (movedPos.y == 0)
+            movedPos.y = 2;
+        else if (movedPos.y == 2)
+            movedPos.y = 0;
         else
-            newPos.y = -1;
+            movedPos.y = -1;
 
-        //対角に居ない場合は実行しない
-        if (newPos.x == -1 || newPos.y == -1)
+        //線形に居ない場合は実行しない
+        if (movedPos.x == -1 || movedPos.y == -1)
         {
             return;
         }
 
-        if (BattleManager.instance.OnReadyDetails())
+        if (CanChangeGrid(movedPos))
         {
-            Vector2 movedPos = newPos;
-            ChangeGridPos(obj, movedPos);
-            MoveGrid(obj, movedPos);
+            if (BattleManager.instance.OnReadyDetails())
+            {
+                ChangeGrid(obj, movedPos);
+                MoveGrid(obj, movedPos);
 
-            //向き反転
-            var tmp = obj.transform.localScale;
-            tmp.x *= -1;
-            obj.transform.localScale = tmp;
+                //向き反転
+                var tmp = obj.transform.localScale;
+                tmp.x *= -1;
+                obj.transform.localScale = tmp;
+            }
         }
     }
 
-    public void OnLocateMove()
+    protected void OnAttackMoveSlash(GameObject obj)
     {
+        Vector2 nowPos = ConvertObjectToVector(obj);
 
+        //対角に移動するので0と2を反転
+        if (nowPos.x == 0)
+            nowPos.x = 2;
+        else if (nowPos.x == 2)
+            nowPos.x = 0;
+        else
+            nowPos.x = -1;
+
+        if (nowPos.y == 0)
+            nowPos.y = 2;
+        else if (nowPos.y == 2)
+            nowPos.y = 0;
+        else
+            nowPos.y = -1;
+
+        //対角に居ない場合は実行しない
+        if (nowPos.x == -1 || nowPos.y == -1)
+        {
+            return;
+        }
+
+        if (CanChangeGrid(nowPos))
+        {
+            if (BattleManager.instance.OnReadyDetails())
+            {
+                ChangeGrid(obj, nowPos);
+                MoveGrid(obj, nowPos);
+
+                //向き反転
+                var tmp = obj.transform.localScale;
+                tmp.x *= -1;
+                obj.transform.localScale = tmp;
+            }
+        }
     }
 
-    //EnemyのAI用
-    protected abstract void SwitchCommand(int rand);
+    //public void OnMoveUp()
+    //{
+    //    GameObject obj = null;
+    //    BattleManager.WhoseTurn nowTurn = BattleManager.instance.GetWhoseTurn();
+
+    //    if (nowTurn == BattleManager.WhoseTurn.player)
+    //        obj = BattleManager.instance.player.gameObject;
+    //    else if (nowTurn == BattleManager.WhoseTurn.braver)
+    //        obj = BattleManager.instance.braver.gameObject;
+    //    else if (nowTurn == BattleManager.WhoseTurn.princess)
+    //        obj = BattleManager.instance.princess.gameObject;
+
+    //    Vector2 movedPos = ConvertObjectToVector(obj);
+    //    if (0 <= movedPos.y && movedPos.y <= 2)
+    //        movedPos.y -= 1;
+    //    else
+    //        return;
+
+    //    OnMoveLocation(obj, movedPos);
+    //}
+
+    public void OnMoveUp()
+    {
+        OnMoveLocation(1);
+    }
+
+    public void OnMoveDown()
+    {
+        OnMoveLocation(-1);
+    }
+
+    //移動する
+    protected void OnMoveLocation(int n, GameObject obj = null)
+    {
+        BattleManager.WhoseTurn nowTurn = BattleManager.instance.GetWhoseTurn();
+
+        if (obj == null)
+        {
+            if (nowTurn == BattleManager.WhoseTurn.player)
+                obj = BattleManager.instance.player.gameObject;
+            else if (nowTurn == BattleManager.WhoseTurn.braver)
+                obj = BattleManager.instance.braver.gameObject;
+            else if (nowTurn == BattleManager.WhoseTurn.princess)
+                obj = BattleManager.instance.princess.gameObject;
+        }
+
+        Vector2 movedPos = ConvertObjectToVector(obj);
+        if (0 <= movedPos.y && movedPos.y <= 2)
+            movedPos.y += n;
+        else
+            return;
+
+        if (ConvertVectorToObject(movedPos) == null)
+        {
+            if (BattleManager.instance.OnReadyDetails())
+            {
+                SetGrid(obj, movedPos);
+            }
+        }
+    }
 }

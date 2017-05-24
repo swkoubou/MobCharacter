@@ -107,7 +107,7 @@ public class BattleManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             //実験用
-            string buff = "";
+            string buff = null;
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
