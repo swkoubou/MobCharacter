@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public abstract class BattleEnemy : CommonBattleChar
+public abstract class BattleEnemy : CommonBattleChara
 {
-    //一度だけupdate関数内で使いたいので
-    protected bool isOnce;
+    protected float changeTurnWaitTime = 1f;
+    protected float enemyMoveTime;
 
-    protected void Start()
+    protected new void Start()
     {
-        isOnce = false;
+        //BattleManager.instance.enemies.Add(gameObject);
+        enemyMoveTime = charMoveTime / 2;
+        base.Start();
     }
 
     void Update()
@@ -17,23 +20,120 @@ public abstract class BattleEnemy : CommonBattleChar
 
     }
 
-    protected void EnemyTurn()
+    public void EnemyTurn()
     {
-        //Enemyターンじゃないなら
-        if (BattleManager.instance.GetWhoseTurn() != BattleManager.WhoseTurn.enemy)
+        BattleManager.instance.countEnemyTurn++;
+
+        List<GameObject> players = SerchChara();
+        GameObject target = SameRowObject(players);
+        if (target != null)
         {
-            isOnce = false;
+            SwitchCommand(target, Random.Range(0, 10));
+        }
+        else
+        {
+            float distance = NearestColObject(players);
+            if (distance <= -1)
+            {
+                OnEnemyMoveLocation(-1);
+            }
+
+            else if (1 <= distance)
+            {
+                OnEnemyMoveLocation(1);
+            }
+        }
+    }
+
+    //プレイヤー達を検索し取得
+    protected List<GameObject> SerchChara()
+    {
+        List<GameObject> players = new List<GameObject>();
+        for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
+        {
+            for (int j = 0; j < BattleManager.COUNT_BASE_POS; j++)
+            {
+                var obj = BattleManager.instance.gridPositions[i, j];
+
+                //&&だと先の条件がfalseだと、それより後の条件は通らないので
+                if (obj != null && obj.tag == "Player")
+                {
+                    players.Add(BattleManager.instance.gridPositions[i, j]);
+                }
+            }
+        }
+
+        return players;
+    }
+
+    protected GameObject SameRowObject(List<GameObject> player)
+    {
+        for (int i = 0; i < player.Count; i++)
+        {
+            if (ConvertObjectToVector(gameObject).x == ConvertObjectToVector(player[i]).x)
+            {
+                return player[i];
+            }
+        }
+
+        //横軸が一致しなかったら
+        return null;
+    }
+
+    protected float NearestColObject(List<GameObject> player)
+    {
+        float[] diff = new float[player.Count];
+        for (int i = 0; i < player.Count; i++)
+        {
+            diff[i] = ConvertObjectToVector(gameObject).y - ConvertObjectToVector(player[i]).y;
+        }
+
+        float nearest = diff[0];
+        for (int i = 0; i < player.Count - 1; i++)
+        {
+            if (Mathf.Abs(diff[i]) < Mathf.Abs(diff[i + 1]))
+                nearest = diff[i];
+        }
+
+        return nearest;
+    }
+
+    protected void OnEnemyNormalAttack(GameObject target)
+    {
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
+
+        //攻撃し、その場に留まるので
+        movedPos.y = ConvertObjectToVector(target).y;
+        
+        //線形に居ない場合は実行しない
+        if (movedPos.x == -1 || movedPos.y == -1)
+        {
             return;
         }
 
-        int rand = Random.Range(0, 10);
-        if (!isOnce)
+        var moveHash = new Hashtable();
+        //gridPOsiiotnsだとnullのときエラーが出るので
+        moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
+        moveHash.Add("time", enemyMoveTime);
+        iTween.MoveFrom(gameObject, moveHash);
+    }
+
+    //移動する
+    protected void OnEnemyMoveLocation(int n)
+    {
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
+        movedPos.x += n;
+
+        if (ConvertVectorToObject(movedPos) != null)
         {
-            isOnce = true;
-            SwitchCommand(rand);
+            print("移動来ません");
+        }
+        else
+        {
+            ChangeGrid(gameObject, movedPos);
         }
     }
 
     //EnemyのAI用
-    protected abstract void SwitchCommand(int rand);
+    protected abstract void SwitchCommand(GameObject target, int rand);
 }

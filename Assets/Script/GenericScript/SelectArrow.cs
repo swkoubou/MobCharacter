@@ -21,7 +21,11 @@ public class SelectArrow : MonoBehaviour
     public AudioClip selectSE;
 
     //カーソルの位置調整
-    public Vector3 offset;
+    public Vector3 defaultOffset;
+
+    //offsetを一時確保する空要素
+    [HideInInspector]
+    private Vector3 offset = default(Vector3);
 
     //現在取得しているボタン
     protected GameObject currentSelected;
@@ -92,7 +96,11 @@ public class SelectArrow : MonoBehaviour
     {
         //カーソルの位置調整
         Vector3 pos = newPos.transform.position;
-        transform.position = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+
+        if(offset == default(Vector3))
+            transform.position = new Vector3(pos.x + defaultOffset.x, pos.y + defaultOffset.y, pos.z + defaultOffset.z);
+        else
+            transform.position = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
         if (currentSelected != lastSelected)
         {
@@ -101,6 +109,18 @@ public class SelectArrow : MonoBehaviour
 
         //バックアップ
         lastSelected = currentSelected;
+    }
+
+    //ボタンのOnClikeを再設定し
+    public void SetButtons(Button[] newButton, Vector3 newOffset = default(Vector3))
+    {
+        selectButton = new Button[newButton.Length];
+        for (int i = 0; i < newButton.Length; i++)
+        {
+            selectButton[i] = newButton[i];
+        }
+
+        offset = newOffset;
     }
 
 

@@ -17,23 +17,28 @@ public class Skeleton : BattleEnemy
 
     void Update()
     {
-        EnemyTurn();
+        
     }
 
 
-    protected override void SwitchCommand(int rand)
+    protected override void SwitchCommand(GameObject target, int rand)
     {
         switch (rand)
         {
             case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                OnEnemyNormalAttack(target);
                 break;
 
             default:
-                if (!FindObjectOfType<iTween>())
-                    iTween.MoveFrom(gameObject, iTween.Hash("y", transform.position.y - 100f, "time", 0.5f));
+                OnEnemyNormalAttack(target);
                 break;
         }
-        print("Oak");
-        StartCoroutine(BattleManager.instance.ChangeTurnPlayer());
+
+
     }
 }

@@ -5,16 +5,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class BattlePlayer : CommonBattleChar
+public class BattlePlayer : CommonBattleChara
 {    
 
-    void Start()
+    new void Start()
     {
         HP = 10;
         attack = 0;
         defaultPos = new Vector2(0, 2);
         defaultOffset = new Vector2(0, 1);
-        SetGrid(gameObject, defaultPos);
+        //SetGrid(gameObject, defaultPos);
+        base.Start();
     }
     
     void Update()
@@ -24,24 +25,30 @@ public class BattlePlayer : CommonBattleChar
 
     public void SetOnClick()
     {
-        UnityAction[] method = new UnityAction[] { OnAttackMoveVertical, OnAttackMoveSlash, OnEscape };
+        UnityAction[] method = new UnityAction[] { OnNormalAttack, OnAttackMoveVertical, OnAttackMoveSlash};
         SetMethod(method);
     }
 
     /*以下ボタン関数*/
 
-    public void OnAttackMoveVertical()
+    public new void OnNormalAttack()
     {
-        base.OnAttackMoveVertical(gameObject);
+        base.OnNormalAttack();
     }
 
-    public void OnAttackMoveSlash()
+    public new void OnAttackMoveVertical()
     {
-        base.OnAttackMoveSlash(gameObject);
+        base.OnAttackMoveVertical();
+    }
+
+    public new void OnAttackMoveSlash()
+    {
+        base.OnAttackMoveSlash();
     }
 
     public void OnEscape()
     {
         FadeSceneManager.Execute(Loader.battleSceneName);
+        soundBox.PlayOneShot(audioClass.decide, 1f);
     }
 }
