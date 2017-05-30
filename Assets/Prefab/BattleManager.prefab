@@ -68,9 +68,16 @@ MonoBehaviour:
   escapeCommand: {fileID: 0}
   whoseNameText: {fileID: 0}
   whoseNameTextPath: Canvas/Command/Main/WhoseNameText
+  message:
+  - 
+  - 
+  - 
+  - 
+  logTextPath: Canvas/TextManager/Content
   mainArrow: {fileID: 0}
   subArrow: {fileID: 0}
   basePositionsPath: 2DObject/BasePositions
   enemies: []
   enemiesPath: 2DObject/Enemies
   countEnemyTurn: 0
+  audioClass: {fileID: 0}

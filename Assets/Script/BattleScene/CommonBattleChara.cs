@@ -19,8 +19,7 @@ public class CommonBattleChara : MonoBehaviour
     protected AudioClass audioClass;
     protected AudioSource soundBox;
 
-    private string message;
-
+    public string objectName;
 
     //protected void Start()
     //{
@@ -38,11 +37,6 @@ public class CommonBattleChara : MonoBehaviour
     public void LoseHP(int dmg)
     {
         HP -= dmg;
-    }
-
-    protected void PrintMessage()
-    {
-
     }
 
     //グリッド配列にキャラクタを設置
@@ -172,6 +166,8 @@ public class CommonBattleChara : MonoBehaviour
             moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
             moveHash.Add("time", charMoveTime);
             iTween.MoveFrom(gameObject, moveHash);
+            
+            BattleManager.instance.AddMessage(objectName + "の通常攻撃!");
             soundBox.PlayOneShot(audioClass.normalAttack, 1f);
         }
     }
@@ -200,6 +196,7 @@ public class CommonBattleChara : MonoBehaviour
             {
                 ChangeGrid(gameObject, movedPos);
                 MoveGrid(gameObject, movedPos);
+                BattleManager.instance.AddMessage(objectName + "の移動攻撃!");
 
                 //向き反転
                 var tmp = transform.localScale;
@@ -244,6 +241,7 @@ public class CommonBattleChara : MonoBehaviour
             {
                 ChangeGrid(gameObject, nowPos);
                 MoveGrid(gameObject, nowPos);
+                BattleManager.instance.AddMessage(objectName + "のスラッシュ攻撃!");
 
                 //向き反転
                 var tmp = transform.localScale;
@@ -253,7 +251,8 @@ public class CommonBattleChara : MonoBehaviour
         }
         else
         {
-            print("移動来ません");
+            print("移動攻撃できません");
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
     }
 
@@ -262,8 +261,13 @@ public class CommonBattleChara : MonoBehaviour
         Vector2 pos = ConvertObjectToVector(gameObject);
 
         //上段に居ないときのみ実行
-        if(pos.x != 0)
+        if (pos.x != 0)
             OnMoveLocation(-1);
+        else
+        {
+            BattleManager.instance.AddMessage("移動できません");
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+        }
     }
 
     public void OnMoveDown()
@@ -273,6 +277,11 @@ public class CommonBattleChara : MonoBehaviour
         //下段に居ないときのみ実行
         if (pos.x != 2)
             OnMoveLocation(1);
+        else
+        {
+            BattleManager.instance.AddMessage("移動できません");
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+        }
     }
 
     //移動する
@@ -283,7 +292,8 @@ public class CommonBattleChara : MonoBehaviour
 
         if (ConvertVectorToObject(movedPos) != null)
         {
-            print("移動来ません");
+            BattleManager.instance.AddMessage("移動できません");
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
         else
         {

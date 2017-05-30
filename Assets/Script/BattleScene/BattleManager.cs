@@ -66,8 +66,6 @@ public class BattleManager : MonoBehaviour
     public Text whoseNameText;
     public string whoseNameTextPath;
 
-    [HideInInspector]
-    public string[] message = new string[4];
     private Text[] logText;
     public string logTextPath;
 
@@ -180,7 +178,7 @@ public class BattleManager : MonoBehaviour
         instance.subArrow = instance.commandPanel.transform.FindChild("SubArrow").GetComponent<SelectArrow>();
         instance.eventSystem = FindObjectOfType<EventSystem>();
         instance.audioClass = FindObjectOfType<AudioClass>();
-        instance.soundBox = FindObjectOfType<AudioSource>();
+        instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
 
         for (int i = 0; i < logText.Length; i++)
             logText[i].text = null;
@@ -220,23 +218,15 @@ public class BattleManager : MonoBehaviour
         Initialized();
     }
 
-    public void PrintMessage()
+    //メッセージログ
+    public void AddMessage(string log) 
     {
-        while (logText[0].text == null)
+        for (int i = 1; i < logText.Length; i++)
         {
-            int i = 1;
-            for (i = 1; i < logText.Length; i++)
-            {
-                logText[i - 1].text = logText[i].text;
-                logText[i].text = null;
-            }
-            //i = 1;
+            logText[i - 1].text = logText[i].text;
+            logText[i].text = null;
         }
-    }
-
-    public void AddMessage(string log)
-    {
-        logText[message.Length].text = log;
+        logText[logText.Length - 1].text = log;
     }
 
     /********************
@@ -256,7 +246,7 @@ public class BattleManager : MonoBehaviour
         instance.whoseTurn = WhoseTurn.player;
         instance.subArrow.SetButtons(instance.player.buttonsObject);
         instance.mainCommand.SetActive(true);
-        instance.whoseNameText.text = "モブ";
+        instance.whoseNameText.text = instance.player.objectName;
         instance.player.SetOnClick();
         instance.mainArrow.StartSelect();
     }
@@ -268,7 +258,7 @@ public class BattleManager : MonoBehaviour
         instance.whoseTurn = WhoseTurn.braver;
         instance.subArrow.SetButtons(instance.braver.buttonsObject);
         instance.mainCommand.SetActive(true);
-        instance.whoseNameText.text = "勇者";
+        instance.whoseNameText.text = instance.braver.objectName;
         instance.braver.SetOnClick();
         instance.mainArrow.StartSelect();
     }
@@ -280,7 +270,7 @@ public class BattleManager : MonoBehaviour
         instance.whoseTurn = WhoseTurn.princess;
         instance.subArrow.SetButtons(instance.princess.buttonsObject);
         instance.mainCommand.SetActive(true);
-        instance.whoseNameText.text = "姫";
+        instance.whoseNameText.text = instance.princess.objectName;
         instance.princess.SetOnClick();
         instance.mainArrow.StartSelect();
     }
@@ -324,7 +314,7 @@ public class BattleManager : MonoBehaviour
     //全てのEnemyを攻撃させる
     public IEnumerator NextEnemyTurn()
     {
-        while(true)
+        while (true)
         {
             yield return new WaitForSeconds(instance.changeTurnWaitTime / 2);
 
@@ -353,7 +343,7 @@ public class BattleManager : MonoBehaviour
             instance.nowDetailCommand.SetActive(false);
             instance.mainArrow.StartSelect();
             instance.subArrow.StopSelect();
-            soundBox.PlayOneShot(audioClass.decide, 1f);
+            soundBox.PlayOneShot(audioClass.cancel, 1f);
         }
     }
 
@@ -401,8 +391,14 @@ public class BattleManager : MonoBehaviour
         {
             ChangeTurnNext();
 
-            instance.OnCommandBaack();
+            //instance.OnCommandBaack();
             instance.mainCommand.SetActive(false);
+
+            instance.isPushed = false;
+            iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
+            instance.nowDetailCommand.SetActive(false);
+            instance.mainArrow.StartSelect();
+            instance.subArrow.StopSelect();
 
             return true;
         }
