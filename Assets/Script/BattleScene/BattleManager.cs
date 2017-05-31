@@ -191,11 +191,10 @@ public class BattleManager : MonoBehaviour
         }
 
         countEnemyTurn = 0;
+        enemies.Clear();
         var enemy = GameObject.Find(enemiesPath).GetComponentsInChildren<BattleEnemy>();
         foreach (var e in enemy)
-        {
             enemies.Add(e.gameObject);
-        }
 
         //最初は仮に入れておく
         instance.nowDetailCommand = instance.attackCommand;
@@ -316,7 +315,7 @@ public class BattleManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(instance.changeTurnWaitTime / 2);
+            yield return new WaitForSeconds((instance.changeTurnWaitTime+1f) / 2);
 
             //Enemyの数よりカウンターが回ったらプレイヤーのターンにする
             if (instance.countEnemyTurn >= enemies.Count)
@@ -327,6 +326,12 @@ public class BattleManager : MonoBehaviour
 
             enemies[instance.countEnemyTurn].GetComponent<BattleEnemy>().EnemyTurn();
         }
+    }
+
+    //なにもできないとき
+    public void TurnSkip()
+    {
+        instance.countEnemyTurn++;
     }
 
     /********************

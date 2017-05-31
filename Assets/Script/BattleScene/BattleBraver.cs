@@ -31,9 +31,9 @@ public class BattleBraver : CommonBattleChara
     }
 
     /*以下ボタン関数*/
-    public new void OnNormalAttack()
+    public void OnNormalAttack()
     {
-        base.OnNormalAttack();
+        base.OnNormalAttack(controller[0]);
     }
 
     public new void OnAttackMoveVertical()

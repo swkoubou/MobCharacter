@@ -12,7 +12,7 @@ public class BattlePrincess : CommonBattleChara
     {
         HP = 30;
         attack = 2;
-        defaultPos = new Vector2(2, 0);
+        defaultPos = new Vector2(2, 2);
         defaultOffset = new Vector2(0, 1);
         //SetGrid(gameObject, defaultPos);
         base.Start();
@@ -33,9 +33,9 @@ public class BattlePrincess : CommonBattleChara
     }
 
     /*以下ボタン関数*/
-    public new void OnNormalAttack()
+    public void OnNormalAttack()
     {
-        base.OnNormalAttack();
+        base.OnNormalAttack(controller[0]);
     }
 
     public new void OnAttackMoveVertical()

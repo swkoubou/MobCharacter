@@ -11,7 +11,7 @@ public abstract class BattleEnemy : CommonBattleChara
     protected new void Start()
     {
         //BattleManager.instance.enemies.Add(gameObject);
-        enemyMoveTime = charMoveTime / 2;
+        enemyMoveTime = (charMoveTime + 1f) / 2;
         base.Start();
     }
 
@@ -116,6 +116,9 @@ public abstract class BattleEnemy : CommonBattleChara
         moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
         moveHash.Add("time", enemyMoveTime);
         iTween.MoveFrom(gameObject, moveHash);
+
+        soundBox.PlayOneShot(audioClass.normalAttack, 1f);
+        BattleManager.instance.AddMessage(objectName + "の攻撃");
     }
 
     //移動する
@@ -127,10 +130,12 @@ public abstract class BattleEnemy : CommonBattleChara
         if (ConvertVectorToObject(movedPos) != null)
         {
             print("移動来ません");
+            BattleManager.instance.TurnSkip();
         }
         else
         {
             ChangeGrid(gameObject, movedPos);
+            BattleManager.instance.AddMessage(objectName + "は移動した");
         }
     }
 

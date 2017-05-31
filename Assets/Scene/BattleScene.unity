@@ -424,11 +424,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904b6ca1a455e594793056158a6b0805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: Enemy1
   defaultPos: {x: 0, y: 1}
   defaultOffset: {x: 0, y: 1.5}
   buttonsObject: []
   buttonsText: []
-  objectName: 
+  controller: []
 --- !u!1 &175314785
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,6 +656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82ae9ba6b45a3034dbdd24e9c128ea68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: "\u30E2\u30D6"
   defaultPos: {x: 0, y: 2}
   defaultOffset: {x: 0, y: 1}
   buttonsObject:
@@ -665,7 +667,8 @@ MonoBehaviour:
   - "\u30D5\u30ED\u30F3\u30C8\u30A2\u30BF\u30C3\u30AF"
   - "\u30D0\u30FC\u30C1\u30AB\u30EB"
   - "\u30B9\u30E9\u30C3\u30B7\u30E5"
-  objectName: "\u30E2\u30D6"
+  controller:
+  - {fileID: 9100000, guid: 5f002c41c9817134794641c49a43a6f7, type: 2}
 --- !u!212 &212745815
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1065,11 +1068,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904b6ca1a455e594793056158a6b0805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: Enemy3
   defaultPos: {x: 2, y: 1}
   defaultOffset: {x: 0, y: 1.5}
   buttonsObject: []
   buttonsText: []
-  objectName: 
+  controller: []
 --- !u!1 &314410418
 GameObject:
   m_ObjectHideFlags: 0
@@ -1093,7 +1097,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 314410418}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 22.02, y: -5.45, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children: []
@@ -1111,6 +1115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d458d2901faf49429e8e42d3c0fe7ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: "\u52C7\u8005"
   defaultPos: {x: 1, y: 2}
   defaultOffset: {x: 0, y: 1}
   buttonsObject:
@@ -1121,7 +1126,8 @@ MonoBehaviour:
   - "\u9583\u5149"
   - "\u3069\u308A\u3083\u30FC"
   - "\u308A\u30FC\u3080\u30FC"
-  objectName: "\u52C7\u8005"
+  controller:
+  - {fileID: 9100000, guid: 5f002c41c9817134794641c49a43a6f7, type: 2}
 --- !u!212 &314410421
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1669,7 +1675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 717010a4ee0ee0f4b9425bb5fb0d7888, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  decide: {fileID: 8300000, guid: 993e487eb2c9dad4cb62f17b63ac1a2a, type: 3}
+  decide: {fileID: 8300000, guid: 031e9e74a0fc16c428b8861a2a70e925, type: 3}
   cancel: {fileID: 8300000, guid: c8e9fb1f61fee2b4d9c783f9b54280e4, type: 3}
   notExecute: {fileID: 8300000, guid: e3f99f14f044994489561b519c8bceaf, type: 3}
   normalAttack: {fileID: 8300000, guid: 6f496ee0330769443ab4f931e81e9e07, type: 3}
@@ -4701,6 +4707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73e4e7da547ceb241a8d7bdf3c92ed09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: "\u59EB"
   defaultPos: {x: 2, y: 2}
   defaultOffset: {x: 0, y: 1}
   buttonsObject:
@@ -4711,7 +4718,8 @@ MonoBehaviour:
   - "\u8E74\u308A"
   - "\u30AB\u30C1\u30B3\u30DF"
   - "\u30B9\u30EA\u9003\u3052"
-  objectName: "\u59EB"
+  controller:
+  - {fileID: 9100000, guid: 5f002c41c9817134794641c49a43a6f7, type: 2}
 --- !u!212 &1814644014
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5145,11 +5153,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904b6ca1a455e594793056158a6b0805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectName: 
   defaultPos: {x: 1, y: 1}
   defaultOffset: {x: 0, y: 1.5}
   buttonsObject: []
   buttonsText: []
-  objectName: 
+  controller: []
 --- !u!1 &1928006559
 GameObject:
   m_ObjectHideFlags: 0

@@ -54,7 +54,7 @@ MonoBehaviour:
   player: {fileID: 0}
   braver: {fileID: 0}
   princess: {fileID: 0}
-  changeTurnWaitTime: 1
+  changeTurnWaitTime: 0
   panelMoveTime: 0.2
   panelMoveValue: -11
   isPushed: 0
@@ -68,11 +68,6 @@ MonoBehaviour:
   escapeCommand: {fileID: 0}
   whoseNameText: {fileID: 0}
   whoseNameTextPath: Canvas/Command/Main/WhoseNameText
-  message:
-  - 
-  - 
-  - 
-  - 
   logTextPath: Canvas/TextManager/Content
   mainArrow: {fileID: 0}
   subArrow: {fileID: 0}

@@ -11,15 +11,17 @@ public class CommonBattleChara : MonoBehaviour
     protected int attack;
     protected float charMoveTime = 1f;
 
+    public string objectName;
     public Vector2 defaultPos;
     public Vector2 defaultOffset;
     public Button[] buttonsObject;
     public string[] buttonsText;
+    public RuntimeAnimatorController[] controller;
+    protected Animator anim;
 
     protected AudioClass audioClass;
     protected AudioSource soundBox;
-
-    public string objectName;
+    
 
     //protected void Start()
     //{
@@ -29,7 +31,11 @@ public class CommonBattleChara : MonoBehaviour
 
     protected void Start()
     {
+        //アニメーション用のボックスを子オブジェクトとして生成
+        (Instantiate(Resources.Load("EffectAnimator")) as GameObject).transform.parent = gameObject.transform;
+
         SetGrid(gameObject, defaultPos);
+        anim = GetComponentInChildren<Animator>();
         audioClass = FindObjectOfType<AudioClass>();
         soundBox = FindObjectOfType<AudioSource>();
     }
@@ -80,17 +86,10 @@ public class CommonBattleChara : MonoBehaviour
         }
     }
 
-    //protected bool CheckRegularPos(Vector2 pos)
-    //{
-    //    if (pos.x < 0 || 2 < pos.x || pos.y < 0 || 2 < pos.y)
-    //        return false;
-    //    else
-    //        return true;
-    //}
-
     //キャラクターを指定先のグリッドに移動する
     protected void MoveGrid(GameObject obj, Vector2 target)
     {
+        CheckDirection(obj, target);
         Vector2 offset = obj.GetComponent<CommonBattleChara>().defaultOffset;
         Vector2 end = BattleManager.instance.basePositions[(int)target.x, (int)target.y].transform.position;
         end += new Vector2(offset.x, offset.y);
@@ -99,6 +98,23 @@ public class CommonBattleChara : MonoBehaviour
         moveHash.Add("position", new Vector3(end.x, end.y, 0));
         moveHash.Add("time", charMoveTime);
         iTween.MoveTo(obj, moveHash);
+    }
+
+    //向きをチェック
+    protected void CheckDirection(GameObject obj, Vector2 target)
+    {
+        var tmp = obj.transform.localScale;
+        if (target.y == 2)
+        {
+            if (tmp.x < 0)
+                tmp.x *= -1;
+        }
+        else if (target.y == 0)
+        {
+            if (0 <= tmp.x)
+                tmp.x *= -1;
+        }
+        obj.transform.localScale = tmp;
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
@@ -143,10 +159,17 @@ public class CommonBattleChara : MonoBehaviour
         }
     }
 
+    protected void AnimStart(RuntimeAnimatorController effect, AudioClip se, string message)
+    {
+        anim.runtimeAnimatorController = effect;
+        anim.SetTrigger("Start");
+        soundBox.PlayOneShot(se, 1f);
+        BattleManager.instance.AddMessage(objectName + message);
+    }
 
     /*以下ボタン関数*/
 
-    protected void OnNormalAttack()
+    protected void OnNormalAttack(RuntimeAnimatorController effect)
     {
         Vector2 movedPos = ConvertObjectToVector(gameObject);
 
@@ -166,9 +189,7 @@ public class CommonBattleChara : MonoBehaviour
             moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
             moveHash.Add("time", charMoveTime);
             iTween.MoveFrom(gameObject, moveHash);
-            
-            BattleManager.instance.AddMessage(objectName + "の通常攻撃!");
-            soundBox.PlayOneShot(audioClass.normalAttack, 1f);
+            AnimStart(effect, audioClass.normalAttack, "の通常攻撃!");
         }
     }
 
@@ -197,11 +218,6 @@ public class CommonBattleChara : MonoBehaviour
                 ChangeGrid(gameObject, movedPos);
                 MoveGrid(gameObject, movedPos);
                 BattleManager.instance.AddMessage(objectName + "の移動攻撃!");
-
-                //向き反転
-                var tmp = transform.localScale;
-                tmp.x *= -1;
-                transform.localScale = tmp;
             }
         }
         else
@@ -212,41 +228,38 @@ public class CommonBattleChara : MonoBehaviour
 
     protected void OnAttackMoveSlash()
     {
-        Vector2 nowPos = ConvertObjectToVector(gameObject);
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
 
         //対角に移動するので0と2を反転
-        if (nowPos.x == 0)
-            nowPos.x = 2;
-        else if (nowPos.x == 2)
-            nowPos.x = 0;
+        if (movedPos.x == 0)
+            movedPos.x = 2;
+        else if (movedPos.x == 2)
+            movedPos.x = 0;
         else
-            nowPos.x = -1;
+            movedPos.x = -1;
 
-        if (nowPos.y == 0)
-            nowPos.y = 2;
-        else if (nowPos.y == 2)
-            nowPos.y = 0;
+        if (movedPos.y == 0)
+            movedPos.y = 2;
+        else if (movedPos.y == 2)
+            movedPos.y = 0;
         else
-            nowPos.y = -1;
+            movedPos.y = -1;
 
         //対角に居ない場合は実行しない
-        if (nowPos.x == -1 || nowPos.y == -1)
+        if (movedPos.x == -1 || movedPos.y == -1)
         {
+            BattleManager.instance.AddMessage("移動攻撃できません");
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
             return;
         }
 
-        if (CanChangeGrid(nowPos))
+        if (CanChangeGrid(movedPos))
         {
             if (BattleManager.instance.OnReadyDetails())
             {
-                ChangeGrid(gameObject, nowPos);
-                MoveGrid(gameObject, nowPos);
+                ChangeGrid(gameObject, movedPos);
+                MoveGrid(gameObject, movedPos);
                 BattleManager.instance.AddMessage(objectName + "のスラッシュ攻撃!");
-
-                //向き反転
-                var tmp = transform.localScale;
-                tmp.x *= -1;
-                transform.localScale = tmp;
             }
         }
         else
