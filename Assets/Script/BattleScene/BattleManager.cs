@@ -23,6 +23,17 @@ public class BattleManager : MonoBehaviour
     };
     private WhoseTurn whoseTurn;
 
+    //なんのコマンドを操作しているのか
+    public enum WhatCommand
+    {
+        none = -1,
+        attack,
+        tool,
+        move,
+        escape
+    };
+    private WhatCommand whatCommand;
+
     //ターンを変更するとき何秒待つか
     [Range(0, 2)]
     public float changeTurnWaitTime;
@@ -175,7 +186,7 @@ public class BattleManager : MonoBehaviour
         instance.whoseNameText = GameObject.Find(whoseNameTextPath).GetComponent<Text>();
         instance.logText = GameObject.Find(logTextPath).GetComponentsInChildren<Text>();
         instance.mainArrow = instance.mainCommand.transform.FindChild("MainArrow").GetComponent<SelectArrow>();
-        instance.subArrow = instance.commandPanel.transform.FindChild("SubArrow").GetComponent<SelectArrow>();
+        instance.subArrow = instance.commandPanel.transform.FindChild("SubArrow").GetComponent<TraceLine>();
         instance.eventSystem = FindObjectOfType<EventSystem>();
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
@@ -243,6 +254,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.player;
+        instance.whatCommand = WhatCommand.none;
         instance.subArrow.SetButtons(instance.player.buttonsObject);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.player.objectName;
@@ -255,6 +267,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.braver;
+        instance.whatCommand = WhatCommand.none;
         instance.subArrow.SetButtons(instance.braver.buttonsObject);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.braver.objectName;
@@ -267,6 +280,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.princess;
+        instance.whatCommand = WhatCommand.none;
         instance.subArrow.SetButtons(instance.princess.buttonsObject);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.princess.objectName;
@@ -279,6 +293,7 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.enemy;
+        instance.whatCommand = WhatCommand.none;
         countEnemyTurn = 0;
         StartCoroutine(NextEnemyTurn());
     }
@@ -338,11 +353,18 @@ public class BattleManager : MonoBehaviour
         * コマンド関連 *
      ********************/
 
+    //今なんのコマンドを操作しているか
+    public WhatCommand GetWhatCommand()
+    {
+        return instance.whatCommand;
+    }
+
     //サブコマンドからメインコマンドに戻るとき
     public void OnCommandBaack()
     {
         if (instance.isPushed && !FindObjectOfType<iTween>())
         {
+            instance.whatCommand = WhatCommand.none;
             instance.isPushed = false;
             iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
             instance.nowDetailCommand.SetActive(false);
@@ -399,6 +421,7 @@ public class BattleManager : MonoBehaviour
             //instance.OnCommandBaack();
             instance.mainCommand.SetActive(false);
 
+            instance.whatCommand = WhatCommand.none;
             instance.isPushed = false;
             iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
             instance.nowDetailCommand.SetActive(false);
@@ -416,6 +439,7 @@ public class BattleManager : MonoBehaviour
     public void OnAttack()
     {
         instance.nowDetailCommand = instance.attackCommand;
+        instance.whatCommand = WhatCommand.attack;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
         instance.subArrow.SetButtons(buttons);
@@ -426,6 +450,7 @@ public class BattleManager : MonoBehaviour
     public void OnTool()
     {
         instance.nowDetailCommand = instance.toolCommand;
+        instance.whatCommand = WhatCommand.tool;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
         instance.subArrow.SetButtons(buttons);
@@ -436,6 +461,7 @@ public class BattleManager : MonoBehaviour
     public void OnMove()
     {
         instance.nowDetailCommand = instance.moveCommand;
+        instance.whatCommand = WhatCommand.move;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
         instance.subArrow.SetButtons(buttons);
@@ -488,6 +514,7 @@ public class BattleManager : MonoBehaviour
     public void OnEscape()
     {
         instance.nowDetailCommand = instance.escapeCommand;
+        instance.whatCommand = WhatCommand.escape;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
         instance.subArrow.SetButtons(buttons, new Vector3(-6, 0, 0));

@@ -118,7 +118,7 @@ public class CommonBattleChara : MonoBehaviour
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
-    protected Vector2 ConvertObjectToVector(GameObject obj)
+    public Vector2 ConvertObjectToVector(GameObject obj)
     {
         for (int i = 0; i < BattleManager.COUNT_BASE_POS; i++)
         {
@@ -136,7 +136,7 @@ public class CommonBattleChara : MonoBehaviour
     }
 
     //指定した位置情報に何が設置されているか調べて返す
-    protected GameObject ConvertVectorToObject(Vector2 target)
+    public GameObject ConvertVectorToObject(Vector2 target)
     {
         //範囲外なら
         if (target.x < 0 || 2 < target.x || target.y < 0 || 2 < target.y)
@@ -155,7 +155,7 @@ public class CommonBattleChara : MonoBehaviour
         {
             buttonsObject[i].onClick.RemoveAllListeners();
             buttonsObject[i].onClick.AddListener(method[i]);
-            buttonsObject[i].transform.FindChild("Text").GetComponent<Text>().text = buttonsText[i];
+            buttonsObject[i].transform.GetComponentInChildren<Text>().text = buttonsText[i];
         }
     }
 

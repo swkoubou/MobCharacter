@@ -24,8 +24,7 @@ public class SelectArrow : MonoBehaviour
     public Vector3 defaultOffset;
 
     //offsetを一時確保する空要素
-    [HideInInspector]
-    private Vector3 offset = default(Vector3);
+    protected Vector3 offset = default(Vector3);
 
     //現在取得しているボタン
     protected GameObject currentSelected;
