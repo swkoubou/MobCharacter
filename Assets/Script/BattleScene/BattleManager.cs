@@ -145,12 +145,19 @@ public class BattleManager : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
+                //CommandPanelにTraceLineを入れておくと予測線も消えてしまうため
                 instance.commandPanel.SetActive(false);
+                instance.subArrow.gameObject.GetComponent<Image>().enabled = false;
+            }
+            else if (instance.subArrow.enabled && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)))
+            {
+                instance.subArrow.gameObject.GetComponent<Image>().enabled = true;
             }
             else
             {
                 instance.commandPanel.SetActive(true);
             }
+            
         }
 
         //実験用
@@ -186,7 +193,8 @@ public class BattleManager : MonoBehaviour
         instance.whoseNameText = GameObject.Find(whoseNameTextPath).GetComponent<Text>();
         instance.logText = GameObject.Find(logTextPath).GetComponentsInChildren<Text>();
         instance.mainArrow = instance.mainCommand.transform.FindChild("MainArrow").GetComponent<SelectArrow>();
-        instance.subArrow = instance.commandPanel.transform.FindChild("SubArrow").GetComponent<TraceLine>();
+        //instance.subArrow = instance.commandPanel.transform.FindChild("SubArrow").GetComponent<TraceLine>();
+        instance.subArrow = FindObjectOfType<TraceLine>();
         instance.eventSystem = FindObjectOfType<EventSystem>();
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
