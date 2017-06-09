@@ -13,9 +13,14 @@ public class CommonBattleChara : MonoBehaviour
 
     public string objectName;
     public Vector2 defaultPos;
-    public Vector2 defaultOffset;
+    protected Vector2 defaultOffset;
+
+    protected Slider HPber;
+    protected Vector2 hpberOffset;
+
     public Button[] buttonsObject;
     public string[] buttonsText;
+
     public RuntimeAnimatorController[] controller;
     protected Animator anim;
 
@@ -32,7 +37,14 @@ public class CommonBattleChara : MonoBehaviour
     protected void Start()
     {
         //アニメーション用のボックスを子オブジェクトとして生成
-        (Instantiate(Resources.Load("EffectAnimator")) as GameObject).transform.parent = gameObject.transform;
+        (Instantiate(Resources.Load("EffectAnimator"), transform) as GameObject).transform.SetParent(gameObject.transform);
+
+        //HPバーを子オブジェクトとして生成
+        var canvas = (Instantiate(Resources.Load("HPber"), (Vector2)transform.position + hpberOffset, Quaternion.identity) as GameObject);
+        canvas.transform.SetParent(gameObject.transform);
+        HPber = canvas.GetComponentInChildren<Slider>();
+        HPber.maxValue = HP;
+        HPber.value = HPber.maxValue;
 
         SetGrid(gameObject, defaultPos);
         anim = GetComponentInChildren<Animator>();
@@ -43,6 +55,7 @@ public class CommonBattleChara : MonoBehaviour
     public void LoseHP(int dmg)
     {
         HP -= dmg;
+        HPber.value = HP;
     }
 
     //グリッド配列にキャラクタを設置
@@ -54,7 +67,7 @@ public class CommonBattleChara : MonoBehaviour
         }
         else
         {
-            CommonBattleChara component = obj.GetComponent<CommonBattleChara>();
+            var component = obj.GetComponent<CommonBattleChara>();
             Vector2 offset = component.defaultOffset;
             BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = obj;
             MoveGrid(obj, pos);
@@ -159,15 +172,31 @@ public class CommonBattleChara : MonoBehaviour
         }
     }
 
-    protected void AnimStart(RuntimeAnimatorController effect, AudioClip se, string message)
+    protected void AnimStart(RuntimeAnimatorController effect, AudioClip se)
     {
         anim.runtimeAnimatorController = effect;
         anim.SetTrigger("Start");
         soundBox.PlayOneShot(se, 1f);
-        BattleManager.instance.AddMessage(objectName + message);
     }
 
     /*以下ボタン関数*/
+
+    //その場から動かずアニメーションを使いたいとき
+    protected void OnOnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
+    {
+        if (BattleManager.instance.OnReadyDetails())
+        {
+            anim.runtimeAnimatorController = effect;
+            anim.SetTrigger("Start");
+            soundBox.PlayOneShot(se, 1f);
+            BattleManager.instance.AddMessage(objectName + message);
+        }
+    }
+
+    protected void DelayChange()
+    {
+        BattleManager.instance.ChangeTurnNext();
+    }
 
     protected void OnNormalAttack(RuntimeAnimatorController effect)
     {
@@ -189,7 +218,11 @@ public class CommonBattleChara : MonoBehaviour
             moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
             moveHash.Add("time", charMoveTime);
             iTween.MoveFrom(gameObject, moveHash);
-            AnimStart(effect, audioClass.normalAttack, "の通常攻撃!");
+
+            AnimStart(null, audioClass.normalAttack);
+            BattleManager.instance.AddMessage(objectName + "の通常攻撃!");
+            Invoke("DelayChange", BattleManager.instance.changeTurnWaitTime);
+            ConvertVectorToObject(new Vector2((int)movedPos.x, (int)movedPos.y)).GetComponent<CommonBattleChara>().LoseHP(attack);
         }
     }
 
@@ -218,6 +251,7 @@ public class CommonBattleChara : MonoBehaviour
                 ChangeGrid(gameObject, movedPos);
                 MoveGrid(gameObject, movedPos);
                 BattleManager.instance.AddMessage(objectName + "の移動攻撃!");
+                BattleManager.instance.ChangeTurnNext();
             }
         }
         else
@@ -260,6 +294,7 @@ public class CommonBattleChara : MonoBehaviour
                 ChangeGrid(gameObject, movedPos);
                 MoveGrid(gameObject, movedPos);
                 BattleManager.instance.AddMessage(objectName + "のスラッシュ攻撃!");
+                BattleManager.instance.ChangeTurnNext();
             }
         }
         else
@@ -313,6 +348,7 @@ public class CommonBattleChara : MonoBehaviour
             if (BattleManager.instance.OnReadyDetails())
             {
                 ChangeGrid(gameObject, movedPos);
+                BattleManager.instance.ChangeTurnNext();
             }
         }
     }

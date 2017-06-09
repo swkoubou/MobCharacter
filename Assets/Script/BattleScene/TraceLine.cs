@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public class TraceLine : SelectArrow
     {
         moveLine = traceLines.GetComponentsInChildren<SpriteRenderer>();
 
+
         player = FindObjectOfType<BattlePlayer>();
         braver = FindObjectOfType<BattleBraver>();
         princess = FindObjectOfType<BattlePrincess>();
@@ -23,9 +25,19 @@ public class TraceLine : SelectArrow
 
     void OnDisable()
     {
-        //まず白に初期化
-        foreach (var e in moveLine)
-            e.color = new Color(255, 255, 255);
+        try
+        {
+            //まず白に初期化
+            foreach (var e in moveLine)
+            {
+                e.color = new Color(255, 255, 255);
+                e.enabled = false;
+            }
+        }
+        catch (Exception e)
+        {
+            print(e.Message);
+        }
     }
 
     new void Update()
@@ -81,7 +93,7 @@ public class TraceLine : SelectArrow
                 switch (BattleManager.instance.GetWhatCommand())
                 {
                     case BattleManager.WhatCommand.attack:
-                        
+
                         break;
 
                     case BattleManager.WhatCommand.tool:
@@ -174,9 +186,7 @@ public class TraceLine : SelectArrow
 
     void BrightLine(int[] array)
     {
-        //まず白に初期化
-        foreach (var e in moveLine)
-            e.color = new Color(255, 255, 255);
+        OnDisable();
 
         if (array == null)
             return;
@@ -185,6 +195,7 @@ public class TraceLine : SelectArrow
         for (int i = 0; i < array.Length; i++)
         {
             moveLine[array[i]].color = new Color(250, 0, 255);
+            moveLine[array[i]].enabled = true;
         }
     }
 

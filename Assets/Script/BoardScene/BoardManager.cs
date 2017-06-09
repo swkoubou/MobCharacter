@@ -81,8 +81,6 @@ public class BoardManager : MonoBehaviour
 
         if (whoseTurn == WhoseTurn.enemy && !enemiesMoving)
             StartCoroutine(MoveEnemies());
-
-        print(GetWhoseTurn());
     }
 
     public WhoseTurn GetWhoseTurn()

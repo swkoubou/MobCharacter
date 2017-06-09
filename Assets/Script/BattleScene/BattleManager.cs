@@ -47,6 +47,8 @@ public class BattleManager : MonoBehaviour
     [HideInInspector]
     public bool isPushed;
 
+    private GameObject nowSelectedCharactor;
+
     //一番上にある、コマンド類が入った階層フォルダ
     [HideInInspector]
     public GameObject commandPanel;
@@ -268,6 +270,11 @@ public class BattleManager : MonoBehaviour
         instance.whoseNameText.text = instance.player.objectName;
         instance.player.SetOnClick();
         instance.mainArrow.StartSelect();
+
+        //今どのキャラを操作しているかを表示する矢印, 最初に初期化
+        //Destroy(nowSelectedCharactor);
+        nowSelectedCharactor = Instantiate(Resources.Load("SelectedCharactor"), instance.player.gameObject.transform) as GameObject;
+        nowSelectedCharactor.transform.parent = instance.player.gameObject.transform;
     }
 
     //Braverのターンにする+初期化
@@ -281,6 +288,11 @@ public class BattleManager : MonoBehaviour
         instance.whoseNameText.text = instance.braver.objectName;
         instance.braver.SetOnClick();
         instance.mainArrow.StartSelect();
+
+        //今どのキャラを操作しているかを表示する矢印, 最初に初期化
+        Destroy(nowSelectedCharactor);
+        nowSelectedCharactor = Instantiate(Resources.Load("SelectedCharactor"), instance.braver.gameObject.transform) as GameObject;
+        nowSelectedCharactor.transform.parent = instance.braver.gameObject.transform;
     }
 
     //Princesのターンにする+初期化
@@ -294,6 +306,11 @@ public class BattleManager : MonoBehaviour
         instance.whoseNameText.text = instance.princess.objectName;
         instance.princess.SetOnClick();
         instance.mainArrow.StartSelect();
+
+        //今どのキャラを操作しているかを表示する矢印, 最初に初期化
+        Destroy(nowSelectedCharactor);
+        nowSelectedCharactor = Instantiate(Resources.Load("SelectedCharactor"), instance.princess.gameObject.transform) as GameObject;
+        nowSelectedCharactor.transform.parent = instance.princess.gameObject.transform;
     }
 
     //Enemyのターンにする+初期化
@@ -304,6 +321,9 @@ public class BattleManager : MonoBehaviour
         instance.whatCommand = WhatCommand.none;
         countEnemyTurn = 0;
         StartCoroutine(NextEnemyTurn());
+
+        //今どのキャラを操作しているかを表示する矢印, 最初に初期化
+        Destroy(nowSelectedCharactor);
     }
 
     //次のターンに自動判断で切り替え
@@ -383,7 +403,7 @@ public class BattleManager : MonoBehaviour
     }
 
     //メインコマンドが押されたら
-    public void OnCommandPushed()
+    public bool OnCommandPushed()
     {
         if (!instance.isPushed && !FindObjectOfType<iTween>() && FadeSceneManager.IsFadeFinished())
         {
@@ -392,6 +412,12 @@ public class BattleManager : MonoBehaviour
             //GlobalCoroutine.Go(WaitTime(), panelMoveTime);
             Invoke("WaitTime", panelMoveTime);
             soundBox.PlayOneShot(audioClass.decide, 1f);
+
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -415,8 +441,10 @@ public class BattleManager : MonoBehaviour
     //メインコマンド決定
     private void OnReady()
     {
-        instance.OnCommandPushed();
-        instance.mainArrow.StopSelect();
+        if (instance.OnCommandPushed())
+        {
+            instance.mainArrow.StopSelect();
+        }
     }
 
     //準備ができているならtrue, できていないならfalsaeを返す
@@ -424,7 +452,7 @@ public class BattleManager : MonoBehaviour
     {
         if (instance.isPushed && !FindObjectOfType<iTween>())
         {
-            ChangeTurnNext();
+            //ChangeTurnNext();
 
             //instance.OnCommandBaack();
             instance.mainCommand.SetActive(false);

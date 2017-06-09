@@ -10,10 +10,11 @@ public class BattlePlayer : CommonBattleChara
 
     new void Start()
     {
-        HP = 10;
-        attack = 0;
+        HP = 20;
+        attack = 2;
         defaultPos = new Vector2(0, 2);
         defaultOffset = new Vector2(0, 1);
+        hpberOffset = new Vector2(0, -1.32f);
         //SetGrid(gameObject, defaultPos);
         base.Start();
     }

@@ -11,9 +11,10 @@ public class BattlePrincess : CommonBattleChara
     new void Start()
     {
         HP = 30;
-        attack = 2;
+        attack = 4;
         defaultPos = new Vector2(2, 2);
         defaultOffset = new Vector2(0, 1);
+        hpberOffset = new Vector2(0, -1.32f);
         //SetGrid(gameObject, defaultPos);
         base.Start();
     }
@@ -35,7 +36,18 @@ public class BattlePrincess : CommonBattleChara
     /*以下ボタン関数*/
     public void OnNormalAttack()
     {
-        base.OnNormalAttack(controller[0]);
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
+        movedPos.y = 1;
+
+        if (ConvertVectorToObject(movedPos) == null)
+        {
+            BattleManager.instance.AddMessage("攻撃対象がいません");
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
+
+        OnOnlyAnim(controller[0], audioClass.superFrame, "の獄炎!");
+        ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().LoseHP(attack);
     }
 
     public new void OnAttackMoveVertical()

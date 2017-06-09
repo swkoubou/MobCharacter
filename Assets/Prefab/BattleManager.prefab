@@ -54,7 +54,7 @@ MonoBehaviour:
   player: {fileID: 0}
   braver: {fileID: 0}
   princess: {fileID: 0}
-  changeTurnWaitTime: 0
+  changeTurnWaitTime: 0.1
   panelMoveTime: 0.2
   panelMoveValue: -11
   isPushed: 0

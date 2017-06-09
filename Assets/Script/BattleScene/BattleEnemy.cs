@@ -7,6 +7,7 @@ public abstract class BattleEnemy : CommonBattleChara
 {
     protected float changeTurnWaitTime = 1f;
     protected float enemyMoveTime;
+    private bool canMove = true;
 
     protected new void Start()
     {
@@ -23,11 +24,13 @@ public abstract class BattleEnemy : CommonBattleChara
     public void EnemyTurn()
     {
         BattleManager.instance.countEnemyTurn++;
+        canMove = true;
 
         List<GameObject> players = SerchChara();
         GameObject target = SameRowObject(players);
         if (target != null)
         {
+            print("1");
             SwitchCommand(target, Random.Range(0, 10));
         }
         else
@@ -35,11 +38,12 @@ public abstract class BattleEnemy : CommonBattleChara
             float distance = NearestColObject(players);
             if (distance <= -1)
             {
+                print("2");
                 OnEnemyMoveLocation(-1);
             }
-
             else if (1 <= distance)
             {
+                print("3");
                 OnEnemyMoveLocation(1);
             }
         }
@@ -85,14 +89,14 @@ public abstract class BattleEnemy : CommonBattleChara
         float[] diff = new float[player.Count];
         for (int i = 0; i < player.Count; i++)
         {
-            diff[i] = ConvertObjectToVector(gameObject).y - ConvertObjectToVector(player[i]).y;
+            diff[i] = ConvertObjectToVector(player[i]).y - ConvertObjectToVector(gameObject).y;
         }
 
         float nearest = diff[0];
         for (int i = 0; i < player.Count - 1; i++)
         {
             if (Mathf.Abs(diff[i]) < Mathf.Abs(diff[i + 1]))
-                nearest = diff[i];
+                nearest = diff[i + 1];
         }
 
         return nearest;
@@ -104,7 +108,7 @@ public abstract class BattleEnemy : CommonBattleChara
 
         //攻撃し、その場に留まるので
         movedPos.y = ConvertObjectToVector(target).y;
-        
+
         //線形に居ない場合は実行しない
         if (movedPos.x == -1 || movedPos.y == -1)
         {
@@ -126,10 +130,20 @@ public abstract class BattleEnemy : CommonBattleChara
     {
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += n;
-
-        if (ConvertVectorToObject(movedPos) != null)
+        print(gameObject + ":" + n);
+        //移動先がEnemyで動けないなら
+        if (ConvertVectorToObject(movedPos) != null && ConvertVectorToObject(movedPos).tag == "Enemy")
         {
-            print("移動来ません");
+            if (!canMove)
+                BattleManager.instance.TurnSkip();
+            else
+                canMove = false;
+            print(canMove);
+            OnEnemyMoveLocation(-n);
+        }
+        else if (ConvertVectorToObject(movedPos) != null)
+        {
+            print("移動来ません" + n);
             BattleManager.instance.TurnSkip();
         }
         else

@@ -383,7 +383,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 97281747}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -490,7 +490,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Enemy1
   defaultPos: {x: 0, y: 1}
-  defaultOffset: {x: 0, y: 1.5}
   buttonsObject: []
   buttonsText: []
   controller: []
@@ -722,7 +721,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: "\u30E2\u30D6"
   defaultPos: {x: 0, y: 2}
-  defaultOffset: {x: 0, y: 1}
   buttonsObject:
   - {fileID: 1703885192}
   - {fileID: 29336450}
@@ -1134,7 +1132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Enemy3
   defaultPos: {x: 2, y: 1}
-  defaultOffset: {x: 0, y: 1.5}
   buttonsObject: []
   buttonsText: []
   controller: []
@@ -1181,7 +1178,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: "\u52C7\u8005"
   defaultPos: {x: 1, y: 2}
-  defaultOffset: {x: 0, y: 1}
   buttonsObject:
   - {fileID: 1703885192}
   - {fileID: 29336450}
@@ -1385,7 +1381,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -386, y: 226}
+  m_AnchoredPosition: {x: -391, y: 243}
   m_SizeDelta: {x: 400, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &328713711
@@ -1743,6 +1739,7 @@ MonoBehaviour:
   cancel: {fileID: 8300000, guid: c8e9fb1f61fee2b4d9c783f9b54280e4, type: 3}
   notExecute: {fileID: 8300000, guid: e3f99f14f044994489561b519c8bceaf, type: 3}
   normalAttack: {fileID: 8300000, guid: 6f496ee0330769443ab4f931e81e9e07, type: 3}
+  superFrame: {fileID: 8300000, guid: aa8db9f199bab5e4c887f9b013e923d8, type: 3}
 --- !u!1 &474288975
 GameObject:
   m_ObjectHideFlags: 0
@@ -2082,7 +2079,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 679623646}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -2146,7 +2143,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 815884288}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -2518,7 +2515,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 883239162}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -2656,7 +2653,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 925692144}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -3290,7 +3287,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1167006029}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -3745,7 +3742,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1250183611}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -3809,7 +3806,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1251549135}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -3873,7 +3870,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1264291347}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -4075,7 +4072,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1353436681}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -4213,7 +4210,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1379478083}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -4277,7 +4274,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1389156657}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -4405,7 +4402,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1453625029}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -5583,7 +5580,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: "\u59EB"
   defaultPos: {x: 2, y: 2}
-  defaultOffset: {x: 0, y: 1}
   buttonsObject:
   - {fileID: 1703885192}
   - {fileID: 29336450}
@@ -5593,7 +5589,7 @@ MonoBehaviour:
   - "\u30AB\u30C1\u30B3\u30DF"
   - "\u30B9\u30EA\u9003\u3052"
   controller:
-  - {fileID: 9100000, guid: 5f002c41c9817134794641c49a43a6f7, type: 2}
+  - {fileID: 9100000, guid: 83e7829d8e84662448eb9399310cd75b, type: 2}
 --- !u!212 &1814644014
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5625,7 +5621,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300008, guid: 7be1368f153a61342ae69285a6802dc3, type: 3}
+  m_Sprite: {fileID: 21300008, guid: 8031b18ef597a8645bd9a66af7ab7caa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5664,7 +5660,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1866535992}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_MotionVectors: 1
@@ -6092,9 +6088,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904b6ca1a455e594793056158a6b0805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectName: 
+  objectName: Enemy2
   defaultPos: {x: 1, y: 1}
-  defaultOffset: {x: 0, y: 1.5}
   buttonsObject: []
   buttonsText: []
   controller: []
