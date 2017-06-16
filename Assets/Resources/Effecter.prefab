@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 95627387421478712}
   - component: {fileID: 114385138922745162}
   m_Layer: 0
-  m_Name: EffectAnimator
+  m_Name: Effecter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -55,7 +55,7 @@ public class TraceLine : SelectArrow
                         selectedColor = AttackCasePlayer();
                         break;
 
-                    case BattleManager.WhatCommand.tool:
+                    case BattleManager.WhatCommand.idle:
 
                         break;
 
@@ -75,7 +75,7 @@ public class TraceLine : SelectArrow
                     case BattleManager.WhatCommand.attack:
                         break;
 
-                    case BattleManager.WhatCommand.tool:
+                    case BattleManager.WhatCommand.idle:
 
                         break;
 
@@ -96,7 +96,7 @@ public class TraceLine : SelectArrow
 
                         break;
 
-                    case BattleManager.WhatCommand.tool:
+                    case BattleManager.WhatCommand.idle:
 
                         break;
 

@@ -490,8 +490,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Enemy1
   defaultPos: {x: 0, y: 1}
-  buttonsObject: []
-  buttonsText: []
+  attackButtons: []
+  idleButtons: []
+  attackText: []
+  idleText: []
   controller: []
 --- !u!1 &175314785
 GameObject:
@@ -721,14 +723,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: "\u30E2\u30D6"
   defaultPos: {x: 0, y: 2}
-  buttonsObject:
+  attackButtons:
   - {fileID: 1703885192}
   - {fileID: 29336450}
   - {fileID: 175314787}
-  buttonsText:
-  - "\u30D5\u30ED\u30F3\u30C8\u30A2\u30BF\u30C3\u30AF"
-  - "\u30D0\u30FC\u30C1\u30AB\u30EB"
-  - "\u30B9\u30E9\u30C3\u30B7\u30E5"
+  idleButtons:
+  - {fileID: 835060256}
+  - {fileID: 1174447996}
+  - {fileID: 1189690148}
+  attackText: []
+  idleText: []
   controller:
   - {fileID: 9100000, guid: 5f002c41c9817134794641c49a43a6f7, type: 2}
 --- !u!212 &212745815
@@ -1132,8 +1136,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Enemy3
   defaultPos: {x: 2, y: 1}
-  buttonsObject: []
-  buttonsText: []
+  attackButtons: []
+  idleButtons: []
+  attackText: []
+  idleText: []
   controller: []
 --- !u!1 &314410418
 GameObject:
@@ -1178,16 +1184,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: "\u52C7\u8005"
   defaultPos: {x: 1, y: 2}
-  buttonsObject:
+  attackButtons:
   - {fileID: 1703885192}
   - {fileID: 29336450}
   - {fileID: 175314787}
-  buttonsText:
-  - "\u9583\u5149"
-  - "\u3069\u308A\u3083\u30FC"
-  - "\u308A\u30FC\u3080\u30FC"
+  idleButtons:
+  - {fileID: 835060256}
+  - {fileID: 1174447996}
+  - {fileID: 1189690148}
+  attackText: []
+  idleText: []
   controller:
   - {fileID: 9100000, guid: 5f002c41c9817134794641c49a43a6f7, type: 2}
+  - {fileID: 9100000, guid: 025e5e490d95f2148a3603a503655754, type: 2}
 --- !u!212 &314410421
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1738,8 +1747,12 @@ MonoBehaviour:
   decide: {fileID: 8300000, guid: 031e9e74a0fc16c428b8861a2a70e925, type: 3}
   cancel: {fileID: 8300000, guid: c8e9fb1f61fee2b4d9c783f9b54280e4, type: 3}
   notExecute: {fileID: 8300000, guid: e3f99f14f044994489561b519c8bceaf, type: 3}
+  escape: {fileID: 8300000, guid: 694d468933b84a74e8e7e3eb7a3ae18c, type: 3}
   normalAttack: {fileID: 8300000, guid: 6f496ee0330769443ab4f931e81e9e07, type: 3}
-  superFrame: {fileID: 8300000, guid: aa8db9f199bab5e4c887f9b013e923d8, type: 3}
+  hyperRay: {fileID: 0}
+  doubleSlash: {fileID: 8300000, guid: 87bde009cf5396640ad5a1c6ef369738, type: 3}
+  superFlame: {fileID: 8300000, guid: 9029f554e0031ce4084539c6a7392646, type: 3}
+  fleezeAce: {fileID: 8300000, guid: d3744fa1147f0574ba7fb76c864debab, type: 3}
 --- !u!1 &474288975
 GameObject:
   m_ObjectHideFlags: 0
@@ -2473,7 +2486,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u9053\u5177"
+  m_Text: "\u904A\u3076"
 --- !u!222 &867206517
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4752,7 +4765,7 @@ GameObject:
   - component: {fileID: 1544984472}
   - component: {fileID: 1544984471}
   m_Layer: 5
-  m_Name: ToolButton
+  m_Name: IdleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5580,16 +5593,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: "\u59EB"
   defaultPos: {x: 2, y: 2}
-  buttonsObject:
+  attackButtons:
   - {fileID: 1703885192}
   - {fileID: 29336450}
   - {fileID: 175314787}
-  buttonsText:
-  - "\u8E74\u308A"
-  - "\u30AB\u30C1\u30B3\u30DF"
-  - "\u30B9\u30EA\u9003\u3052"
+  idleButtons:
+  - {fileID: 835060256}
+  - {fileID: 1174447996}
+  - {fileID: 1189690148}
+  attackText: []
+  idleText: []
   controller:
   - {fileID: 9100000, guid: 83e7829d8e84662448eb9399310cd75b, type: 2}
+  - {fileID: 9100000, guid: 688011d0b6894994fad3480ee27bb32c, type: 2}
 --- !u!212 &1814644014
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6090,8 +6106,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Enemy2
   defaultPos: {x: 1, y: 1}
-  buttonsObject: []
-  buttonsText: []
+  attackButtons: []
+  idleButtons: []
+  attackText: []
+  idleText: []
   controller: []
 --- !u!1 &1928006559
 GameObject:
@@ -6409,7 +6427,7 @@ GameObject:
   - component: {fileID: 2080583047}
   - component: {fileID: 2080583046}
   m_Layer: 5
-  m_Name: Tool
+  m_Name: Idle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

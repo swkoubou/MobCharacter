@@ -28,7 +28,7 @@ public class BattleManager : MonoBehaviour
     {
         none = -1,
         attack,
-        tool,
+        idle,
         move,
         escape
     };
@@ -66,7 +66,7 @@ public class BattleManager : MonoBehaviour
     public GameObject attackCommand;
 
     [HideInInspector]
-    public GameObject toolCommand;
+    public GameObject idleCommand;
 
     [HideInInspector]
     public GameObject moveCommand;
@@ -109,6 +109,13 @@ public class BattleManager : MonoBehaviour
     public AudioClass audioClass;
     private AudioSource soundBox;
 
+    //全キャラのコマンドをスタックするデリゲート
+    public delegate void StackCommandPlayer();
+    public StackCommandPlayer stackCommandPlayer;
+    public delegate void StackCommandBraver();
+    public StackCommandBraver stackCommandBraver;
+    public delegate void StackCommandPrincess();
+    public StackCommandPrincess stackCommandPrincess;
 
     void Awake()
     {
@@ -158,8 +165,7 @@ public class BattleManager : MonoBehaviour
             else
             {
                 instance.commandPanel.SetActive(true);
-            }
-            
+            } 
         }
 
         //実験用
@@ -176,6 +182,11 @@ public class BattleManager : MonoBehaviour
             }
             print(buff);
         }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            instance.player.DamagedAnim(10);
+        }
     }
 
     //読み込まれる毎に初期化
@@ -189,7 +200,7 @@ public class BattleManager : MonoBehaviour
         instance.commandPanel = GameObject.Find(commandPanelPath);
         instance.mainCommand = GameObject.Find(commandPanelPath + "Main");
         instance.attackCommand = GameObject.Find(commandPanelPath + "Attack");
-        instance.toolCommand = GameObject.Find(commandPanelPath + "Tool");
+        instance.idleCommand = GameObject.Find(commandPanelPath + "Idle");
         instance.moveCommand = GameObject.Find(commandPanelPath + "Move");
         instance.escapeCommand = GameObject.Find(commandPanelPath + "Escape");
         instance.whoseNameText = GameObject.Find(whoseNameTextPath).GetComponent<Text>();
@@ -200,6 +211,7 @@ public class BattleManager : MonoBehaviour
         instance.eventSystem = FindObjectOfType<EventSystem>();
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
+        instance.changeTurnWaitTime = 1f;
 
         for (int i = 0; i < logText.Length; i++)
             logText[i].text = null;
@@ -262,10 +274,13 @@ public class BattleManager : MonoBehaviour
     //Playerのターンにする+初期化
     public IEnumerator ChangeTurnPlayer()
     {
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.player;
+        if (instance.player.gameObject == null)
+            ChangeTurnNext();
+
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whatCommand = WhatCommand.none;
-        instance.subArrow.SetButtons(instance.player.buttonsObject);
+        instance.subArrow.SetButtons(instance.player.attackButtons);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.player.objectName;
         instance.player.SetOnClick();
@@ -280,10 +295,13 @@ public class BattleManager : MonoBehaviour
     //Braverのターンにする+初期化
     public IEnumerator ChangeTurnBraver()
     {
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.braver;
+        if (instance.braver.gameObject == null)
+            ChangeTurnNext();
+
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whatCommand = WhatCommand.none;
-        instance.subArrow.SetButtons(instance.braver.buttonsObject);
+        instance.subArrow.SetButtons(instance.braver.attackButtons);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.braver.objectName;
         instance.braver.SetOnClick();
@@ -298,10 +316,13 @@ public class BattleManager : MonoBehaviour
     //Princesのターンにする+初期化
     public IEnumerator ChangeTurnPrincess()
     {
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.princess;
+        if (instance.princess.gameObject == null)
+            ChangeTurnNext();
+
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whatCommand = WhatCommand.none;
-        instance.subArrow.SetButtons(instance.princess.buttonsObject);
+        instance.subArrow.SetButtons(instance.princess.attackButtons);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.princess.objectName;
         instance.princess.SetOnClick();
@@ -316,8 +337,15 @@ public class BattleManager : MonoBehaviour
     //Enemyのターンにする+初期化
     public IEnumerator ChangeTurnEnemy()
     {
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whoseTurn = WhoseTurn.enemy;
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
+        stackCommandPlayer();
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
+        stackCommandBraver();
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
+        stackCommandPrincess(); 
+
+        yield return new WaitForSeconds(instance.changeTurnWaitTime);
         instance.whatCommand = WhatCommand.none;
         countEnemyTurn = 0;
         StartCoroutine(NextEnemyTurn());
@@ -450,7 +478,7 @@ public class BattleManager : MonoBehaviour
     //準備ができているならtrue, できていないならfalsaeを返す
     public bool OnReadyDetails()
     {
-        if (instance.isPushed && !FindObjectOfType<iTween>())
+        if(true)//if (instance.isPushed && !FindObjectOfType<iTween>())
         {
             //ChangeTurnNext();
 
@@ -483,10 +511,10 @@ public class BattleManager : MonoBehaviour
         OnReady();
     }
 
-    public void OnTool()
+    public void OnIdle()
     {
-        instance.nowDetailCommand = instance.toolCommand;
-        instance.whatCommand = WhatCommand.tool;
+        instance.nowDetailCommand = instance.idleCommand;
+        instance.whatCommand = WhatCommand.idle;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
         instance.subArrow.SetButtons(buttons);

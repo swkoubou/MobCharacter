@@ -19,6 +19,6 @@ public class AnimController : MonoBehaviour
 
     public void AnimEnd()
     {
-        BattleManager.instance.ChangeTurnNext();
+        //BattleManager.instance.ChangeTurnNext();
     }
 }

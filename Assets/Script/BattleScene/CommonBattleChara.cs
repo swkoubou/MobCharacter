@@ -18,15 +18,31 @@ public class CommonBattleChara : MonoBehaviour
     protected Slider HPber;
     protected Vector2 hpberOffset;
 
-    public Button[] buttonsObject;
-    public string[] buttonsText;
+    public Button[] attackButtons;
+    public Button[] idleButtons;
+
+    [HideInInspector]
+    public string[] attackText;
+    [HideInInspector]
+    public string[] idleText;
 
     public RuntimeAnimatorController[] controller;
     protected Animator anim;
+    protected GameObject effecter;
 
     protected AudioClass audioClass;
     protected AudioSource soundBox;
-    
+
+    //エラーメッセージリスト
+    public class MessageList
+    {
+        //攻撃系
+        public string nonTarget = "攻撃目標が居ません";
+
+        //移動系
+        public string nonMove = "移動できません";
+    }
+    public MessageList messageList = new MessageList();
 
     //protected void Start()
     //{
@@ -37,7 +53,8 @@ public class CommonBattleChara : MonoBehaviour
     protected void Start()
     {
         //アニメーション用のボックスを子オブジェクトとして生成
-        (Instantiate(Resources.Load("EffectAnimator"), transform) as GameObject).transform.SetParent(gameObject.transform);
+        effecter = (Instantiate(Resources.Load("Effecter"), transform) as GameObject);
+        effecter.transform.SetParent(gameObject.transform);
 
         //HPバーを子オブジェクトとして生成
         var canvas = (Instantiate(Resources.Load("HPber"), (Vector2)transform.position + hpberOffset, Quaternion.identity) as GameObject);
@@ -52,11 +69,42 @@ public class CommonBattleChara : MonoBehaviour
         soundBox = FindObjectOfType<AudioSource>();
     }
 
-    public void LoseHP(int dmg)
+    //攻撃されたとき、攻撃側からここにアクセス
+    public void DamagedAnim(int dmg)
     {
         HP -= dmg;
         HPber.value = HP;
+
+        if (HP <= 0)
+        {
+            iTween.FadeTo(gameObject, iTween.Hash("alpha", 0f, "time", 2f));
+            Destroy(gameObject, 2f);
+        }
+        else
+        {
+            iTween.ShakePosition(gameObject, iTween.Hash("x", 0.1f, "time", 1.5f));
+
+            var options = FlashingManager.Hash("minAlpha", 0.3f, "color", Color.red, "count", 4, "time", 1.5f);
+            FlashingManager.Execute(GetComponent<SpriteRenderer>(), options);
+        }
     }
+
+    //public void LoseHP(int dmg)
+    //{
+    //    HP -= dmg;
+    //    HPber.value = HP;
+
+    //    if (HP <= 0)
+    //        Delete();
+    //}
+
+    //protected void Delete()
+    //{
+    //    var options = new Dictionary<string, object>();
+    //    options.Add("time", 2f);
+    //    FlashingManager.Execute(gameObject.GetComponent<SpriteRenderer>(), options);
+    //    Destroy(gameObject, 1.5f);
+    //}
 
     //グリッド配列にキャラクタを設置
     protected void SetGrid(GameObject obj, Vector2 pos)
@@ -164,11 +212,11 @@ public class CommonBattleChara : MonoBehaviour
 
     protected void SetMethod(UnityAction[] method)
     {
-        for (int i = 0; i < buttonsObject.Length; i++)
+        for (int i = 0; i < attackButtons.Length; i++)
         {
-            buttonsObject[i].onClick.RemoveAllListeners();
-            buttonsObject[i].onClick.AddListener(method[i]);
-            buttonsObject[i].transform.GetComponentInChildren<Text>().text = buttonsText[i];
+            attackButtons[i].onClick.RemoveAllListeners();
+            attackButtons[i].onClick.AddListener(method[i]);
+            attackButtons[i].transform.GetComponentInChildren<Text>().text = attackText[i];
         }
     }
 
@@ -198,7 +246,7 @@ public class CommonBattleChara : MonoBehaviour
         BattleManager.instance.ChangeTurnNext();
     }
 
-    protected void OnNormalAttack(RuntimeAnimatorController effect)
+    protected void OnNormalAttack()
     {
         Vector2 movedPos = ConvertObjectToVector(gameObject);
 
@@ -206,8 +254,10 @@ public class CommonBattleChara : MonoBehaviour
         movedPos.y = 1;
 
         //線形に居ない場合は実行しない
-        if (movedPos.x == -1 || movedPos.y == -1)
+        if (movedPos.x == -1 || movedPos.y == -1 || ConvertVectorToObject(movedPos) == null)
         {
+            BattleManager.instance.AddMessage(messageList.nonTarget);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
             return;
         }
 
@@ -221,8 +271,8 @@ public class CommonBattleChara : MonoBehaviour
 
             AnimStart(null, audioClass.normalAttack);
             BattleManager.instance.AddMessage(objectName + "の通常攻撃!");
-            Invoke("DelayChange", BattleManager.instance.changeTurnWaitTime);
-            ConvertVectorToObject(new Vector2((int)movedPos.x, (int)movedPos.y)).GetComponent<CommonBattleChara>().LoseHP(attack);
+            //Invoke("DelayChange", BattleManager.instance.changeTurnWaitTime);
+            ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
         }
     }
 
@@ -256,7 +306,7 @@ public class CommonBattleChara : MonoBehaviour
         }
         else
         {
-            print("移動来ません");
+            print(messageList.nonMove);
         }
     }
 
@@ -282,7 +332,7 @@ public class CommonBattleChara : MonoBehaviour
         //対角に居ない場合は実行しない
         if (movedPos.x == -1 || movedPos.y == -1)
         {
-            BattleManager.instance.AddMessage("移動攻撃できません");
+            BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
             return;
         }
@@ -299,7 +349,7 @@ public class CommonBattleChara : MonoBehaviour
         }
         else
         {
-            print("移動攻撃できません");
+            print(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
     }
@@ -313,7 +363,7 @@ public class CommonBattleChara : MonoBehaviour
             OnMoveLocation(-1);
         else
         {
-            BattleManager.instance.AddMessage("移動できません");
+            BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
     }
@@ -327,7 +377,7 @@ public class CommonBattleChara : MonoBehaviour
             OnMoveLocation(1);
         else
         {
-            BattleManager.instance.AddMessage("移動できません");
+            BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
     }
@@ -340,7 +390,7 @@ public class CommonBattleChara : MonoBehaviour
 
         if (ConvertVectorToObject(movedPos) != null)
         {
-            BattleManager.instance.AddMessage("移動できません");
+            BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
         else

@@ -12,10 +12,11 @@ public class BattlePlayer : CommonBattleChara
     {
         HP = 20;
         attack = 2;
-        defaultPos = new Vector2(0, 2);
+        defaultPos = new Vector2(1, 0);
         defaultOffset = new Vector2(0, 1);
         hpberOffset = new Vector2(0, -1.32f);
-        //SetGrid(gameObject, defaultPos);
+
+        attackText = new string[3] {"通常攻撃", "バーチカルアタック", "スラッシュスラント"};
         base.Start();
     }
     
@@ -32,9 +33,11 @@ public class BattlePlayer : CommonBattleChara
 
     /*以下ボタン関数*/
 
-    public void OnNormalAttack()
+    public new void OnNormalAttack()
     {
-        base.OnNormalAttack(controller[0]);
+        //base.OnNormalAttack();
+        BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(base.OnNormalAttack);
+        BattleManager.instance.ChangeTurnNext();
     }
 
     public new void OnAttackMoveVertical()
@@ -49,7 +52,7 @@ public class BattlePlayer : CommonBattleChara
 
     public void OnEscape()
     {
-        FadeSceneManager.Execute(Loader.battleSceneName);
-        soundBox.PlayOneShot(audioClass.decide, 1f);
+        FadeSceneManager.Execute(Loader.boardSceneName);
+        soundBox.PlayOneShot(audioClass.escape, 1f);
     }
 }

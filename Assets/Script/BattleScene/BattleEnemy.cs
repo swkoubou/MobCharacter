@@ -21,6 +21,12 @@ public abstract class BattleEnemy : CommonBattleChara
 
     }
 
+    //DestroyされたらListからも消しておく
+    private void OnDestroy()
+    {
+        BattleManager.instance.enemies.Remove(gameObject);
+    }
+
     public void EnemyTurn()
     {
         BattleManager.instance.countEnemyTurn++;
