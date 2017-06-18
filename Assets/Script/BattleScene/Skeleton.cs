@@ -10,7 +10,7 @@ public class Skeleton : BattleEnemy
     new void Start()
     {
         HP = 10;
-        attack = 1;
+        attack = 5;
         defaultOffset = new Vector2(0, 1.5f);
         hpberOffset = new Vector2(0, -1.8f);
         base.Start();

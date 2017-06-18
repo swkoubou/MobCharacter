@@ -7,7 +7,7 @@ public abstract class BattleEnemy : CommonBattleChara
 {
     protected float changeTurnWaitTime = 1f;
     protected float enemyMoveTime;
-    private bool canMove = true;
+    private bool canMove;
 
     protected new void Start()
     {
@@ -18,7 +18,7 @@ public abstract class BattleEnemy : CommonBattleChara
 
     void Update()
     {
-
+        print(gameObject);
     }
 
     //DestroyされたらListからも消しておく
@@ -29,7 +29,6 @@ public abstract class BattleEnemy : CommonBattleChara
 
     public void EnemyTurn()
     {
-        BattleManager.instance.countEnemyTurn++;
         canMove = true;
 
         List<GameObject> players = SerchChara();
@@ -38,6 +37,7 @@ public abstract class BattleEnemy : CommonBattleChara
         {
             print("1");
             SwitchCommand(target, Random.Range(0, 10));
+            BattleManager.instance.NextEnemyTurn();
         }
         else
         {
@@ -76,13 +76,13 @@ public abstract class BattleEnemy : CommonBattleChara
         return players;
     }
 
-    protected GameObject SameRowObject(List<GameObject> player)
+    protected GameObject SameRowObject(List<GameObject> players)
     {
-        for (int i = 0; i < player.Count; i++)
+        for (int i = 0; i < players.Count; i++)
         {
-            if (ConvertObjectToVector(gameObject).x == ConvertObjectToVector(player[i]).x)
+            if (ConvertObjectToVector(gameObject).x == ConvertObjectToVector(players[i]).x)
             {
-                return player[i];
+                return players[i];
             }
         }
 
@@ -122,13 +122,15 @@ public abstract class BattleEnemy : CommonBattleChara
         }
 
         var moveHash = new Hashtable();
-        //gridPOsiiotnsだとnullのときエラーが出るので
+        //gridPosiiotnsだとnullのときエラーが出るので
         moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
         moveHash.Add("time", enemyMoveTime);
         iTween.MoveFrom(gameObject, moveHash);
 
         soundBox.PlayOneShot(audioClass.normalAttack, 1f);
         BattleManager.instance.AddMessage(objectName + "の攻撃");
+        target.GetComponent<CommonBattleChara>().DamagedAnim(attack);
+        BattleManager.instance.NextEnemyTurn();
     }
 
     //移動する
@@ -140,22 +142,24 @@ public abstract class BattleEnemy : CommonBattleChara
         //移動先がEnemyで動けないなら
         if (ConvertVectorToObject(movedPos) != null && ConvertVectorToObject(movedPos).tag == "Enemy")
         {
+            print("4");
             if (!canMove)
-                BattleManager.instance.TurnSkip();
+                BattleManager.instance.NextEnemyTurn();
             else
                 canMove = false;
-            print(canMove);
+            print("canMove: "+canMove);
             OnEnemyMoveLocation(-n);
         }
         else if (ConvertVectorToObject(movedPos) != null)
         {
             print("移動来ません" + n);
-            BattleManager.instance.TurnSkip();
+            BattleManager.instance.NextEnemyTurn();
         }
         else
         {
             ChangeGrid(gameObject, movedPos);
             BattleManager.instance.AddMessage(objectName + "は移動した");
+            BattleManager.instance.NextEnemyTurn();
         }
     }
 

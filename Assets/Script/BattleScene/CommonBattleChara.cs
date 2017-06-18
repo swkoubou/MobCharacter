@@ -15,6 +15,7 @@ public class CommonBattleChara : MonoBehaviour
     public Vector2 defaultPos;
     protected Vector2 defaultOffset;
 
+    protected GameObject HPcanvas;
     protected Slider HPber;
     protected Vector2 hpberOffset;
 
@@ -57,9 +58,9 @@ public class CommonBattleChara : MonoBehaviour
         effecter.transform.SetParent(gameObject.transform);
 
         //HPバーを子オブジェクトとして生成
-        var canvas = (Instantiate(Resources.Load("HPber"), (Vector2)transform.position + hpberOffset, Quaternion.identity) as GameObject);
-        canvas.transform.SetParent(gameObject.transform);
-        HPber = canvas.GetComponentInChildren<Slider>();
+        HPcanvas = (Instantiate(Resources.Load("HPber"), (Vector2)transform.position + hpberOffset, Quaternion.identity) as GameObject);
+        HPcanvas.transform.SetParent(gameObject.transform);
+        HPber = HPcanvas.GetComponentInChildren<Slider>();
         HPber.maxValue = HP;
         HPber.value = HPber.maxValue;
 
@@ -109,7 +110,7 @@ public class CommonBattleChara : MonoBehaviour
     //グリッド配列にキャラクタを設置
     protected void SetGrid(GameObject obj, Vector2 pos)
     {
-        if(obj == null)
+        if (obj == null)
         {
             BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = null;
         }
@@ -133,11 +134,11 @@ public class CommonBattleChara : MonoBehaviour
     protected bool CanChangeGrid(Vector2 target)
     {
         GameObject obj = ConvertVectorToObject(target);
-        if(obj == null)
+        if (obj == null)
         {
             return true;
         }
-        else if(obj.tag != "Enemy")
+        else if (obj.tag != "Enemy")
         {
             return true;
         }
@@ -164,18 +165,26 @@ public class CommonBattleChara : MonoBehaviour
     //向きをチェック
     protected void CheckDirection(GameObject obj, Vector2 target)
     {
-        var tmp = obj.transform.localScale;
+        var scale = obj.transform.localScale;
+        var ber = HPcanvas.transform.localScale;
         if (target.y == 2)
         {
-            if (tmp.x < 0)
-                tmp.x *= -1;
+            if (scale.x < 0)
+            {
+                scale.x *= -1;
+                ber *= -1;
+            }
         }
         else if (target.y == 0)
         {
-            if (0 <= tmp.x)
-                tmp.x *= -1;
+            if (0 <= scale.x)
+            {
+                scale.x *= -1;
+                ber *= -1;
+            }
         }
-        obj.transform.localScale = tmp;
+        obj.transform.localScale = scale;
+        HPcanvas.transform.localScale = ber;
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
@@ -205,18 +214,28 @@ public class CommonBattleChara : MonoBehaviour
             var tmp = new GameObject();
             Destroy(tmp, 0.1f);
             return tmp;
-        } 
+        }
         else
             return BattleManager.instance.gridPositions[(int)target.x, (int)target.y];
     }
 
-    protected void SetMethod(UnityAction[] method)
+    protected void SetMethodAttack(UnityAction[] method)
     {
         for (int i = 0; i < attackButtons.Length; i++)
         {
             attackButtons[i].onClick.RemoveAllListeners();
             attackButtons[i].onClick.AddListener(method[i]);
             attackButtons[i].transform.GetComponentInChildren<Text>().text = attackText[i];
+        }
+    }
+
+    protected void SetMethodIdle(UnityAction[] method)
+    {
+        for (int i = 0; i < idleButtons.Length; i++)
+        {
+            idleButtons[i].onClick.RemoveAllListeners();
+            idleButtons[i].onClick.AddListener(method[i]);
+            idleButtons[i].transform.GetComponentInChildren<Text>().text = idleText[i];
         }
     }
 
@@ -232,13 +251,13 @@ public class CommonBattleChara : MonoBehaviour
     //その場から動かずアニメーションを使いたいとき
     protected void OnOnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
     {
-        if (BattleManager.instance.OnReadyDetails())
-        {
-            anim.runtimeAnimatorController = effect;
-            anim.SetTrigger("Start");
-            soundBox.PlayOneShot(se, 1f);
-            BattleManager.instance.AddMessage(objectName + message);
-        }
+        BattleManager.instance.OnReadyDetails();
+
+        anim.runtimeAnimatorController = effect;
+        anim.SetTrigger("Start");
+        soundBox.PlayOneShot(se, 1f);
+        BattleManager.instance.AddMessage(objectName + message);
+
     }
 
     protected void DelayChange()
@@ -246,160 +265,99 @@ public class CommonBattleChara : MonoBehaviour
         BattleManager.instance.ChangeTurnNext();
     }
 
-    protected void OnNormalAttack()
-    {
-        Vector2 movedPos = ConvertObjectToVector(gameObject);
-
-        //攻撃し、その場に留まるので
-        movedPos.y = 1;
-
-        //線形に居ない場合は実行しない
-        if (movedPos.x == -1 || movedPos.y == -1 || ConvertVectorToObject(movedPos) == null)
-        {
-            BattleManager.instance.AddMessage(messageList.nonTarget);
-            soundBox.PlayOneShot(audioClass.notExecute, 1f);
-            return;
-        }
-
-        if (BattleManager.instance.OnReadyDetails())
-        {
-            var moveHash = new Hashtable();
-            //gridPOsiiotnsだとnullのときエラーが出るので
-            moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
-            moveHash.Add("time", charMoveTime);
-            iTween.MoveFrom(gameObject, moveHash);
-
-            AnimStart(null, audioClass.normalAttack);
-            BattleManager.instance.AddMessage(objectName + "の通常攻撃!");
-            //Invoke("DelayChange", BattleManager.instance.changeTurnWaitTime);
-            ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
-        }
-    }
-
-    protected void OnAttackMoveVertical()
-    {
-        Vector2 movedPos = ConvertObjectToVector(gameObject);
-
-        //向かい側に移動するのでyだけ動かす
-        if (movedPos.y == 0)
-            movedPos.y = 2;
-        else if (movedPos.y == 2)
-            movedPos.y = 0;
-        else
-            movedPos.y = -1;
-
-        //線形に居ない場合は実行しない
-        if (movedPos.x == -1 || movedPos.y == -1)
-        {
-            return;
-        }
-
-        if (CanChangeGrid(movedPos))
-        {
-            if (BattleManager.instance.OnReadyDetails())
-            {
-                ChangeGrid(gameObject, movedPos);
-                MoveGrid(gameObject, movedPos);
-                BattleManager.instance.AddMessage(objectName + "の移動攻撃!");
-                BattleManager.instance.ChangeTurnNext();
-            }
-        }
-        else
-        {
-            print(messageList.nonMove);
-        }
-    }
-
-    protected void OnAttackMoveSlash()
-    {
-        Vector2 movedPos = ConvertObjectToVector(gameObject);
-
-        //対角に移動するので0と2を反転
-        if (movedPos.x == 0)
-            movedPos.x = 2;
-        else if (movedPos.x == 2)
-            movedPos.x = 0;
-        else
-            movedPos.x = -1;
-
-        if (movedPos.y == 0)
-            movedPos.y = 2;
-        else if (movedPos.y == 2)
-            movedPos.y = 0;
-        else
-            movedPos.y = -1;
-
-        //対角に居ない場合は実行しない
-        if (movedPos.x == -1 || movedPos.y == -1)
-        {
-            BattleManager.instance.AddMessage(messageList.nonMove);
-            soundBox.PlayOneShot(audioClass.notExecute, 1f);
-            return;
-        }
-
-        if (CanChangeGrid(movedPos))
-        {
-            if (BattleManager.instance.OnReadyDetails())
-            {
-                ChangeGrid(gameObject, movedPos);
-                MoveGrid(gameObject, movedPos);
-                BattleManager.instance.AddMessage(objectName + "のスラッシュ攻撃!");
-                BattleManager.instance.ChangeTurnNext();
-            }
-        }
-        else
-        {
-            print(messageList.nonMove);
-            soundBox.PlayOneShot(audioClass.notExecute, 1f);
-        }
-    }
-
     public void OnMoveUp()
     {
-        Vector2 pos = ConvertObjectToVector(gameObject);
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
 
         //上段に居ないときのみ実行
-        if (pos.x != 0)
-            OnMoveLocation(-1);
-        else
+        if (movedPos.x == 0)
         {
+            print("up");
             BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
         }
+
+        switch (BattleManager.instance.GetWhoseTurn())
+        {
+            case BattleManager.WhoseTurn.player:
+                BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(MoveUp);
+                break;
+
+            case BattleManager.WhoseTurn.braver:
+                BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(MoveUp);
+                break;
+
+            case BattleManager.WhoseTurn.princess:
+                BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(MoveUp);
+                break;
+        }
+        BattleManager.instance.ChangeTurnNext();
     }
 
     public void OnMoveDown()
     {
-        Vector2 pos = ConvertObjectToVector(gameObject);
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
 
         //下段に居ないときのみ実行
-        if (pos.x != 2)
-            OnMoveLocation(1);
-        else
+        if (movedPos.x == 2)
         {
+            print("down");
             BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
+
+        switch (BattleManager.instance.GetWhoseTurn())
+        {
+            case BattleManager.WhoseTurn.player:
+                BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(MoveDown);
+                break;
+
+            case BattleManager.WhoseTurn.braver:
+                BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(MoveDown);
+                break;
+
+            case BattleManager.WhoseTurn.princess:
+                BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(MoveDown);
+                break;
+        }
+        BattleManager.instance.ChangeTurnNext();
+    }
+
+    //移動する
+    protected void MoveUp()
+    {
+        Vector2 movedPos = ConvertObjectToVector(gameObject);
+        movedPos.x -= 1;
+
+        if (ConvertVectorToObject(movedPos) != null)
+        {
+            BattleManager.instance.AddMessage(objectName + "は" + messageList.nonMove);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+        }
+        else
+        {
+            BattleManager.instance.OnReadyDetails();
+            ChangeGrid(gameObject, movedPos);
         }
     }
 
     //移動する
-    protected void OnMoveLocation(int n)
+    protected void MoveDown()
     {
         Vector2 movedPos = ConvertObjectToVector(gameObject);
-        movedPos.x += n;
+        movedPos.x += 1;
 
         if (ConvertVectorToObject(movedPos) != null)
         {
-            BattleManager.instance.AddMessage(messageList.nonMove);
+            BattleManager.instance.AddMessage(objectName+"は"+messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
         }
         else
         {
-            if (BattleManager.instance.OnReadyDetails())
-            {
-                ChangeGrid(gameObject, movedPos);
-                BattleManager.instance.ChangeTurnNext();
-            }
+            BattleManager.instance.OnReadyDetails();
+            ChangeGrid(gameObject, movedPos);
         }
     }
 }

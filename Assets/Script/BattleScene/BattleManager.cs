@@ -35,8 +35,7 @@ public class BattleManager : MonoBehaviour
     private WhatCommand whatCommand;
 
     //ターンを変更するとき何秒待つか
-    [Range(0, 2)]
-    public float changeTurnWaitTime;
+    public const float CHANGE_TURN_WAIT_TIME = 1.2f;
 
     [Range(0, 1)]
     public float panelMoveTime;
@@ -117,6 +116,7 @@ public class BattleManager : MonoBehaviour
     public delegate void StackCommandPrincess();
     public StackCommandPrincess stackCommandPrincess;
 
+
     void Awake()
     {
         if (instance == null)
@@ -145,14 +145,13 @@ public class BattleManager : MonoBehaviour
         else
             instance.eventSystem.enabled = true;
 
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        if (GetWhoseTurn() != WhoseTurn.enemy && !FindObjectOfType<iTween>())
         {
-            OnCommandBaack();
-        }
-
-        if (GetWhoseTurn() != WhoseTurn.enemy)
-        {
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            {
+                OnCommandBack(audioClass.cancel);
+            }
+            else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
                 //CommandPanelにTraceLineを入れておくと予測線も消えてしまうため
                 instance.commandPanel.SetActive(false);
@@ -165,7 +164,7 @@ public class BattleManager : MonoBehaviour
             else
             {
                 instance.commandPanel.SetActive(true);
-            } 
+            }
         }
 
         //実験用
@@ -211,7 +210,6 @@ public class BattleManager : MonoBehaviour
         instance.eventSystem = FindObjectOfType<EventSystem>();
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
-        instance.changeTurnWaitTime = 1f;
 
         for (int i = 0; i < logText.Length; i++)
             logText[i].text = null;
@@ -232,8 +230,8 @@ public class BattleManager : MonoBehaviour
         //最初は仮に入れておく
         instance.nowDetailCommand = instance.attackCommand;
 
-        //ターンをPlayerから始める
-        StartCoroutine(ChangeTurnPlayer());
+        //ターンをBraverから始める
+        StartCoroutine(ChangeTurnBraver());
     }
 
 
@@ -251,7 +249,7 @@ public class BattleManager : MonoBehaviour
     }
 
     //メッセージログ
-    public void AddMessage(string log) 
+    public void AddMessage(string log)
     {
         for (int i = 1; i < logText.Length; i++)
         {
@@ -272,39 +270,43 @@ public class BattleManager : MonoBehaviour
     }
 
     //Playerのターンにする+初期化
-    public IEnumerator ChangeTurnPlayer()
+    public IEnumerator ChangeTurnPlayer(float time = CHANGE_TURN_WAIT_TIME)
     {
         instance.whoseTurn = WhoseTurn.player;
         if (instance.player.gameObject == null)
             ChangeTurnNext();
 
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
+        yield return new WaitForSeconds(time);
+        OnCommandBack(null);
         instance.whatCommand = WhatCommand.none;
         instance.subArrow.SetButtons(instance.player.attackButtons);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.player.objectName;
-        instance.player.SetOnClick();
+        instance.player.SetOnClickAttack();
+        instance.player.SetOnClickIdle();
         instance.mainArrow.StartSelect();
-
+        
         //今どのキャラを操作しているかを表示する矢印, 最初に初期化
-        //Destroy(nowSelectedCharactor);
+        Destroy(nowSelectedCharactor);
         nowSelectedCharactor = Instantiate(Resources.Load("SelectedCharactor"), instance.player.gameObject.transform) as GameObject;
         nowSelectedCharactor.transform.parent = instance.player.gameObject.transform;
     }
 
     //Braverのターンにする+初期化
-    public IEnumerator ChangeTurnBraver()
+    public IEnumerator ChangeTurnBraver(float time = CHANGE_TURN_WAIT_TIME)
     {
         instance.whoseTurn = WhoseTurn.braver;
         if (instance.braver.gameObject == null)
             ChangeTurnNext();
 
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
+        yield return new WaitForSeconds(time);
+        OnCommandBack(null);
         instance.whatCommand = WhatCommand.none;
         instance.subArrow.SetButtons(instance.braver.attackButtons);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.braver.objectName;
-        instance.braver.SetOnClick();
+        instance.braver.SetOnClickAttack();
+        instance.braver.SetOnClickIdle();
         instance.mainArrow.StartSelect();
 
         //今どのキャラを操作しているかを表示する矢印, 最初に初期化
@@ -314,18 +316,20 @@ public class BattleManager : MonoBehaviour
     }
 
     //Princesのターンにする+初期化
-    public IEnumerator ChangeTurnPrincess()
+    public IEnumerator ChangeTurnPrincess(float time = CHANGE_TURN_WAIT_TIME)
     {
         instance.whoseTurn = WhoseTurn.princess;
         if (instance.princess.gameObject == null)
             ChangeTurnNext();
 
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
+        yield return new WaitForSeconds(time);
+        OnCommandBack(null);
         instance.whatCommand = WhatCommand.none;
         instance.subArrow.SetButtons(instance.princess.attackButtons);
         instance.mainCommand.SetActive(true);
         instance.whoseNameText.text = instance.princess.objectName;
-        instance.princess.SetOnClick();
+        instance.princess.SetOnClickAttack();
+        instance.princess.SetOnClickIdle();
         instance.mainArrow.StartSelect();
 
         //今どのキャラを操作しているかを表示する矢印, 最初に初期化
@@ -335,23 +339,49 @@ public class BattleManager : MonoBehaviour
     }
 
     //Enemyのターンにする+初期化
-    public IEnumerator ChangeTurnEnemy()
+    public IEnumerator ChangeTurnEnemy(float time = CHANGE_TURN_WAIT_TIME)
     {
         instance.whoseTurn = WhoseTurn.enemy;
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
-        stackCommandPlayer();
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
-        stackCommandBraver();
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
-        stackCommandPrincess(); 
-
-        yield return new WaitForSeconds(instance.changeTurnWaitTime);
-        instance.whatCommand = WhatCommand.none;
-        countEnemyTurn = 0;
-        StartCoroutine(NextEnemyTurn());
 
         //今どのキャラを操作しているかを表示する矢印, 最初に初期化
         Destroy(nowSelectedCharactor);
+
+        //デリゲートのスタックを吐き出す
+        if (stackCommandBraver != null)
+            stackCommandBraver();
+        yield return new WaitForSeconds(time);
+        if (stackCommandPrincess != null)
+            stackCommandPrincess();
+        yield return new WaitForSeconds(time);
+        if (stackCommandPlayer != null)
+            stackCommandPlayer();
+       
+        yield return new WaitForSeconds(time);
+        instance.whatCommand = WhatCommand.none;
+        countEnemyTurn = 0;
+        StartCoroutine(RotateEnemyTurn());
+    }
+
+    //前のターンに自動判断で切り替え
+    public void ChangeTurnBack()
+    {
+        switch (GetWhoseTurn())
+        {
+            case WhoseTurn.braver:
+                //AddMessage("これ以上戻れません");
+                break;
+
+            case WhoseTurn.princess:
+                StartCoroutine(ChangeTurnBraver(0f));
+                break;
+
+            case WhoseTurn.player:
+                StartCoroutine(ChangeTurnPrincess(0f));
+                break;
+
+            case WhoseTurn.enemy:
+                break;
+        }
     }
 
     //次のターンに自動判断で切り替え
@@ -359,20 +389,20 @@ public class BattleManager : MonoBehaviour
     {
         switch (GetWhoseTurn())
         {
-            case WhoseTurn.player:
-                StartCoroutine(ChangeTurnBraver());
-                break;
-
             case WhoseTurn.braver:
-                StartCoroutine(ChangeTurnPrincess());
+                StartCoroutine(ChangeTurnPrincess(0f));
                 break;
 
             case WhoseTurn.princess:
+                StartCoroutine(ChangeTurnPlayer(0f));
+                break;
+
+            case WhoseTurn.player:
                 StartCoroutine(ChangeTurnEnemy());
                 break;
 
             case WhoseTurn.enemy:
-                StartCoroutine(ChangeTurnPlayer());
+                StartCoroutine(ChangeTurnBraver());
                 break;
         }
     }
@@ -382,27 +412,25 @@ public class BattleManager : MonoBehaviour
      ********************/
 
     //全てのEnemyを攻撃させる
-    public IEnumerator NextEnemyTurn()
+    public IEnumerator RotateEnemyTurn()
     {
-        while (true)
+        yield return new WaitForSeconds(CHANGE_TURN_WAIT_TIME / 2f);
+
+        //Enemyの数よりカウンターが回ったらプレイヤーのターンにする
+        if (instance.countEnemyTurn >= enemies.Count)
         {
-            yield return new WaitForSeconds((instance.changeTurnWaitTime+1f) / 2);
-
-            //Enemyの数よりカウンターが回ったらプレイヤーのターンにする
-            if (instance.countEnemyTurn >= enemies.Count)
-            {
-                instance.ChangeTurnNext();
-                break;
-            }
-
-            enemies[instance.countEnemyTurn].GetComponent<BattleEnemy>().EnemyTurn();
+            instance.ChangeTurnNext();
+            yield break;
         }
+
+        enemies[instance.countEnemyTurn].GetComponent<BattleEnemy>().EnemyTurn();
     }
 
     //なにもできないとき
-    public void TurnSkip()
+    public void NextEnemyTurn()
     {
         instance.countEnemyTurn++;
+        StartCoroutine(RotateEnemyTurn());
     }
 
     /********************
@@ -416,24 +444,30 @@ public class BattleManager : MonoBehaviour
     }
 
     //サブコマンドからメインコマンドに戻るとき
-    public void OnCommandBaack()
+    public void OnCommandBack(AudioClip se)
     {
-        if (instance.isPushed && !FindObjectOfType<iTween>())
+        if (instance.isPushed)
         {
             instance.whatCommand = WhatCommand.none;
             instance.isPushed = false;
             iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
-            instance.nowDetailCommand.SetActive(false);
-            instance.mainArrow.StartSelect();
-            instance.subArrow.StopSelect();
-            soundBox.PlayOneShot(audioClass.cancel, 1f);
         }
+        else
+        {
+            //ChangeTurnから再帰でもう一度呼び出されてしまうため
+            if (se != null)
+                ChangeTurnBack();
+        }
+        instance.nowDetailCommand.SetActive(false);
+        instance.mainArrow.StartSelect();
+        instance.subArrow.StopSelect();
+        soundBox.PlayOneShot(se, 1f);
     }
 
     //メインコマンドが押されたら
     public bool OnCommandPushed()
     {
-        if (!instance.isPushed && !FindObjectOfType<iTween>() && FadeSceneManager.IsFadeFinished())
+        if (FadeSceneManager.IsFadeFinished() && !FindObjectOfType<iTween>())
         {
             instance.isPushed = true;
             iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x + instance.panelMoveValue, "time", instance.panelMoveTime));
@@ -476,28 +510,16 @@ public class BattleManager : MonoBehaviour
     }
 
     //準備ができているならtrue, できていないならfalsaeを返す
-    public bool OnReadyDetails()
+    public void OnReadyDetails()
     {
-        if(true)//if (instance.isPushed && !FindObjectOfType<iTween>())
-        {
-            //ChangeTurnNext();
+        instance.mainCommand.SetActive(false);
 
-            //instance.OnCommandBaack();
-            instance.mainCommand.SetActive(false);
-
-            instance.whatCommand = WhatCommand.none;
-            instance.isPushed = false;
-            iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
-            instance.nowDetailCommand.SetActive(false);
-            instance.mainArrow.StartSelect();
-            instance.subArrow.StopSelect();
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        instance.whatCommand = WhatCommand.none;
+        instance.isPushed = false;
+        iTween.MoveTo(instance.mainCommand, iTween.Hash("x", instance.mainCommand.transform.position.x - instance.panelMoveValue, "time", instance.panelMoveTime));
+        instance.nowDetailCommand.SetActive(false);
+        instance.mainArrow.StartSelect();
+        instance.subArrow.StopSelect();
     }
 
     public void OnAttack()
@@ -517,7 +539,7 @@ public class BattleManager : MonoBehaviour
         instance.whatCommand = WhatCommand.idle;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
-        instance.subArrow.SetButtons(buttons);
+        instance.subArrow.SetButtons(buttons, new Vector3(-6, 0, 0));
 
         OnReady();
     }

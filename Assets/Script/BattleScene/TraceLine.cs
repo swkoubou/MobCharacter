@@ -8,6 +8,9 @@ public class TraceLine : SelectArrow
 {
     public GameObject traceLines;
     private SpriteRenderer[] moveLine;
+    private Color lineColor;
+    private readonly Color movedColor = new Color(255, 0, 255);
+    private readonly Color notMovedColor = Color.blue;
 
     private BattlePlayer player;
     private BattleBraver braver;
@@ -55,17 +58,10 @@ public class TraceLine : SelectArrow
                         selectedColor = AttackCasePlayer();
                         break;
 
-                    case BattleManager.WhatCommand.idle:
-
-                        break;
-
                     case BattleManager.WhatCommand.move:
                         selectedColor = MoveCaseALL(player.gameObject);
                         break;
 
-                    case BattleManager.WhatCommand.escape:
-
-                        break;
                 }
                 break;
 
@@ -73,18 +69,11 @@ public class TraceLine : SelectArrow
                 switch (BattleManager.instance.GetWhatCommand())
                 {
                     case BattleManager.WhatCommand.attack:
-                        break;
-
-                    case BattleManager.WhatCommand.idle:
-
+                        selectedColor = AttackCaseBraver();
                         break;
 
                     case BattleManager.WhatCommand.move:
                         selectedColor = MoveCaseALL(braver.gameObject);
-                        break;
-
-                    case BattleManager.WhatCommand.escape:
-
                         break;
                 }
                 break;
@@ -93,19 +82,11 @@ public class TraceLine : SelectArrow
                 switch (BattleManager.instance.GetWhatCommand())
                 {
                     case BattleManager.WhatCommand.attack:
-
-                        break;
-
-                    case BattleManager.WhatCommand.idle:
-
+                        selectedColor = AttackCasePrincess();
                         break;
 
                     case BattleManager.WhatCommand.move:
                         selectedColor = MoveCaseALL(princess.gameObject);
-                        break;
-
-                    case BattleManager.WhatCommand.escape:
-
                         break;
                 }
                 break;
@@ -132,6 +113,8 @@ public class TraceLine : SelectArrow
                 selectedColor = new int[] { 4 };
             else if (pos == new Vector2(2, 2))
                 selectedColor = new int[] { 5 };
+
+            lineColor = notMovedColor;
         }
         else if (currentSelected == selectButton[1].gameObject)
         {
@@ -141,6 +124,8 @@ public class TraceLine : SelectArrow
                 selectedColor = new int[] { 2, 3 };
             else if (pos == new Vector2(2, 0) || pos == new Vector2(2, 2))
                 selectedColor = new int[] { 4, 5 };
+
+            lineColor = movedColor;
         }
         else if (currentSelected == selectButton[2].gameObject)
         {
@@ -148,6 +133,73 @@ public class TraceLine : SelectArrow
                 selectedColor = new int[] { 6, 7 };
             else if (pos == new Vector2(0, 2) || pos == new Vector2(2, 1))
                 selectedColor = new int[] { 8, 9 };
+
+            lineColor = movedColor;
+        }
+
+        return selectedColor;
+    }
+
+    int[] AttackCaseBraver()
+    {
+        int[] selectedColor = null;
+        Vector2 pos = braver.ConvertObjectToVector(braver.gameObject);
+
+        if (currentSelected == selectButton[0].gameObject)
+        {
+            if (pos == new Vector2(0, 0))
+                selectedColor = new int[] { 0 };
+            else if (pos == new Vector2(0, 2))
+                selectedColor = new int[] { 1 };
+            else if (pos == new Vector2(1, 0))
+                selectedColor = new int[] { 2 };
+            else if (pos == new Vector2(1, 2))
+                selectedColor = new int[] { 3 };
+            else if (pos == new Vector2(2, 0))
+                selectedColor = new int[] { 4 };
+            else if (pos == new Vector2(2, 2))
+                selectedColor = new int[] { 5 };
+
+            lineColor = notMovedColor;
+        }
+
+        return selectedColor;
+    }
+
+    int[] AttackCasePrincess()
+    {
+        int[] selectedColor = null;
+        Vector2 pos = princess.ConvertObjectToVector(princess.gameObject);
+
+        if (currentSelected == selectButton[0].gameObject)
+        {
+            if (pos == new Vector2(0, 0))
+                selectedColor = new int[] { 0 };
+            else if (pos == new Vector2(0, 2))
+                selectedColor = new int[] { 1 };
+            else if (pos == new Vector2(1, 0))
+                selectedColor = new int[] { 2 };
+            else if (pos == new Vector2(1, 2))
+                selectedColor = new int[] { 3 };
+            else if (pos == new Vector2(2, 0))
+                selectedColor = new int[] { 4 };
+            else if (pos == new Vector2(2, 2))
+                selectedColor = new int[] { 5 };
+
+            lineColor = notMovedColor;
+        }
+        else if (currentSelected == selectButton[1].gameObject)
+        {
+            if (pos == new Vector2(1, 0))
+                selectedColor = new int[] { 14 };
+            else if (pos == new Vector2(2, 0))
+                selectedColor = new int[] { 8 };
+            else if (pos == new Vector2(1, 2))
+                selectedColor = new int[] { 17 };
+            else if (pos == new Vector2(2, 2))
+                selectedColor = new int[]{7};
+
+            lineColor = notMovedColor;
         }
 
         return selectedColor;
@@ -181,6 +233,7 @@ public class TraceLine : SelectArrow
                 selectedColor = new int[] { 13 };
         }
 
+        lineColor = movedColor;
         return selectedColor;
     }
 
@@ -194,8 +247,13 @@ public class TraceLine : SelectArrow
         //指定したモノだけ色を変える
         for (int i = 0; i < array.Length; i++)
         {
-            moveLine[array[i]].color = new Color(250, 0, 255);
+            moveLine[array[i]].color = lineColor;
             moveLine[array[i]].enabled = true;
+        }
+
+        if (!FindObjectOfType<FlashingManager>()){
+            for (int i = 0; i < array.Length; i++)
+                FlashingManager.Execute(moveLine[array[i]], FlashingManager.Hash("minAlpha", 0.3f ,"count", 2));
         }
     }
 
