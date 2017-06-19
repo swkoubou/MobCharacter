@@ -46,12 +46,6 @@ public class Loader : MonoBehaviour
         {
             FadeSceneManager.Destroy();
         }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Image tmp = GameObject.Find("Canvas/Enemy/Image").GetComponent<Image>();
-            FlashManager.Excute(tmp);
-        }
     }
 
 

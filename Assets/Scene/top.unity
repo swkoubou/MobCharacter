@@ -478,7 +478,7 @@ MonoBehaviour:
   - {fileID: 746322566}
   soundBox: {fileID: 0}
   selectSE: {fileID: 0}
-  offset: {x: -3, y: 0, z: 0}
+  defaultOffset: {x: -180, y: 0, z: 0}
   isStartSelect: 0
 --- !u!114 &586253580
 MonoBehaviour:
