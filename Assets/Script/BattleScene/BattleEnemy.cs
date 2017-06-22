@@ -18,14 +18,15 @@ public abstract class BattleEnemy : CommonBattleChara
 
     void Update()
     {
-        print(gameObject);
+        
     }
 
     //DestroyされたらListからも消しておく
-    private void OnDestroy()
-    {
-        BattleManager.instance.enemies.Remove(gameObject);
-    }
+    //private void OnDestroy()
+    //{
+    //    BattleManager.instance.enemies.Remove(gameObject);
+    //    print("COUNT= "+BattleManager.instance.enemies.Count);
+    //}
 
     public void EnemyTurn()
     {
@@ -46,11 +47,13 @@ public abstract class BattleEnemy : CommonBattleChara
             {
                 print("2");
                 OnEnemyMoveLocation(-1);
+                BattleManager.instance.NextEnemyTurn();
             }
             else if (1 <= distance)
             {
                 print("3");
                 OnEnemyMoveLocation(1);
+                BattleManager.instance.NextEnemyTurn();
             }
         }
     }
@@ -130,7 +133,6 @@ public abstract class BattleEnemy : CommonBattleChara
         soundBox.PlayOneShot(audioClass.normalAttack, 1f);
         BattleManager.instance.AddMessage(objectName + "の攻撃");
         target.GetComponent<CommonBattleChara>().DamagedAnim(attack);
-        BattleManager.instance.NextEnemyTurn();
     }
 
     //移動する
@@ -144,22 +146,30 @@ public abstract class BattleEnemy : CommonBattleChara
         {
             print("4");
             if (!canMove)
-                BattleManager.instance.NextEnemyTurn();
+                return;
             else
+            {
                 canMove = false;
-            print("canMove: "+canMove);
-            OnEnemyMoveLocation(-n);
+                print("canMove: " + canMove);
+                OnEnemyMoveLocation(-n);
+            }
         }
         else if (ConvertVectorToObject(movedPos) != null)
         {
-            print("移動来ません" + n);
-            BattleManager.instance.NextEnemyTurn();
+            print("5");
+            if (!canMove)
+                return;
+            else
+            {
+                canMove = false;
+                print("canMove: " + canMove);
+                print("移動来ません" + n);
+            }
         }
         else
         {
             ChangeGrid(gameObject, movedPos);
             BattleManager.instance.AddMessage(objectName + "は移動した");
-            BattleManager.instance.NextEnemyTurn();
         }
     }
 

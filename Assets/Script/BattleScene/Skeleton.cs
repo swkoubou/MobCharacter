@@ -16,13 +16,6 @@ public class Skeleton : BattleEnemy
         base.Start();
     }
 
-
-    void Update()
-    {
-        
-    }
-
-
     protected override void SwitchCommand(GameObject target, int rand)
     {
         switch (rand)

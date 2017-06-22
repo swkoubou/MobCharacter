@@ -54,7 +54,10 @@ MonoBehaviour:
   player: {fileID: 0}
   braver: {fileID: 0}
   princess: {fileID: 0}
-  changeTurnWaitTime: 0.1
+  players: []
+  playersPath: 2DObject/Players
+  enemies: []
+  enemiesPath: 2DObject/Enemies
   panelMoveTime: 0.2
   panelMoveValue: -11
   isPushed: 0
@@ -63,7 +66,7 @@ MonoBehaviour:
   mainCommand: {fileID: 0}
   nowDetailCommand: {fileID: 0}
   attackCommand: {fileID: 0}
-  toolCommand: {fileID: 0}
+  idleCommand: {fileID: 0}
   moveCommand: {fileID: 0}
   escapeCommand: {fileID: 0}
   whoseNameText: {fileID: 0}
@@ -72,7 +75,5 @@ MonoBehaviour:
   mainArrow: {fileID: 0}
   subArrow: {fileID: 0}
   basePositionsPath: 2DObject/BasePositions
-  enemies: []
-  enemiesPath: 2DObject/Enemies
   countEnemyTurn: 0
   audioClass: {fileID: 0}

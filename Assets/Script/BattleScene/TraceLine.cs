@@ -131,7 +131,7 @@ public class TraceLine : SelectArrow
         {
             if (pos == new Vector2(0, 0) || pos == new Vector2(2, 2))
                 selectedColor = new int[] { 6, 7 };
-            else if (pos == new Vector2(0, 2) || pos == new Vector2(2, 1))
+            else if (pos == new Vector2(0, 2) || pos == new Vector2(2, 0))
                 selectedColor = new int[] { 8, 9 };
 
             lineColor = movedColor;
@@ -161,6 +161,32 @@ public class TraceLine : SelectArrow
                 selectedColor = new int[] { 5 };
 
             lineColor = notMovedColor;
+        }
+        else if (currentSelected == selectButton[1].gameObject)
+        {
+            if (pos == new Vector2(1, 0))
+                selectedColor = new int[] { 2, 6 };
+            else if (pos == new Vector2(2, 0))
+                selectedColor = new int[] { 4, 16 };
+            else if (pos == new Vector2(1, 2))
+                selectedColor = new int[] { 3, 9 };
+            else if (pos == new Vector2(2, 2))
+                selectedColor = new int[] { 5, 15 };
+
+            lineColor = movedColor;
+        }
+        else if (currentSelected == selectButton[2].gameObject)
+        {
+            if (pos == new Vector2(0, 0))
+                selectedColor = new int[] { 0, 14 };
+            else if (pos == new Vector2(1, 0))
+                selectedColor = new int[] { 2, 8 };
+            else if (pos == new Vector2(0, 2))
+                selectedColor = new int[] { 1, 17 };
+            else if (pos == new Vector2(1, 2))
+                selectedColor = new int[] { 3, 7 };
+
+            lineColor = movedColor;
         }
 
         return selectedColor;
@@ -197,7 +223,20 @@ public class TraceLine : SelectArrow
             else if (pos == new Vector2(1, 2))
                 selectedColor = new int[] { 17 };
             else if (pos == new Vector2(2, 2))
-                selectedColor = new int[]{7};
+                selectedColor = new int[] { 7 };
+
+            lineColor = notMovedColor;
+        }
+        else if (currentSelected == selectButton[2].gameObject)
+        {
+            if (pos == new Vector2(0, 0))
+                selectedColor = new int[] { 6 };
+            else if (pos == new Vector2(1, 0))
+                selectedColor = new int[] { 16 };
+            else if (pos == new Vector2(0, 2))
+                selectedColor = new int[] { 9 };
+            else if (pos == new Vector2(1, 2))
+                selectedColor = new int[] { 15 };
 
             lineColor = notMovedColor;
         }
@@ -251,9 +290,10 @@ public class TraceLine : SelectArrow
             moveLine[array[i]].enabled = true;
         }
 
-        if (!FindObjectOfType<FlashingManager>()){
+        if (!FindObjectOfType<FlashingManager>())
+        {
             for (int i = 0; i < array.Length; i++)
-                FlashingManager.Execute(moveLine[array[i]], FlashingManager.Hash("minAlpha", 0.3f ,"count", 2));
+                FlashingManager.Execute(moveLine[array[i]], FlashingManager.Hash("minAlpha", 0.3f, "count", 2));
         }
     }
 
