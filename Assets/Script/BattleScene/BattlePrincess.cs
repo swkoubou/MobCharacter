@@ -12,7 +12,6 @@ public class BattlePrincess : CommonBattleChara
     {
         HP = 30;
         attack = 4;
-        defaultPos = new Vector2(1, 2);
         defaultOffset = new Vector2(0, 1);
         hpberOffset = new Vector2(0, -1.32f);
 
@@ -64,7 +63,7 @@ public class BattlePrincess : CommonBattleChara
         movedPos.y = 1;
 
         effecter.transform.position = ConvertVectorToObject(movedPos).transform.position;
-        OnOnlyAnim(controller[0], audioClass.superFlame, "の" + attackText[0] + "!");
+        OnlyAnim(controller[0], audioClass.superFlame, "の" + attackText[0] + "!");
         if (ConvertVectorToObject(movedPos) != null)
         {
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
@@ -94,8 +93,15 @@ public class BattlePrincess : CommonBattleChara
         movedPos.x += -1;
         movedPos.y = 1;
 
+        if (ConvertVectorToObject(movedPos) == null || movedPos.x < 0)
+        {
+            BattleManager.instance.AddMessage(messageList.nonTarget);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
+
         effecter.transform.position = ConvertVectorToObject(movedPos).transform.position;
-        OnOnlyAnim(controller[1], audioClass.fleezeAce, "の" + attackText[1] + "!");
+        OnlyAnim(controller[1], audioClass.fleezeAce, "の" + attackText[1] + "!");
         if (ConvertVectorToObject(movedPos) != null)
         {
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
@@ -125,8 +131,15 @@ public class BattlePrincess : CommonBattleChara
         movedPos.x += 1;
         movedPos.y = 1;
 
+        if (ConvertVectorToObject(movedPos) == null || movedPos.x > 2)
+        {
+            BattleManager.instance.AddMessage(messageList.nonTarget);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
+
         effecter.transform.position = ConvertVectorToObject(movedPos).transform.position;
-        OnOnlyAnim(controller[2], audioClass.fleezeAce, "の" + attackText[2] + "!");
+        OnlyAnim(controller[2], audioClass.fleezeAce, "の" + attackText[2] + "!");
         if (ConvertVectorToObject(movedPos) != null)
         {
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);

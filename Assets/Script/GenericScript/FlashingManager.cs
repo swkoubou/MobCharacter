@@ -39,6 +39,9 @@ public class FlashingManager : MonoBehaviour
 
         //すべてのフラッシュが終わる時間
         public float time = 1f;
+
+        //無限ループするか
+        public bool infinite = false;
     }
     public FlashOptions flashOptions = new FlashOptions();
 
@@ -94,7 +97,7 @@ public class FlashingManager : MonoBehaviour
     {
         try
         {
-            if (flashOptions.count <= 0)
+            if (flashOptions.count <= 0 && !flashOptions.infinite)
             {
                 FlashingStop();
             }
@@ -119,6 +122,7 @@ public class FlashingManager : MonoBehaviour
         catch (Exception e)
         {
             print(e.Message);
+            Destroy(gameObject);
         }
     }
 
@@ -244,18 +248,6 @@ public class FlashingManager : MonoBehaviour
         }
     }
 
-    //引数をグローバル変数に格納
-    private void FlashingStart<T>(T target, Dictionary<string, object> options)
-    {
-        this.target = target;
-
-        if (options != null)
-        {
-            //オプションを格納
-            SetField(flashOptions, options);
-        }
-    }
-
     //Flashingが終わったら破棄する
     private void FlashingStop()
     {
@@ -273,6 +265,37 @@ public class FlashingManager : MonoBehaviour
             {
                 (target as SpriteRenderer).color = new Color(255, 255, 255);
             }
+        }
+
+        Destroy(gameObject);
+    }
+
+    //引数をグローバル変数に格納
+    private void FlashingStart<T>(T target, Dictionary<string, object> options)
+    {
+        this.target = target;
+
+        if (options != null)
+        {
+            //オプションを格納
+            SetField(flashOptions, options);
+        }
+    }
+
+    //ここにアクセスすると強制終了
+    public void ForcedTerminate()
+    {
+        if (target.GetType() == typeof(Image))
+        {
+            (target as Image).color = new Color(255, 255, 255, 1);
+        }
+        else if (target.GetType() == typeof(Text))
+        {
+            (target as Text).color = new Color(255, 255, 255, 1);
+        }
+        else if (target.GetType() == typeof(SpriteRenderer))
+        {
+            (target as SpriteRenderer).color = new Color(255, 255, 255, 1);
         }
 
         Destroy(gameObject);

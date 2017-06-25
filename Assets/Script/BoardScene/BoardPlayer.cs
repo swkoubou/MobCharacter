@@ -15,16 +15,18 @@ public class BoardPlayer : MovingObject
     public float restartlevelDelay = 0.5f; //次レベルへ行く時の時間差
 
     private Animator animator; //PlayerChop, PlayerHit用
+    private Text message;
 
 
     //MovingObjectのStartメソッドを継承　baseで呼び出し
     protected override void Start()
     {
-        HP = 1;
-        attack = 0;
+        HP = 10;
+        attack = 5;
 
         //Animatorをキャッシュしておく
         animator = GetComponent<Animator>();
+        message = GameObject.Find("UI/Message").GetComponent<Text>();
 
         //MovingObjectのStartメソッド呼び出し
         base.Start();
@@ -51,7 +53,6 @@ public class BoardPlayer : MovingObject
             }
             else
             {
-
                 int horizontal = 0; //-1: 左移動, 1: 右移動
                 int vertical = 0; //-1: 下移動, 1: 上移動
 
@@ -85,8 +86,20 @@ public class BoardPlayer : MovingObject
         //MovingObjectのAttemptMove呼び出し
         base.AttemptMove<T>(xDir, yDir);
 
+        string animStr = null;
+        if (yDir == 1)
+            animStr = "Up";
+        else if (xDir == 1)
+            animStr = "Right";
+        else if (yDir == -1)
+            animStr = "Down";
+        else if (xDir == -1)
+            animStr = "Left";
+
+        animator.SetTrigger(animStr);
+
         //壁向かって移動できないときはターン遷移しない
-        if(isMoving)
+        //if (isMoving)
             BoardManager.instance.ChangeTurnBraver(); 
     }
 
@@ -99,10 +112,10 @@ public class BoardPlayer : MovingObject
             Wall other = component as Wall;
 
             //WallスクリプトのDamageWallメソッド呼び出し
-            other.DamageWall(wallDamage);
-
+            other.DamageWall(attack);
             //Wallに攻撃するアニメーションを実行
-            animator.SetTrigger("PlayerChop");
+            //animator.SetTrigger("PlayerChop"); 
+            BoardManager.instance.DamagedAnim(other.GetComponent<SpriteRenderer>());
         }
     }
 
@@ -137,18 +150,14 @@ public class BoardPlayer : MovingObject
     //敵キャラがプレイヤーを攻撃した時のメソッド
     public override void LoseHP(int dmg)
     {
-        animator.SetTrigger("PlayerHit");
-        HP -= dmg;
+        enabled = false;
+        message.enabled = true;
+        Invoke("BattleScene", restartlevelDelay);
+        base.LoseHP(dmg);
     }
 
-
-    private void CheckIfGameOver()
+    private void BattleScene()
     {
-        if (HP <= 0)
-        {
-            //GameManagerのGameOverメソッド実行
-            //public staticな変数なのでこのような簡単な形でメソッドを呼び出せる
-            //BoardManager.instance.GameOver();
-        }
+        FadeSceneManager.Execute(Loader.battleSceneName);
     }
 }

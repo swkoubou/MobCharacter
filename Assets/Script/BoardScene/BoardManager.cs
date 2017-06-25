@@ -11,7 +11,7 @@ public class BoardManager : MonoBehaviour
     public static BoardManager instance = null;
     private MapGenerator mapGenerator;
 
-    private int level = 1;
+    private int level = 10;
 
     [HideInInspector]
     public int playerHP;
@@ -23,6 +23,10 @@ public class BoardManager : MonoBehaviour
 
     private List<BoardEnemy> enemies;
     private bool enemiesMoving = false;
+
+    //音楽系
+    public AudioClass audioClass;
+    public AudioSource soundBox;
 
 
     public enum WhoseTurn
@@ -70,7 +74,11 @@ public class BoardManager : MonoBehaviour
     void InitGame()
     {
         enemies.Clear();
-        mapGenerator.SetupScene(4);
+        mapGenerator.SetupScene(level);
+        level += 10;
+        print(level);
+        instance.audioClass = FindObjectOfType<AudioClass>();
+        instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
     }
 
 
@@ -143,5 +151,10 @@ public class BoardManager : MonoBehaviour
         }
 
         enemiesMoving = false;
+    }
+
+    public void DamagedAnim<T>(T other)
+    {
+        FlashingManager.Execute(other, FlashingManager.Hash("minAlpha", 0.3f, "color", Color.red, "count", 2));
     }
 }

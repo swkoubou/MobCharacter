@@ -76,6 +76,11 @@ public class CommonBattleChara : MonoBehaviour
         HP -= dmg;
         HPber.value = HP;
 
+        if (HP <= HPber.maxValue / 4)
+            HPber.gameObject.transform.FindChild("Fill Area/Fill").GetComponent<Image>().color = new Color(160, 0, 0);
+        else if (HP <= HPber.maxValue / 2)
+            HPber.gameObject.transform.FindChild("Fill Area/Fill").GetComponent<Image>().color = Color.yellow;
+
         if (HP <= 0)
         {
             iTween.FadeTo(gameObject, iTween.Hash("alpha", 0f, "time", 2f));
@@ -89,9 +94,11 @@ public class CommonBattleChara : MonoBehaviour
             else if(tag == "Player")
                 BattleManager.instance.players.Remove(gameObject);
 
+            //Enemyが全滅したら勝利
             if (BattleManager.instance.enemies.Count <= 0)
                 BattleManager.instance.Win();
-            else if (BattleManager.instance.players.Count <= 0)
+            //誰か一人でもやられたら敗北
+            else if (BattleManager.instance.players.Count < 3)
                 BattleManager.instance.Lose();
         }
         else
@@ -202,25 +209,25 @@ public class CommonBattleChara : MonoBehaviour
     protected void CheckDirection(GameObject obj, Vector2 target)
     {
         var scale = obj.transform.localScale;
-        var ber = HPcanvas.transform.localScale;
+        var ber = obj.GetComponent<CommonBattleChara>().HPcanvas.transform.localScale;
         if (target.y == 2)
         {
             if (scale.x < 0)
             {
                 scale.x *= -1;
-                ber *= -1;
+                ber.x *= -1;
             }
         }
         else if (target.y == 0)
         {
-            if (0 <= scale.x)
+            if (0 < scale.x)
             {
                 scale.x *= -1;
-                ber *= -1;
+                ber.x *= -1;
             }
         }
         obj.transform.localScale = scale;
-        HPcanvas.transform.localScale = ber;
+        obj.GetComponent<CommonBattleChara>().HPcanvas.transform.localScale = ber;
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
@@ -282,10 +289,8 @@ public class CommonBattleChara : MonoBehaviour
         soundBox.PlayOneShot(se, 1f);
     }
 
-    /*以下ボタン関数*/
-
     //その場から動かずアニメーションを使いたいとき
-    protected void OnOnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
+    protected void OnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
     {
         BattleManager.instance.OnReadyDetails();
 
@@ -293,13 +298,24 @@ public class CommonBattleChara : MonoBehaviour
         anim.SetTrigger("Start");
         soundBox.PlayOneShot(se, 1f);
         BattleManager.instance.AddMessage(objectName + message);
+    }
 
+    protected void OnlyAnim(GameObject obj, RuntimeAnimatorController effect, AudioClip se, string message)
+    {
+        BattleManager.instance.OnReadyDetails();
+
+        obj.GetComponent<Animator>().runtimeAnimatorController = effect;
+        obj.GetComponent<Animator>().SetTrigger("Start");
+        soundBox.PlayOneShot(se, 1f);
+        BattleManager.instance.AddMessage(objectName + message);
     }
 
     //protected void DelayChange()
     //{
     //    BattleManager.instance.ChangeTurnNext();
     //}
+
+    /*以下ボタン関数*/
 
     public void OnMoveUp()
     {

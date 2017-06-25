@@ -110,7 +110,13 @@ public class BattleManager : MonoBehaviour
 
     //音楽系
     public AudioClass audioClass;
-    private AudioSource soundBox;
+    public AudioSource soundBox;
+
+    //画像系
+    public Sprite winImage;
+    public Sprite loseImage;
+
+    private bool isGameEnd;
 
     //全キャラのコマンドをスタックするデリゲート
     public delegate void StackCommandPlayer();
@@ -140,6 +146,10 @@ public class BattleManager : MonoBehaviour
 
     void Update()
     {
+        //ゲームを動作させない
+        if (instance.isGameEnd)
+            return;
+
         //シーン遷移時は十字キーで動作させない
         if (FadeSceneManager.IsFading())
         {
@@ -188,7 +198,7 @@ public class BattleManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            instance.player.DamagedAnim(10);
+            instance.player.DamagedAnim(4);
         }
     }
 
@@ -214,6 +224,7 @@ public class BattleManager : MonoBehaviour
         instance.eventSystem = FindObjectOfType<EventSystem>();
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
+        instance.isGameEnd = false;
 
         for (int i = 0; i < logText.Length; i++)
             logText[i].text = null;
@@ -528,11 +539,28 @@ public class BattleManager : MonoBehaviour
     public void Win()
     {
         print("You Win");
+        Judge(winImage, "全ての敵を倒しました");
     }
 
     public void Lose()
     {
         print("You Lose");
+        Judge(loseImage, "誰か一人でも倒されると負け");
+    }
+
+    private void Judge(Sprite sprite, string message)
+    {
+        instance.isGameEnd = true;
+
+        Image judge = GameObject.Find("Canvas/JudgePanel").GetComponent<Image>();
+        judge.enabled = true;
+        judge.sprite = sprite;
+        AddMessage(message);
+        FlashingManager.Execute(judge, FlashingManager.Hash("minAlpha", 0.3f, "infinite", true));
+
+        instance.mainArrow.StopSelect();
+        instance.subArrow.StopSelect();
+        instance.commandPanel.SetActive(false);
     }
 
     /********************

@@ -77,3 +77,5 @@ MonoBehaviour:
   basePositionsPath: 2DObject/BasePositions
   countEnemyTurn: 0
   audioClass: {fileID: 0}
+  winImage: {fileID: 21300000, guid: 64d1a469f5e32b741863f5a7c9f7feee, type: 3}
+  loseImage: {fileID: 21300000, guid: f87e00d6bd943484baff16a54f611468, type: 3}

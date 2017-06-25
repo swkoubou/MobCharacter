@@ -13,11 +13,11 @@ public class BoardEnemy : MovingObject
 
     protected override void Start()
     {
-        HP = 3;
-        attack = 1;
+        HP = 20;
+        attack = 5;
         BoardManager.instance.AddEnemy(this);
         animator = GetComponent<Animator>();
-        target = GameObject.FindGameObjectWithTag("Braver").transform;
+        target = GameObject.FindGameObjectWithTag("Player").transform;
         base.Start();
     }
 
@@ -42,6 +42,7 @@ public class BoardEnemy : MovingObject
 
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
+        BoardManager.instance.ChangeTurnPlayer();
         if (skipMove)
         {
             skipMove = false;
@@ -49,7 +50,6 @@ public class BoardEnemy : MovingObject
         }
 
         base.AttemptMove<T>(xDir, yDir);
-        BoardManager.instance.ChangeTurnPlayer();
         skipMove = true;
     }
 

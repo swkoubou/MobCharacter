@@ -9,6 +9,9 @@ TagManager:
   - Floor
   - Braver
   - Inmortal
+  - Soda
+  - Food
+  - Wall
   layers:
   - Default
   - TransparentFX

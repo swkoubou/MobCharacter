@@ -12,7 +12,6 @@ public class BattlePlayer : CommonBattleChara
     {
         HP = 20;
         attack = 3;
-        defaultPos = new Vector2(2, 2);
         defaultOffset = new Vector2(0, 1);
         hpberOffset = new Vector2(0, -1.32f);
 
@@ -109,9 +108,10 @@ public class BattlePlayer : CommonBattleChara
                     effect.transform.localScale = new Vector3(-5f, 5f, 1f);
 
                 effect.transform.position = ConvertVectorToObject(target).transform.position;
-                effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
-                effect.GetComponent<Animator>().SetTrigger("Start");
-                soundBox.PlayOneShot(null, 1f);
+                OnlyAnim(effect, controller[1], null, "の" + attackText[1] + "!");
+                //effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
+                //effect.GetComponent<Animator>().SetTrigger("Start");
+                //soundBox.PlayOneShot(null, 1f);
                 Destroy(effect, 2f);
             }
 
@@ -123,7 +123,6 @@ public class BattlePlayer : CommonBattleChara
                     ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
             }
             ChangeGrid(gameObject, movedPos);
-            MoveGrid(gameObject, movedPos);
             BattleManager.instance.AddMessage(objectName + "の" + attackText[1] + "!");
         }
         else
@@ -187,7 +186,7 @@ public class BattlePlayer : CommonBattleChara
                 if (ConvertObjectToVector(gameObject) == new Vector2(0, 0))
                 {
                     effect.transform.localScale = new Vector3(-5f, 5f, 1f);
-                    effect.transform.Rotate(new Vector3(0f, 0f, -25f));
+                    effect.transform.Rotate(new Vector3(0f, 0f, -40f));
                 }
                 else if (ConvertObjectToVector(gameObject) == new Vector2(2, 0))
                 {
@@ -202,14 +201,15 @@ public class BattlePlayer : CommonBattleChara
                 else if (ConvertObjectToVector(gameObject) == new Vector2(2, 2))
                 {
                     effect.transform.localScale = new Vector3(5f, 5f, 1f);
-                    effect.transform.Rotate(new Vector3(0f, 0f, -25f));
+                    effect.transform.Rotate(new Vector3(0f, 0f, -40f));
                 }
 
                 effect.transform.position = ConvertVectorToObject(target).transform.position;
-                effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
-                effect.GetComponent<Animator>().SetTrigger("Start");
-                soundBox.PlayOneShot(null, 1f);
-                //Destroy(effect, 2f);
+                OnlyAnim(effect, controller[1], null, "の" + attackText[2] + "!");
+                //effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
+                //effect.GetComponent<Animator>().SetTrigger("Start");
+                //soundBox.PlayOneShot(null, 1f);
+                Destroy(effect, 2f);
             }
 
             if (ConvertVectorToObject(target) != null)
@@ -220,7 +220,6 @@ public class BattlePlayer : CommonBattleChara
                     ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
             }
             ChangeGrid(gameObject, movedPos);
-            MoveGrid(gameObject, movedPos);
             BattleManager.instance.AddMessage(objectName + "の" + attackText[2] + "!");
         }
         else

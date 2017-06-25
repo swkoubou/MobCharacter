@@ -12,11 +12,10 @@ public class BattleBraver : CommonBattleChara
     {
         HP = 50;
         attack = 5;
-        defaultPos = new Vector2(0, 2);
         defaultOffset = new Vector2(0, 1);
         hpberOffset = new Vector2(0, -1.32f);
 
-        attackText = new string[3] { "破滅光線", "二重撃", "mogero" };
+        attackText = new string[3] { "破滅光線", "二重撃", "メテオバーン" };
         idleText = new string[1] { "素振りをする" };
         base.Start();
     }
@@ -29,7 +28,7 @@ public class BattleBraver : CommonBattleChara
 
     public void SetOnClickAttack()
     {
-        UnityAction[] method = new UnityAction[] { OnHyperRay, OnDoubleSlash, OnHoge };
+        UnityAction[] method = new UnityAction[] { OnHyperRay, OnDoubleSlash, OnBigban };
         SetMethodAttack(method);
     }
 
@@ -61,22 +60,28 @@ public class BattleBraver : CommonBattleChara
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.y = 1;
 
-        OnOnlyAnim(controller[0], audioClass.hyperRay, "の" + attackText[0] + "!");
+        OnlyAnim(controller[0], audioClass.hyperRay, "の" + attackText[0] + "!");
         if (ConvertVectorToObject(movedPos) != null)
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
     }
 
     public void OnDoubleSlash()
     {
+        Vector2 target = ConvertObjectToVector(gameObject);
+        target.y = 1;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += -1;
 
-        Vector2 target = movedPos;
-        target.y = 1;
-
-        if (ConvertVectorToObject(target) == null || movedPos.x < 0)
+        if (ConvertVectorToObject(target) == null)
         {
             BattleManager.instance.AddMessage(messageList.nonTarget);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
+        else if(movedPos.x < 0)
+        {
+            BattleManager.instance.AddMessage(messageList.nonMove);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
             return;
         }
@@ -87,40 +92,50 @@ public class BattleBraver : CommonBattleChara
 
     public void DoubleSlash()
     {
+        Vector2 target = ConvertObjectToVector(gameObject);
+        target.y = 1;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += -1;
 
-        Vector2 target = movedPos;
-        target.y = 1;
-
         if (ConvertVectorToObject(target) != null)
+        {
             ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
+            GameObject effect = Instantiate(Resources.Load("Effecter")) as GameObject;
+            effect.transform.position = ConvertVectorToObject(target).transform.position;
+            Destroy(effect, 2f);
+            OnlyAnim(effect, controller[1], audioClass.doubleSlash, "の" + attackText[1] + "!");
+        }
         ChangeGrid(gameObject, movedPos);
         MoveGrid(gameObject, target, movedPos);
-        effecter.transform.position = ConvertVectorToObject(movedPos).transform.position;
-        OnOnlyAnim(controller[1], audioClass.doubleSlash, "の" + attackText[1] + "!");
     }
 
-    public void OnHoge()
+    public void OnBigban()
     {
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += 1;
 
-        Vector2 target = movedPos;
+        Vector2 target = ConvertObjectToVector(gameObject);
         target.y = 1;
 
-        if (ConvertVectorToObject(target) == null || movedPos.x > 2)
+        if (ConvertVectorToObject(target) == null)
         {
             BattleManager.instance.AddMessage(messageList.nonTarget);
             soundBox.PlayOneShot(audioClass.notExecute, 1f);
             return;
         }
+        else if(movedPos.x > 2)
+        {
+            BattleManager.instance.AddMessage(messageList.nonMove);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
 
-        BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(Hoge);
+        BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(Bigban);
         BattleManager.instance.ChangeTurnNext();
     }
 
-    private void Hoge()
+    private void Bigban()
     {
         Vector2 target = ConvertObjectToVector(gameObject);
         target.y = 1;
@@ -129,11 +144,15 @@ public class BattleBraver : CommonBattleChara
         movedPos.x += 1;
 
         if (ConvertVectorToObject(target) != null)
+        {
             ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
+            GameObject effect = Instantiate(Resources.Load("Effecter")) as GameObject;
+            effect.transform.position = ConvertVectorToObject(target).transform.position;
+            Destroy(effect, 2f);
+            OnlyAnim(effect, controller[2], null, "の" + attackText[2] + "!");
+        }
         ChangeGrid(gameObject, movedPos);
         MoveGrid(gameObject, target, movedPos);
-        effecter.transform.position = ConvertVectorToObject(movedPos).transform.position;
-        OnOnlyAnim(controller[1], null, "の" + attackText[2] + "!");
     }
 
     public void OnIdle()
