@@ -5,18 +5,16 @@ using UnityEngine;
 
 public class Skeleton : BattleEnemy
 {
-
-
     new void Start()
     {
-        HP = 10;
-        attack = 5;
+        HP = 15;
+        attack = 3;
         defaultOffset = new Vector2(0, 1.5f);
         hpberOffset = new Vector2(0, -1.8f);
         base.Start();
     }
 
-    protected override void SwitchCommand(GameObject target, int rand)
+    protected override void SwitchCommand(int rand)
     {
         switch (rand)
         {
@@ -26,14 +24,12 @@ public class Skeleton : BattleEnemy
             case 3:
             case 4:
             case 5:
-                OnEnemyNormalAttack(target);
+                OnEnemyNormalAttack();
                 break;
 
             default:
-                OnEnemyNormalAttack(target);
+                OnEnemyNormalAttack();
                 break;
         }
-
-
     }
 }

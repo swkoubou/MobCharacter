@@ -297,7 +297,7 @@ public class CommonBattleChara : MonoBehaviour
         anim.runtimeAnimatorController = effect;
         anim.SetTrigger("Start");
         soundBox.PlayOneShot(se, 1f);
-        BattleManager.instance.AddMessage(objectName + message);
+        BattleManager.instance.AddMessage(message);
     }
 
     protected void OnlyAnim(GameObject obj, RuntimeAnimatorController effect, AudioClip se, string message)
@@ -307,7 +307,7 @@ public class CommonBattleChara : MonoBehaviour
         obj.GetComponent<Animator>().runtimeAnimatorController = effect;
         obj.GetComponent<Animator>().SetTrigger("Start");
         soundBox.PlayOneShot(se, 1f);
-        BattleManager.instance.AddMessage(objectName + message);
+        BattleManager.instance.AddMessage(message);
     }
 
     //protected void DelayChange()

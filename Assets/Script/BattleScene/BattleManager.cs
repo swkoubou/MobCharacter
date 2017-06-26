@@ -118,6 +118,9 @@ public class BattleManager : MonoBehaviour
 
     private bool isGameEnd;
 
+    //出現するモンスター
+    public string popMonster;
+
     //全キャラのコマンドをスタックするデリゲート
     public delegate void StackCommandPlayer();
     public StackCommandPlayer stackCommandPlayer;
@@ -148,7 +151,12 @@ public class BattleManager : MonoBehaviour
     {
         //ゲームを動作させない
         if (instance.isGameEnd)
+        {
+            if (Input.anyKeyDown)
+                FadeSceneManager.Execute(Loader.boardSceneName);
+
             return;
+        }
 
         //シーン遷移時は十字キーで動作させない
         if (FadeSceneManager.IsFading())
@@ -242,6 +250,15 @@ public class BattleManager : MonoBehaviour
             players.Add(e.gameObject);
 
         enemies.Clear();
+        if (GameObject.Find(enemiesPath).GetComponentsInChildren<BattleEnemy>().Length == 0)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                GameObject generate = Instantiate(Resources.Load(Loader.popMonster[i])) as GameObject;
+                generate.GetComponent<BattleEnemy>().defaultPos = new Vector2(i, 1);
+                generate.transform.SetParent(GameObject.Find(enemiesPath).transform);
+            }
+        }
         var enemy = GameObject.Find(enemiesPath).GetComponentsInChildren<BattleEnemy>();
         foreach (var e in enemy)
             enemies.Add(e.gameObject);
@@ -270,12 +287,15 @@ public class BattleManager : MonoBehaviour
     //メッセージログ
     public void AddMessage(string log)
     {
-        for (int i = 1; i < logText.Length; i++)
+        if (log != null)
         {
-            logText[i - 1].text = logText[i].text;
-            logText[i].text = null;
+            for (int i = 1; i < logText.Length; i++)
+            {
+                logText[i - 1].text = logText[i].text;
+                logText[i].text = null;
+            }
+            logText[logText.Length - 1].text = log;
         }
-        logText[logText.Length - 1].text = log;
     }
 
     /********************
@@ -673,5 +693,19 @@ public class BattleManager : MonoBehaviour
         instance.subArrow.SetButtons(buttons, new Vector3(-5, 0, 0));
 
         OnReady();
+    }
+
+    public void Escape()
+    {
+        if (GetWhoseTurn() == WhoseTurn.player)
+        {
+            FadeSceneManager.Execute(Loader.boardSceneName);
+            instance.soundBox.PlayOneShot(instance.audioClass.escape, 1f);
+        }
+        else
+        {
+            instance.AddMessage("逃げるはモブしか使えません");
+            instance.soundBox.PlayOneShot(instance.audioClass.notExecute, 1f);
+        }
     }
 }

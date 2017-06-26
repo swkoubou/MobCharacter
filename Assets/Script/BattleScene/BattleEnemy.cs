@@ -30,32 +30,52 @@ public abstract class BattleEnemy : CommonBattleChara
 
     public void EnemyTurn()
     {
+        SwitchCommand(Random.Range(0, 10));
+    }
+
+    protected void NonTarget()
+    {
         canMove = true;
 
         List<GameObject> players = SerchChara();
-        GameObject target = SameRowObject(players);
-        if (target != null)
+        float distance = NearestColObject(players);
+        if (distance <= -1)
         {
-            print("1");
-            SwitchCommand(target, Random.Range(0, 10));
+            print("2");
+            OnEnemyMoveLocation(-1);
             BattleManager.instance.NextEnemyTurn();
         }
-        else
+        else if (1 <= distance)
         {
-            float distance = NearestColObject(players);
-            if (distance <= -1)
-            {
-                print("2");
-                OnEnemyMoveLocation(-1);
-                BattleManager.instance.NextEnemyTurn();
-            }
-            else if (1 <= distance)
-            {
-                print("3");
-                OnEnemyMoveLocation(1);
-                BattleManager.instance.NextEnemyTurn();
-            }
+            print("3");
+            OnEnemyMoveLocation(1);
+            BattleManager.instance.NextEnemyTurn();
         }
+
+        //List<GameObject> players = SerchChara();
+        //GameObject target = SameRowObject(players);
+        //if (target != null)
+        //{
+        //    print("1");
+        //    SwitchCommand(Random.Range(0, 10));
+        //    BattleManager.instance.NextEnemyTurn();
+        //}
+        //else
+        //{
+        //    float distance = NearestColObject(players);
+        //    if (distance <= -1)
+        //    {
+        //        print("2");
+        //        OnEnemyMoveLocation(-1);
+        //        BattleManager.instance.NextEnemyTurn();
+        //    }
+        //    else if (1 <= distance)
+        //    {
+        //        print("3");
+        //        OnEnemyMoveLocation(1);
+        //        BattleManager.instance.NextEnemyTurn();
+        //    }
+        //}
     }
 
     //プレイヤー達を検索し取得
@@ -111,28 +131,41 @@ public abstract class BattleEnemy : CommonBattleChara
         return nearest;
     }
 
-    protected void OnEnemyNormalAttack(GameObject target)
+    protected void OnEnemyNormalAttack()
     {
         Vector2 movedPos = ConvertObjectToVector(gameObject);
+        if(ConvertVectorToObject(new Vector2(movedPos.x, movedPos.y+1)) != null)
+        {
+            MoveAttack(new Vector2(movedPos.x, movedPos.y + 1));
+        }
+        else if(ConvertVectorToObject(new Vector2(movedPos.x, movedPos.y - 1)) != null)
+        {
+            MoveAttack(new Vector2(movedPos.x, movedPos.y - 1));
+        }
+        else
+        {
+            NonTarget();
+        }
+    }
 
-        //攻撃し、その場に留まるので
-        movedPos.y = ConvertObjectToVector(target).y;
-
+    protected void MoveAttack(Vector2 target)
+    {
         //線形に居ない場合は実行しない
-        if (movedPos.x == -1 || movedPos.y == -1)
+        if (target.x == -1 || target.y == -1)
         {
             return;
         }
 
         var moveHash = new Hashtable();
         //gridPosiiotnsだとnullのときエラーが出るので
-        moveHash.Add("x", BattleManager.instance.basePositions[(int)movedPos.x, (int)movedPos.y].transform.position.x);
+        moveHash.Add("x", BattleManager.instance.basePositions[(int)target.x, (int)target.y].transform.position.x);
         moveHash.Add("time", enemyMoveTime);
         iTween.MoveFrom(gameObject, moveHash);
 
         soundBox.PlayOneShot(audioClass.normalAttack, 1f);
         BattleManager.instance.AddMessage(objectName + "の攻撃");
-        target.GetComponent<CommonBattleChara>().DamagedAnim(attack);
+        ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
+        BattleManager.instance.NextEnemyTurn();
     }
 
     //移動する
@@ -174,5 +207,5 @@ public abstract class BattleEnemy : CommonBattleChara
     }
 
     //EnemyのAI用
-    protected abstract void SwitchCommand(GameObject target, int rand);
+    protected abstract void SwitchCommand(int rand);
 }

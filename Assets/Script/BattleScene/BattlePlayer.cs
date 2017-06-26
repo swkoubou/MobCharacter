@@ -7,11 +7,10 @@ using UnityEngine.Events;
 
 public class BattlePlayer : CommonBattleChara
 {    
-
     new void Start()
     {
-        HP = 20;
-        attack = 3;
+        HP = 30;
+        attack = 2;
         defaultOffset = new Vector2(0, 1);
         hpberOffset = new Vector2(0, -1.32f);
 
@@ -108,7 +107,7 @@ public class BattlePlayer : CommonBattleChara
                     effect.transform.localScale = new Vector3(-5f, 5f, 1f);
 
                 effect.transform.position = ConvertVectorToObject(target).transform.position;
-                OnlyAnim(effect, controller[1], null, "の" + attackText[1] + "!");
+                OnlyAnim(effect, controller[1], null, objectName + "の" + attackText[1] + "!");
                 //effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
                 //effect.GetComponent<Animator>().SetTrigger("Start");
                 //soundBox.PlayOneShot(null, 1f);
@@ -118,7 +117,7 @@ public class BattlePlayer : CommonBattleChara
             if (ConvertVectorToObject(target) != null)
             {
                 if (ConvertVectorToObject(movedPos) != null && ConvertVectorToObject(movedPos).tag == "Player")
-                    ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack * 3);
+                    ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack * 4);
                 else
                     ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
             }
@@ -205,7 +204,7 @@ public class BattlePlayer : CommonBattleChara
                 }
 
                 effect.transform.position = ConvertVectorToObject(target).transform.position;
-                OnlyAnim(effect, controller[1], null, "の" + attackText[2] + "!");
+                OnlyAnim(effect, controller[1], null, objectName + "の" + attackText[2] + "!");
                 //effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
                 //effect.GetComponent<Animator>().SetTrigger("Start");
                 //soundBox.PlayOneShot(null, 1f);
@@ -215,7 +214,7 @@ public class BattlePlayer : CommonBattleChara
             if (ConvertVectorToObject(target) != null)
             {
                 if (ConvertVectorToObject(movedPos) != null && ConvertVectorToObject(movedPos).tag == "Player")
-                    ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack * 4);
+                    ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack * 5);
                 else
                     ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
             }
@@ -238,11 +237,5 @@ public class BattlePlayer : CommonBattleChara
     private void Idle()
     {
         BattleManager.instance.AddMessage(objectName + "は昼寝をした");
-    }
-
-    public void OnEscape()
-    {
-        FadeSceneManager.Execute(Loader.boardSceneName);
-        soundBox.PlayOneShot(audioClass.escape, 1f);
-    }
+    }    
 }

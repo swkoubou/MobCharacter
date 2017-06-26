@@ -60,7 +60,14 @@ public class BattleBraver : CommonBattleChara
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.y = 1;
 
-        OnlyAnim(controller[0], audioClass.hyperRay, "の" + attackText[0] + "!");
+        if (ConvertVectorToObject(movedPos) == null)
+        {
+            BattleManager.instance.AddMessage(messageList.nonTarget);
+            soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            return;
+        }
+
+        OnlyAnim(controller[0], audioClass.hyperRay, objectName + "の" + attackText[0] + "!");
         if (ConvertVectorToObject(movedPos) != null)
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
     }
@@ -100,11 +107,11 @@ public class BattleBraver : CommonBattleChara
 
         if (ConvertVectorToObject(target) != null)
         {
-            ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
             GameObject effect = Instantiate(Resources.Load("Effecter")) as GameObject;
             effect.transform.position = ConvertVectorToObject(target).transform.position;
             Destroy(effect, 2f);
-            OnlyAnim(effect, controller[1], audioClass.doubleSlash, "の" + attackText[1] + "!");
+            OnlyAnim(effect, controller[1], audioClass.doubleSlash, objectName + "の" + attackText[1] + "!");
+            ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
         }
         ChangeGrid(gameObject, movedPos);
         MoveGrid(gameObject, target, movedPos);
@@ -145,11 +152,11 @@ public class BattleBraver : CommonBattleChara
 
         if (ConvertVectorToObject(target) != null)
         {
-            ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
             GameObject effect = Instantiate(Resources.Load("Effecter")) as GameObject;
             effect.transform.position = ConvertVectorToObject(target).transform.position;
             Destroy(effect, 2f);
-            OnlyAnim(effect, controller[2], null, "の" + attackText[2] + "!");
+            OnlyAnim(effect, controller[2], null, objectName + "の" + attackText[2] + "!");
+            ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
         }
         ChangeGrid(gameObject, movedPos);
         MoveGrid(gameObject, target, movedPos);
