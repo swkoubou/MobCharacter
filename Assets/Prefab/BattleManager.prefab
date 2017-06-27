@@ -51,9 +51,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7e82635631e2749a1334d508b1e570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTurn: 1
+  player: {fileID: 0}
+  braver: {fileID: 0}
+  princess: {fileID: 0}
+  changeTurnWaitTime: 0.1
   panelMoveTime: 0.2
-  panelMoveValue: -3
+  panelMoveValue: -11
   isPushed: 0
+  commandPanel: {fileID: 0}
+  commandPanelPath: Canvas/Command/
   mainCommand: {fileID: 0}
-  subCommand: {fileID: 0}
+  nowDetailCommand: {fileID: 0}
+  attackCommand: {fileID: 0}
+  toolCommand: {fileID: 0}
+  moveCommand: {fileID: 0}
+  escapeCommand: {fileID: 0}
+  whoseNameText: {fileID: 0}
+  whoseNameTextPath: Canvas/Command/Main/WhoseNameText
+  logTextPath: Canvas/TextManager/Content
+  mainArrow: {fileID: 0}
+  subArrow: {fileID: 0}
+  basePositionsPath: 2DObject/BasePositions
+  enemies: []
+  enemiesPath: 2DObject/Enemies
+  countEnemyTurn: 0
+  audioClass: {fileID: 0}

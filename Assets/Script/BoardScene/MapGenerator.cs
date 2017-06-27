@@ -32,14 +32,18 @@ public class MapGenerator : MonoBehaviour
     public GameObject[] foodTiles;
     public GameObject[] enemyTiles;
     public GameObject[] outerWallTiles;
+    public GameObject backgroundTile;
     public TextAsset[] mapText;
 
     private Text errorText;
 
+    //exitの最終的な座標を内包したオブジェクト
+    private GameObject lastExit;
+
     //ref修飾子で使う用の、一時変数
     private GameObject tmpTile;
 
-    //読み込み用テキストのフォルダ名 *Build後にフォルダごと直接コピーする必要あり
+    //読み込み用テキストのフォルダ名
     public string foldaName = "MapText";
 
     //マップ生成するときの全てのオブジェクト情報、位置情報をここに保存する
@@ -119,13 +123,22 @@ public class MapGenerator : MonoBehaviour
                 if (textMark == 'x')
                     allObjectData[y, x] = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
 
-                //wallTilesを生成
-                //else if (textMark == 'o')
-                //    allObjectData[y, x] = wallTiles[Random.Range(0, wallTiles.Length)];
+                //wallTilesを生成+下には床を設置
+                else if (textMark == 'o')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = wallTiles[Random.Range(0, wallTiles.Length)];
+                }
 
                 //-のとき floorTilesを生成
-                else
+                else if (textMark == '-')
                     allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+
+                //0のときbackgroundTilesを生成
+                else
+                    allObjectData[y, x] = backgroundTile;
 
                 //左から右、上から下にテキストを読み込んでいくので、xは+軸、yは-軸に配置する
                 GameObject instance = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
@@ -194,10 +207,10 @@ public class MapGenerator : MonoBehaviour
         tile = instance;
     }
 
-
+    //Exitを取得する
     public GameObject GetExit()
     {
-        return tmpTile;
+        return lastExit;
     }
 
 
@@ -220,6 +233,7 @@ public class MapGenerator : MonoBehaviour
         LayoutObjectRandom(ref tmpTile);
         tmpTile = exit;
         LayoutObjectRandom(ref tmpTile);
+        lastExit = tmpTile;
 
         //ランダムに位置を決める
         LayoutObjectRandom(enemyTiles, enemyCount, enemyCount);

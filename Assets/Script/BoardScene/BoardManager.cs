@@ -6,23 +6,32 @@ using UnityEngine.SceneManagement;
 
 public class BoardManager : MonoBehaviour
 {
-    public float levelStartDelay = 2f;
+    //public float levelStartDelay = 2f;
     public float turnDelay = 0.1f;
     public static BoardManager instance = null;
-    public MapGenerator mapGenerator;
-    public int playerFoodPoints = 100;
-    [HideInInspector]
-    public bool playersTurn = true;
-    [HideInInspector]
-    public bool braversTurn = false;
+    private MapGenerator mapGenerator;
 
-    private Text levelText;
-    private GameObject levelImage;
     private int level = 1;
-    private bool doingSetup;
-    private List<Enemy> enemies;
-    private bool enemiesMoving;
-    public Braver braver;
+
+    [HideInInspector]
+    public int playerHP;
+    [HideInInspector]
+    public int braverHP;
+
+    public BoardBraver braver;
+    private bool braverMoving = false;
+
+    private List<BoardEnemy> enemies;
+    private bool enemiesMoving = false;
+
+
+    public enum WhoseTurn
+    {
+        player,
+        braver,
+        enemy
+    };
+    private WhoseTurn whoseTurn = WhoseTurn.player;
 
 
     void Awake()
@@ -32,17 +41,10 @@ public class BoardManager : MonoBehaviour
         else if (instance != this)
             Destroy(gameObject);
 
-        enemies = new List<Enemy>();
+        enemies = new List<BoardEnemy>();
         mapGenerator = GetComponent<MapGenerator>();
         InitGame();
     }
-
-
-    //void OnLevelWasLoaded(int index)
-    //{
-    //    level++;
-    //    InitGame();
-    //}
 
 
     void Start()
@@ -61,55 +63,51 @@ public class BoardManager : MonoBehaviour
             return;
         }
 
-        level++;
-        //Debug.Log(level);
         InitGame();
-        //SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
 
     void InitGame()
     {
-        doingSetup = true;
-        levelImage = GameObject.Find("UI/LevelImage");
-        levelText = GameObject.Find("UI/LevelImage/LevelText").GetComponent<Text>();
-        levelText.text = "Day " + level;
-        levelImage.SetActive(true);
-        Invoke("HideLevelImage", levelStartDelay);
         enemies.Clear();
-        mapGenerator.SetupScene(level);
-    }
-
-
-    private void HideLevelImage()
-    {
-        levelImage.SetActive(false);
-        doingSetup = false;
-    }
-
-
-    public void GameOver()
-    {
-        levelText.text = "After " + level + " days, you started.";
-        levelImage.SetActive(true);
-        enabled = false;
+        mapGenerator.SetupScene(4);
     }
 
 
     void Update()
     {
-        if (playersTurn || braversTurn || enemiesMoving || doingSetup)
-            return;
-
-        //if (!braversTurn)
+        if(whoseTurn == WhoseTurn.braver && !braverMoving)
             StartCoroutine(MoveBraver());
 
-        //if(!enemiesMoving)
+        if (whoseTurn == WhoseTurn.enemy && !enemiesMoving)
             StartCoroutine(MoveEnemies());
     }
 
+    public WhoseTurn GetWhoseTurn()
+    {
+        return instance.whoseTurn;
+    }
 
-    public void AddBraver(Braver script)
+    //Playerのターンにする+初期化
+    public void ChangeTurnPlayer()
+    {
+        instance.whoseTurn = WhoseTurn.player;
+    }
+
+    //Braverのターンにする+初期化
+    public void ChangeTurnBraver()
+    {
+        instance.whoseTurn = WhoseTurn.braver;
+    }
+
+    //Enemyのターンにする+初期化
+    public void ChangeTurnEnemy()
+    {
+        instance.whoseTurn = WhoseTurn.enemy;
+    }
+
+
+    public void AddBraver(BoardBraver script)
     {
         braver = script;
     }
@@ -117,13 +115,14 @@ public class BoardManager : MonoBehaviour
 
     IEnumerator MoveBraver()
     {
-        braversTurn = true;
+        braverMoving = true;
         yield return new WaitForSeconds(turnDelay);
         braver.MoveBraver();
+        braverMoving = false;
     }
 
 
-    public void AddEnemyToList(Enemy script)
+    public void AddEnemy(BoardEnemy script)
     {
         enemies.Add(script);
     }
@@ -134,8 +133,8 @@ public class BoardManager : MonoBehaviour
         enemiesMoving = true;
         yield return new WaitForSeconds(turnDelay);
 
-        //if (enemies.Count == 0)
-        //    yield break;
+        if (enemies.Count == 0)
+            yield break;
 
         for (int i = 0; i < enemies.Count; i++)
         {
@@ -143,8 +142,6 @@ public class BoardManager : MonoBehaviour
             yield return new WaitForSeconds(enemies[i].moveTime);
         }
 
-        playersTurn = true;
-        braversTurn = false;
         enemiesMoving = false;
     }
 }
