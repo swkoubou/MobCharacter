@@ -9,7 +9,7 @@ public class CommonBattleChara : MonoBehaviour
 {
     protected int HP;
     protected int attack;
-    protected float charMoveTime = 1f;
+    protected const float charMoveTime = 1f;
 
     public string objectName;
     public Vector2 defaultPos;
@@ -35,7 +35,7 @@ public class CommonBattleChara : MonoBehaviour
     protected AudioSource soundBox;
 
     //エラーメッセージリスト
-    public class MessageList
+    protected class MessageList
     {
         //攻撃系
         public string nonTarget = "攻撃目標が居ません";
@@ -43,7 +43,7 @@ public class CommonBattleChara : MonoBehaviour
         //移動系
         public string nonMove = "移動できません";
     }
-    public MessageList messageList = new MessageList();
+    protected MessageList messageList = new MessageList();
 
     //protected void Start()
     //{
@@ -64,7 +64,7 @@ public class CommonBattleChara : MonoBehaviour
         HPber.maxValue = HP;
         HPber.value = HPber.maxValue;
 
-        SetGrid(gameObject, defaultPos);
+        SetGrid(gameObject, defaultPos, 2f);
         anim = GetComponentInChildren<Animator>();
         audioClass = FindObjectOfType<AudioClass>();
         soundBox = FindObjectOfType<AudioSource>();
@@ -76,10 +76,30 @@ public class CommonBattleChara : MonoBehaviour
         HP -= dmg;
         HPber.value = HP;
 
+        if (HP <= HPber.maxValue / 4)
+            HPber.gameObject.transform.FindChild("Fill Area/Fill").GetComponent<Image>().color = new Color(160, 0, 0);
+        else if (HP <= HPber.maxValue / 2)
+            HPber.gameObject.transform.FindChild("Fill Area/Fill").GetComponent<Image>().color = Color.yellow;
+
         if (HP <= 0)
         {
             iTween.FadeTo(gameObject, iTween.Hash("alpha", 0f, "time", 2f));
+
+            //グリッドからはすぐに消す
+            SetGrid(null, ConvertObjectToVector(gameObject));
             Destroy(gameObject, 2f);
+
+            if(tag == "Enemy")
+                BattleManager.instance.enemies.Remove(gameObject);
+            else if(tag == "Player")
+                BattleManager.instance.players.Remove(gameObject);
+
+            //Enemyが全滅したら勝利
+            if (BattleManager.instance.enemies.Count <= 0)
+                BattleManager.instance.Win();
+            //誰か一人でもやられたら敗北
+            else if (BattleManager.instance.players.Count < 3)
+                BattleManager.instance.Lose();
         }
         else
         {
@@ -108,7 +128,7 @@ public class CommonBattleChara : MonoBehaviour
     //}
 
     //グリッド配列にキャラクタを設置
-    protected void SetGrid(GameObject obj, Vector2 pos)
+    protected void SetGrid(GameObject obj, Vector2 pos, float time = charMoveTime)
     {
         if (obj == null)
         {
@@ -119,7 +139,7 @@ public class CommonBattleChara : MonoBehaviour
             var component = obj.GetComponent<CommonBattleChara>();
             Vector2 offset = component.defaultOffset;
             BattleManager.instance.gridPositions[(int)pos.x, (int)pos.y] = obj;
-            MoveGrid(obj, pos);
+            MoveGrid(obj, pos, time);
         }
     }
 
@@ -149,7 +169,7 @@ public class CommonBattleChara : MonoBehaviour
     }
 
     //キャラクターを指定先のグリッドに移動する
-    protected void MoveGrid(GameObject obj, Vector2 target)
+    protected void MoveGrid(GameObject obj, Vector2 target, float time = charMoveTime)
     {
         CheckDirection(obj, target);
         Vector2 offset = obj.GetComponent<CommonBattleChara>().defaultOffset;
@@ -158,7 +178,30 @@ public class CommonBattleChara : MonoBehaviour
 
         var moveHash = new Hashtable();
         moveHash.Add("position", new Vector3(end.x, end.y, 0));
-        moveHash.Add("time", charMoveTime);
+        moveHash.Add("time", time);
+        iTween.MoveTo(obj, moveHash);
+    }
+
+    //経由地がある場合はこっち
+    protected void MoveGrid(GameObject obj,  params Vector2[] target)
+    {
+        CheckDirection(obj, target[target.Length-1]);
+        Vector2 offset = obj.GetComponent<CommonBattleChara>().defaultOffset;
+
+        Vector2[] end2 = new Vector2[target.Length];
+        for (int i = 0; i < target.Length; i++)
+        {
+            end2[i] = BattleManager.instance.basePositions[(int)target[i].x, (int)target[i].y].transform.position;
+            end2[i] += new Vector2(offset.x, offset.y);
+        }
+        Vector3[] end3 = new Vector3[target.Length];
+        for (int i = 0; i < target.Length; i++)
+            end3[i] = new Vector3(end2[i].x, end2[i].y, 0f);
+
+        var moveHash = new Hashtable();
+        moveHash.Add("path", end3);
+        moveHash.Add("time", charMoveTime/target.Length);
+        moveHash.Add("easetype", iTween.EaseType.easeOutSine);
         iTween.MoveTo(obj, moveHash);
     }
 
@@ -166,25 +209,25 @@ public class CommonBattleChara : MonoBehaviour
     protected void CheckDirection(GameObject obj, Vector2 target)
     {
         var scale = obj.transform.localScale;
-        var ber = HPcanvas.transform.localScale;
+        var ber = obj.GetComponent<CommonBattleChara>().HPcanvas.transform.localScale;
         if (target.y == 2)
         {
             if (scale.x < 0)
             {
                 scale.x *= -1;
-                ber *= -1;
+                ber.x *= -1;
             }
         }
         else if (target.y == 0)
         {
-            if (0 <= scale.x)
+            if (0 < scale.x)
             {
                 scale.x *= -1;
-                ber *= -1;
+                ber.x *= -1;
             }
         }
         obj.transform.localScale = scale;
-        HPcanvas.transform.localScale = ber;
+        obj.GetComponent<CommonBattleChara>().HPcanvas.transform.localScale = ber;
     }
 
     //指定したオブジェクトがどこに設置されているか調べて返す
@@ -246,24 +289,33 @@ public class CommonBattleChara : MonoBehaviour
         soundBox.PlayOneShot(se, 1f);
     }
 
-    /*以下ボタン関数*/
-
     //その場から動かずアニメーションを使いたいとき
-    protected void OnOnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
+    protected void OnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
     {
         BattleManager.instance.OnReadyDetails();
 
         anim.runtimeAnimatorController = effect;
         anim.SetTrigger("Start");
         soundBox.PlayOneShot(se, 1f);
-        BattleManager.instance.AddMessage(objectName + message);
-
+        BattleManager.instance.AddMessage(message);
     }
 
-    protected void DelayChange()
+    protected void OnlyAnim(GameObject obj, RuntimeAnimatorController effect, AudioClip se, string message)
     {
-        BattleManager.instance.ChangeTurnNext();
+        BattleManager.instance.OnReadyDetails();
+
+        obj.GetComponent<Animator>().runtimeAnimatorController = effect;
+        obj.GetComponent<Animator>().SetTrigger("Start");
+        soundBox.PlayOneShot(se, 1f);
+        BattleManager.instance.AddMessage(message);
     }
+
+    //protected void DelayChange()
+    //{
+    //    BattleManager.instance.ChangeTurnNext();
+    //}
+
+    /*以下ボタン関数*/
 
     public void OnMoveUp()
     {

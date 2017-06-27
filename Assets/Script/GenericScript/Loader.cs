@@ -13,6 +13,10 @@ public class Loader : MonoBehaviour
     public BoardManager boardManager;
     public BattleManager battleManager;
 
+    public static string[] popMonster = new string[3] { "Skeleton", "Skeleton" , "Skeleton" };
+    readonly private string skeleton = "Skeleton";
+    readonly private string rabbit = "Rabbit";
+    readonly private string giant = "Giant";
 
     void Awake()
     {
@@ -45,6 +49,23 @@ public class Loader : MonoBehaviour
         else if (Input.GetKey(KeyCode.Alpha3))
         {
             FadeSceneManager.Destroy();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            for (int i = 0; i < 3; i++)
+                popMonster[i] = skeleton;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            for (int i = 0; i < 3; i++)
+                popMonster[i] = rabbit;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            popMonster[0] = rabbit;
+            popMonster[1] = giant;
+            popMonster[2] = skeleton;
         }
     }
 

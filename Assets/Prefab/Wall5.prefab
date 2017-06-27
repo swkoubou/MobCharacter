@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114855010910284328}
   m_Layer: 8
   m_Name: Wall5
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68,7 +68,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dmgSprite: {fileID: 21300104, guid: fbe1e7b94bb1a4a099d5bcb15a00141c, type: 3}
-  hp: 3
 --- !u!212 &212000014245269170
 SpriteRenderer:
   m_ObjectHideFlags: 1

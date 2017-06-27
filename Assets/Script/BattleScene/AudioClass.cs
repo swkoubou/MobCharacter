@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AudioClass : MonoBehaviour
 {
+    /*BattaleScene*/
     //UI
     public AudioClip decide;
     public AudioClip cancel;
@@ -20,6 +21,10 @@ public class AudioClass : MonoBehaviour
     //姫
     public AudioClip superFlame;
     public AudioClip fleezeAce;
+
+
+    /*BoardScene*/
+    public AudioClip wallAttasck;
 
 
     void Start()
