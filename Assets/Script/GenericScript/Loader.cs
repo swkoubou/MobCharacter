@@ -13,7 +13,7 @@ public class Loader : MonoBehaviour
     public BoardManager boardManager;
     public BattleManager battleManager;
 
-    public static string[] popMonster = new string[3] { "Skeleton", "Skeleton" , "Skeleton" };
+    public static string[] popMonster = new string[3] { "Skeleton", "Giant" , "Rabbit" };
     readonly private string skeleton = "Skeleton";
     readonly private string rabbit = "Rabbit";
     readonly private string giant = "Giant";

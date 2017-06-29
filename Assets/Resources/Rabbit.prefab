@@ -36,7 +36,7 @@ Transform:
   m_GameObject: {fileID: 1486738366037236}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15.08, y: -1.17, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f4592e3844a02b41ad458709b1c4556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectName: "\u30DB\u30EF\u30A4\u30C8\u30E9\u30D3\u30C3\u30C8"
+  objectName: "\u767D\u3046\u3055"
   defaultPos: {x: 0, y: 1}
   attackButtons: []
   idleButtons: []

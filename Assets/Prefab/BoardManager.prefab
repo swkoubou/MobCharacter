@@ -56,6 +56,8 @@ MonoBehaviour:
   playerHP: 0
   braverHP: 0
   braver: {fileID: 0}
+  audioClass: {fileID: 0}
+  soundBox: {fileID: 0}
 --- !u!114 &114716011148791286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -73,6 +75,7 @@ MonoBehaviour:
   player: {fileID: 1000010436180218, guid: 7c81f5a7d0bb2d14d9ec09181566279f, type: 2}
   Braver: {fileID: 1130044153631480, guid: a653e89c9e295ed499f05f2090e8af77, type: 2}
   exit: {fileID: 1000010582145160, guid: 208f59688c089224b9d0659bde0f076b, type: 2}
+  item: {fileID: 1410377351328252, guid: 0cccf9d9041b5064d9ec5418287320d4, type: 2}
   floorTiles:
   - {fileID: 1000010895860934, guid: d3726324286d2a446a4d7d4d88c46dac, type: 2}
   - {fileID: 1000010974470842, guid: 74ff3f74b00949d40b94b74ff9ed7a23, type: 2}
@@ -104,7 +107,5 @@ MonoBehaviour:
   backgroundTile: {fileID: 1026903277946022, guid: 60e644b2b9a17cf46876ee1eddabede9,
     type: 2}
   mapText:
-  - {fileID: 4900000, guid: 9c535de9243ebb7429d17e44e0075e1d, type: 3}
-  - {fileID: 4900000, guid: 28202efbb0629fa4ea57db4c6c643bec, type: 3}
-  - {fileID: 4900000, guid: 0e5711bb0a8b3dc45a0a049d11968679, type: 3}
+  - {fileID: 4900000, guid: a3bc30437b379dc49aedb85db70632a7, type: 3}
   foldaName: MapText

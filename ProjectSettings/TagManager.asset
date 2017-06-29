@@ -12,6 +12,7 @@ TagManager:
   - Soda
   - Food
   - Wall
+  - Item
   layers:
   - Default
   - TransparentFX

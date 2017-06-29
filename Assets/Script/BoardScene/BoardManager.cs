@@ -75,7 +75,7 @@ public class BoardManager : MonoBehaviour
     {
         enemies.Clear();
         mapGenerator.SetupScene(level);
-        level += 10;
+        level += 2;
         print(level);
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
@@ -84,8 +84,8 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
-        if(whoseTurn == WhoseTurn.braver && !braverMoving)
-            StartCoroutine(MoveBraver());
+        //if(whoseTurn == WhoseTurn.braver && !braverMoving)
+        //    StartCoroutine(MoveBraver());
 
         if (whoseTurn == WhoseTurn.enemy && !enemiesMoving)
             StartCoroutine(MoveEnemies());
@@ -121,13 +121,13 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    IEnumerator MoveBraver()
-    {
-        braverMoving = true;
-        yield return new WaitForSeconds(turnDelay);
-        braver.MoveBraver();
-        braverMoving = false;
-    }
+    //IEnumerator MoveBraver()
+    //{
+    //    braverMoving = true;
+    //    yield return new WaitForSeconds(turnDelay);
+    //    braver.MoveBraver();
+    //    braverMoving = false;
+    //}
 
 
     public void AddEnemy(BoardEnemy script)

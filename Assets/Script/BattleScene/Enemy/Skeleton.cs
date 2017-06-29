@@ -9,8 +9,8 @@ public class Skeleton : BattleEnemy
     {
         HP = 15;
         attack = 3;
-        defaultOffset = new Vector2(0, 1.5f);
-        hpberOffset = new Vector2(0, -1.8f);
+        defaultOffset = new Vector2(0, 1.2f);
+        hpberOffset = new Vector2(0, -1.5f);
         base.Start();
     }
 

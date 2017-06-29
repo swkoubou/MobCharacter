@@ -120,7 +120,7 @@ public abstract class MovingObject : MonoBehaviour
         bool canMove = Move(xDir, yDir, out hit);
         
         //移動できないところに行こうとしたら音を出す
-        if (hit.transform != null)
+        if (tag == "Player" && hit.transform != null)
         {
             if(hit.transform.gameObject.tag == "Inmortal")
                 BoardManager.instance.soundBox.PlayOneShot(audioClass.notExecute, 1f);

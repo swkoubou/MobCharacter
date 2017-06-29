@@ -27,6 +27,7 @@ public class MapGenerator : MonoBehaviour
     public GameObject player;
     public GameObject Braver;
     public GameObject exit;
+    public GameObject item;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
     public GameObject[] foodTiles;
@@ -136,6 +137,33 @@ public class MapGenerator : MonoBehaviour
                 else if (textMark == '-')
                     allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
 
+                //Gのとき exitを生成
+                else if (textMark == 'G')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = exit;
+                }
+
+                //Sのとき playerを生成
+                else if (textMark == 'S')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = player;
+                }
+
+                //Iのとき itemを生成
+                else if (textMark == 'I')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = item;
+                }
+
                 //0のときbackgroundTilesを生成
                 else
                     allObjectData[y, x] = backgroundTile;
@@ -224,19 +252,20 @@ public class MapGenerator : MonoBehaviour
         MapGenerate();
 
         //敵は対数的に増加
-        int enemyCount = (int)Mathf.Log(level, 2f);
+        //int enemyCount = (int)Mathf.Log(level, 2f);
+        int enemyCount = level;
 
         //ref修飾子を使うのでtmpを使い初期化してから
-        tmpTile = player;
-        LayoutObjectRandom(ref tmpTile);
-        tmpTile = Braver;
-        LayoutObjectRandom(ref tmpTile);
-        tmpTile = exit;
-        LayoutObjectRandom(ref tmpTile);
-        lastExit = tmpTile;
+        //tmpTile = player;
+        //LayoutObjectRandom(ref tmpTile);
+        //tmpTile = Braver;
+        //LayoutObjectRandom(ref tmpTile);
+        //tmpTile = exit;
+        //LayoutObjectRandom(ref tmpTile);
+        //lastExit = tmpTile;
 
         //ランダムに位置を決める
         LayoutObjectRandom(enemyTiles, enemyCount, enemyCount);
-        LayoutObjectRandom(foodTiles, foodCount.min, foodCount.max);
+        //LayoutObjectRandom(foodTiles, foodCount.min, foodCount.max);
     }
 }

@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Top : MonoBehaviour
 {
-    public string startScene = "";
-
     // Use this for initialization
     void Start()
     {
@@ -21,7 +19,7 @@ public class Top : MonoBehaviour
 
     public void startButton()
     {
-        SceneManager.LoadScene(startScene);
+        FadeSceneManager.Execute(Loader.boardSceneName);
     }
 
     public void aboutButton()

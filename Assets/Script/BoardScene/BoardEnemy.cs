@@ -43,11 +43,11 @@ public class BoardEnemy : MovingObject
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
         BoardManager.instance.ChangeTurnPlayer();
-        if (skipMove)
-        {
-            skipMove = false;
-            return;
-        }
+        //if (skipMove)
+        //{
+        //    skipMove = false;
+        //    return;
+        //}
 
         base.AttemptMove<T>(xDir, yDir);
         skipMove = true;

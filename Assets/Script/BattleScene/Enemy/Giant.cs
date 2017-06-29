@@ -16,7 +16,7 @@ public class Giant : BattleEnemy
 
     void Update()
     {
-
+        
     }
 
     protected override void SwitchCommand(int rand)

@@ -31,6 +31,9 @@ public class CommonBattleChara : MonoBehaviour
     protected Animator anim;
     protected GameObject effecter;
 
+    //コマンドボタンを押したか、連打させないように
+    public bool isCommandPushed = false;
+
     protected AudioClass audioClass;
     protected AudioSource soundBox;
 
@@ -292,7 +295,7 @@ public class CommonBattleChara : MonoBehaviour
     //その場から動かずアニメーションを使いたいとき
     protected void OnlyAnim(RuntimeAnimatorController effect, AudioClip se, string message)
     {
-        BattleManager.instance.OnReadyDetails();
+        //BattleManager.instance.OnReadyDetails();
 
         anim.runtimeAnimatorController = effect;
         anim.SetTrigger("Start");
@@ -302,7 +305,7 @@ public class CommonBattleChara : MonoBehaviour
 
     protected void OnlyAnim(GameObject obj, RuntimeAnimatorController effect, AudioClip se, string message)
     {
-        BattleManager.instance.OnReadyDetails();
+        //BattleManager.instance.OnReadyDetails();
 
         obj.GetComponent<Animator>().runtimeAnimatorController = effect;
         obj.GetComponent<Animator>().SetTrigger("Start");
@@ -344,6 +347,7 @@ public class CommonBattleChara : MonoBehaviour
                 BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(MoveUp);
                 break;
         }
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -374,6 +378,7 @@ public class CommonBattleChara : MonoBehaviour
                 BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(MoveDown);
                 break;
         }
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -390,7 +395,7 @@ public class CommonBattleChara : MonoBehaviour
         }
         else
         {
-            BattleManager.instance.OnReadyDetails();
+            //BattleManager.instance.OnReadyDetails();
             ChangeGrid(gameObject, movedPos);
         }
     }
@@ -408,7 +413,7 @@ public class CommonBattleChara : MonoBehaviour
         }
         else
         {
-            BattleManager.instance.OnReadyDetails();
+            //BattleManager.instance.OnReadyDetails();
             ChangeGrid(gameObject, movedPos);
         }
     }

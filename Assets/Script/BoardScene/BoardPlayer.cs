@@ -49,7 +49,8 @@ public class BoardPlayer : MovingObject
             //Enterボタンを押すとPlayerはその場から動かず、ターンをスキップする
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                BoardManager.instance.ChangeTurnBraver();
+                //BoardManager.instance.ChangeTurnBraver();
+                BoardManager.instance.ChangeTurnEnemy();
             }
             else
             {
@@ -100,7 +101,7 @@ public class BoardPlayer : MovingObject
 
         //壁向かって移動できないときはターン遷移しない
         //if (isMoving)
-            BoardManager.instance.ChangeTurnBraver(); 
+        BoardManager.instance.ChangeTurnEnemy();
     }
 
     
@@ -128,16 +129,20 @@ public class BoardPlayer : MovingObject
             Invoke("Restart", restartlevelDelay);
             enabled = false; //Playerを無効にする
         }
-        else if (other.tag == "Food")
+        else if(other.tag == "Item")
         {
-            //体力を回復しotherオブジェクトを削除
             other.gameObject.SetActive(false);
         }
-        else if (other.tag == "Soda")
-        {
-            //体力を回復しotherオブジェクトを削除
-            other.gameObject.SetActive(false);
-        }
+        //else if (other.tag == "Food")
+        //{
+        //    //体力を回復しotherオブジェクトを削除
+        //    other.gameObject.SetActive(false);
+        //}
+        //else if (other.tag == "Soda")
+        //{
+        //    //体力を回復しotherオブジェクトを削除
+        //    other.gameObject.SetActive(false);
+        //}
     }
 
 
