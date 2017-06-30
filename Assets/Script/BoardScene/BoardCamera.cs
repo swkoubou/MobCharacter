@@ -17,6 +17,6 @@ public class BoardCamera : MonoBehaviour
 
     void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, target.transform.position+offset, 10 * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, target.transform.position+offset, 5f * Time.deltaTime);
     }
 }

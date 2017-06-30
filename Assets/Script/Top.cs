@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Top : MonoBehaviour
 {
+    public AudioClip decide;
+
     // Use this for initialization
     void Start()
     {
@@ -14,12 +16,14 @@ public class Top : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (FadeSceneManager.IsFading())
+            FindObjectOfType<TopArrow>().enabled = false;
     }
 
     public void startButton()
     {
         FadeSceneManager.Execute(Loader.boardSceneName);
+        GameObject.Find("SE").GetComponent<AudioSource>().PlayOneShot(decide, 1f);
     }
 
     public void aboutButton()

@@ -179,26 +179,6 @@ public class BattleManager : MonoBehaviour
                 instance.commandPanel.SetActive(true);
             }
         }
-
-        //実験用
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            //実験用
-            string buff = null;
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    buff += "(" + i + "," + j + ")" + gridPositions[i, j] + "\n";
-                }
-            }
-            print(buff);
-        }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            instance.player.DamagedAnim(4);
-        }
     }
 
     //読み込まれる毎に初期化
@@ -250,9 +230,12 @@ public class BattleManager : MonoBehaviour
         {
             for (int i = 0; i < 3; i++)
             {
-                GameObject generate = Instantiate(Resources.Load(Loader.popMonster[i])) as GameObject;
-                generate.GetComponent<BattleEnemy>().defaultPos = new Vector2(i, 1);
-                generate.transform.SetParent(GameObject.Find(enemiesPath).transform);
+                if (Loader.popMonster[i] != null)
+                {
+                    GameObject generate = Instantiate(Resources.Load(Loader.popMonster[i])) as GameObject;
+                    generate.GetComponent<BattleEnemy>().defaultPos = new Vector2(i, 1);
+                    generate.transform.SetParent(GameObject.Find(enemiesPath).transform);
+                }
             }
         }
         var enemy = GameObject.Find(enemiesPath).GetComponentsInChildren<BattleEnemy>();
@@ -264,6 +247,13 @@ public class BattleManager : MonoBehaviour
 
         //ターンをBraverから始める
         StartCoroutine(ChangeTurnBraver());
+
+        if(Loader.level == 4)
+        {
+            var bgm = GameObject.Find("BGM").GetComponent<AudioSource>();
+            bgm.clip = audioClass.boss;
+            bgm.Play();
+        }
     }
 
 
@@ -598,12 +588,21 @@ public class BattleManager : MonoBehaviour
     {
         print("You Win");
         Judge(winImage, "全ての敵を倒しました");
+        if (Loader.level == 3)
+            Loader.isUseEscape[Loader.level] = true;
+        else if (Loader.level == 4)
+            FadeSceneManager.Execute("Title", 3f, 0.1f);
+        else
+            Loader.level--;
     }
 
     public void Lose()
     {
         print("You Lose");
         Judge(loseImage, "誰か一人でも倒されると負け");
+        if (Loader.level == 3 || Loader.level == 4)
+            Loader.isUseEscape[Loader.level] = true;
+        Loader.level--;
     }
 
     private void Judge(Sprite sprite, string message)
@@ -667,13 +666,16 @@ public class BattleManager : MonoBehaviour
 
     public void OnTool()
     {
-        instance.nowDetailCommand = instance.toolCommand;
-        instance.whatCommand = WhatCommand.tool;
+        instance.AddMessage("なにも持っていません");
+        instance.soundBox.PlayOneShot(instance.audioClass.notExecute, 1f);
 
-        Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
-        instance.subArrow.SetButtons(buttons);
+        //instance.nowDetailCommand = instance.toolCommand;
+        //instance.whatCommand = WhatCommand.tool;
 
-        OnReady();
+        //Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
+        //instance.subArrow.SetButtons(buttons);
+
+        //OnReady();
     }
 
     public void OnIdle()
@@ -682,7 +684,7 @@ public class BattleManager : MonoBehaviour
         instance.whatCommand = WhatCommand.idle;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
-        instance.subArrow.SetButtons(buttons, new Vector3(-5, 0, 0));
+        instance.subArrow.SetButtons(buttons, new Vector3(-140, 0, 0));
 
         OnReady();
     }
@@ -746,21 +748,24 @@ public class BattleManager : MonoBehaviour
         instance.whatCommand = WhatCommand.escape;
 
         Button[] buttons = instance.nowDetailCommand.GetComponentsInChildren<Button>();
-        instance.subArrow.SetButtons(buttons, new Vector3(-5, 0, 0));
+        instance.subArrow.SetButtons(buttons, new Vector3(-140, 0, 0));
 
         OnReady();
     }
 
     public void Escape()
     {
-        if (GetWhoseTurn() == WhoseTurn.player)
+        if (Loader.level != 4)
         {
             FadeSceneManager.Execute(Loader.boardSceneName);
             instance.soundBox.PlayOneShot(instance.audioClass.escape, 1f);
+            Loader.isForceEvent = false;
+            Loader.isUseEscape[Loader.level] = true;
+            Loader.level--;
         }
         else
         {
-            instance.AddMessage("逃げるはモブしか使えません");
+            instance.AddMessage("逃げたら即殺されそうだ");
             instance.soundBox.PlayOneShot(instance.audioClass.notExecute, 1f);
         }
     }

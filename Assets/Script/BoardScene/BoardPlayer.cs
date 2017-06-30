@@ -15,8 +15,6 @@ public class BoardPlayer : MovingObject
     public float restartlevelDelay = 0.5f; //次レベルへ行く時の時間差
 
     private Animator animator; //PlayerChop, PlayerHit用
-    private Text message;
-
 
     //MovingObjectのStartメソッドを継承　baseで呼び出し
     protected override void Start()
@@ -26,7 +24,6 @@ public class BoardPlayer : MovingObject
 
         //Animatorをキャッシュしておく
         animator = GetComponent<Animator>();
-        message = GameObject.Find("UI/Message").GetComponent<Text>();
 
         //MovingObjectのStartメソッド呼び出し
         base.Start();
@@ -43,11 +40,17 @@ public class BoardPlayer : MovingObject
 
     void Update()
     {
+        bool isKeyUp = Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A) ||
+            Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.LeftArrow);
+
+        if (isKeyUp)
+            animator.SetTrigger("Wait");
+
         //Playerの順番かつPlayerが動き終わっているとき実行する
         if (BoardManager.instance.GetWhoseTurn() == BoardManager.WhoseTurn.player && !isMoving)
         {
             //Enterボタンを押すとPlayerはその場から動かず、ターンをスキップする
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Q))
             {
                 //BoardManager.instance.ChangeTurnBraver();
                 BoardManager.instance.ChangeTurnEnemy();
@@ -104,7 +107,7 @@ public class BoardPlayer : MovingObject
         BoardManager.instance.ChangeTurnEnemy();
     }
 
-    
+
     //MovingObjectの抽象メソッドのため必ず必要
     protected override void OnCantMove<T>(T component)
     {
@@ -120,6 +123,17 @@ public class BoardPlayer : MovingObject
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Event")
+        {
+            FlashingManager.Execute(other.gameObject.GetComponent<SpriteRenderer>());
+            BoardManager.instance.AddMessage("ドアを開けた");
+            BoardManager.instance.soundBox.PlayOneShot(audioClass.openDoor, 1f);
+            StartCoroutine(Delay(other.gameObject, 1f));
+        }
+    }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -128,21 +142,28 @@ public class BoardPlayer : MovingObject
             //Invoke: 引数分遅れてメソッドを実行する
             Invoke("Restart", restartlevelDelay);
             enabled = false; //Playerを無効にする
+            Loader.boardPlayerPos = new Vector2(-1, -1);
         }
-        else if(other.tag == "Item")
+        else if (other.tag == "Item")
         {
-            other.gameObject.SetActive(false);
+            FlashingManager.Execute(other.gameObject.GetComponent<SpriteRenderer>());
+            BoardManager.instance.AddMessage("宝箱を開けた");
+            BoardManager.instance.soundBox.PlayOneShot(audioClass.getItem, 1f);
+            StartCoroutine(Delay(other.gameObject, 1f));
         }
-        //else if (other.tag == "Food")
-        //{
-        //    //体力を回復しotherオブジェクトを削除
-        //    other.gameObject.SetActive(false);
-        //}
-        //else if (other.tag == "Soda")
-        //{
-        //    //体力を回復しotherオブジェクトを削除
-        //    other.gameObject.SetActive(false);
-        //}
+        else if (other.gameObject.tag == "Event")
+        {
+            FlashingManager.Execute(other.gameObject.GetComponent<SpriteRenderer>());
+            BoardManager.instance.AddMessage("ドアを開けた");
+            BoardManager.instance.soundBox.PlayOneShot(audioClass.openDoor, 1f);
+            StartCoroutine(Delay(other.gameObject, 1f));
+        }
+    }
+
+    IEnumerator Delay(GameObject other, float time)
+    {
+        yield return new WaitForSeconds(time);
+        other.SetActive(false);
     }
 
 
@@ -155,10 +176,12 @@ public class BoardPlayer : MovingObject
     //敵キャラがプレイヤーを攻撃した時のメソッド
     public override void LoseHP(int dmg)
     {
-        enabled = false;
-        message.enabled = true;
+        BoardManager.instance.AddMessage("敵に遭遇した");
         Invoke("BattleScene", restartlevelDelay);
+        BoardManager.instance.soundBox.PlayOneShot(audioClass.normalAttack, 1f);
         base.LoseHP(dmg);
+        Loader.boardPlayerPos = transform.position;
+        enabled = false;
     }
 
     private void BattleScene()

@@ -28,6 +28,10 @@ public class AudioClass : MonoBehaviour
 
     /*BoardScene*/
     public AudioClip wallAttasck;
+    public AudioClip getItem;
+    public AudioClip openDoor;
+
+    public AudioClip boss;
 
 
     void Start()

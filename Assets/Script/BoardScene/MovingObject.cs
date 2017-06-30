@@ -6,6 +6,7 @@ public abstract class MovingObject : MonoBehaviour
 {
     public int HP;
     public int attack;
+    [HideInInspector]
     public float moveTime = 0.1f;
     public LayerMask blockingLayer;
     private BoxCollider2D boxCollider;
