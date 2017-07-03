@@ -40,6 +40,9 @@ public class BattlePlayer : CommonBattleChara
 
     public void OnNormalAttack()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
 
         //攻撃し、その場に留まるので
@@ -52,7 +55,9 @@ public class BattlePlayer : CommonBattleChara
             return;
         }
 
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(NormalAttack);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -74,12 +79,17 @@ public class BattlePlayer : CommonBattleChara
         {
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
         }
-
+        
     }
 
     public void OnAttackMoveVertical()
     {
+        if (isCommandPushed)
+            return;
+
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(AttackMoveVertical);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -107,7 +117,7 @@ public class BattlePlayer : CommonBattleChara
                     effect.transform.localScale = new Vector3(-5f, 5f, 1f);
 
                 effect.transform.position = ConvertVectorToObject(target).transform.position;
-                OnlyAnim(effect, controller[1], null, objectName + "の" + attackText[1] + "!");
+                OnlyAnim(effect, controller[1], audioClass.slash, objectName + "の" + attackText[1] + "!");
                 //effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
                 //effect.GetComponent<Animator>().SetTrigger("Start");
                 //soundBox.PlayOneShot(null, 1f);
@@ -132,32 +142,12 @@ public class BattlePlayer : CommonBattleChara
 
     public void OnAttackMoveSlash()
     {
-        //Vector2 movedPos = ConvertObjectToVector(gameObject);
+        if (isCommandPushed)
+            return;
 
-        ////対角に移動するので0と2を反転
-        //if (movedPos.x == 0)
-        //    movedPos.x = 2;
-        //else if (movedPos.x == 2)
-        //    movedPos.x = 0;
-        //else
-        //    movedPos.x = -1;
-
-        //if (movedPos.y == 0)
-        //    movedPos.y = 2;
-        //else if (movedPos.y == 2)
-        //    movedPos.y = 0;
-        //else
-        //    movedPos.y = -1;
-
-        ////対角に居ない場合は実行しない
-        //if (movedPos.x == -1 || movedPos.y == -1)
-        //{
-        //    BattleManager.instance.AddMessage(messageList.nonMove);
-        //    soundBox.PlayOneShot(audioClass.notExecute, 1f);
-        //    return;
-        //}
-
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(AttackMoveSlash);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -204,7 +194,7 @@ public class BattlePlayer : CommonBattleChara
                 }
 
                 effect.transform.position = ConvertVectorToObject(target).transform.position;
-                OnlyAnim(effect, controller[1], null, objectName + "の" + attackText[2] + "!");
+                OnlyAnim(effect, controller[1], audioClass.slash, objectName + "の" + attackText[2] + "!");
                 //effect.GetComponent<Animator>().runtimeAnimatorController = controller[1];
                 //effect.GetComponent<Animator>().SetTrigger("Start");
                 //soundBox.PlayOneShot(null, 1f);
@@ -230,7 +220,12 @@ public class BattlePlayer : CommonBattleChara
 
     public void OnIdle()
     {
+        if (isCommandPushed)
+            return;
+
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPlayer = new BattleManager.StackCommandPlayer(Idle);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 

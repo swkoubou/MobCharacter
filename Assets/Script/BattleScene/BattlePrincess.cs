@@ -43,6 +43,9 @@ public class BattlePrincess : CommonBattleChara
     /*以下ボタン関数*/
     public void OnSuperFlame()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.y = 1;
 
@@ -53,6 +56,7 @@ public class BattlePrincess : CommonBattleChara
             return;
         }
 
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(SuperFlame);
         BattleManager.instance.ChangeTurnNext();
     }
@@ -79,6 +83,9 @@ public class BattlePrincess : CommonBattleChara
 
     public void OnFreezeAce()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += -1;
         movedPos.y = 1;
@@ -90,7 +97,9 @@ public class BattlePrincess : CommonBattleChara
             return;
         }
 
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(FreezeAce);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -117,6 +126,9 @@ public class BattlePrincess : CommonBattleChara
 
     public void OnWindStorm()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += 1;
         movedPos.y = 1;
@@ -128,7 +140,9 @@ public class BattlePrincess : CommonBattleChara
             return;
         }
 
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(WindStorm);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -146,7 +160,7 @@ public class BattlePrincess : CommonBattleChara
         }
 
         effecter.transform.position = ConvertVectorToObject(movedPos).transform.position;
-        OnlyAnim(controller[2], audioClass.fleezeAce, objectName + "の" + attackText[2] + "!");
+        OnlyAnim(controller[2], audioClass.windStorm, objectName + "の" + attackText[2] + "!");
         if (ConvertVectorToObject(movedPos) != null)
         {
             ConvertVectorToObject(movedPos).GetComponent<CommonBattleChara>().DamagedAnim(attack);
@@ -155,13 +169,18 @@ public class BattlePrincess : CommonBattleChara
 
     public void OnIdle()
     {
+        if (isCommandPushed)
+            return;
+
+        isCommandPushed = true;
         BattleManager.instance.stackCommandPrincess = new BattleManager.StackCommandPrincess(Idle);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
     private void Idle()
     {
-        BattleManager.instance.OnReadyDetails();
+        //BattleManager.instance.OnReadyDetails();
         BattleManager.instance.AddMessage(objectName + "はお化粧を整えた");
     }
 }

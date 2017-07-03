@@ -53,8 +53,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadeColor: {r: 0, g: 0, b: 0, a: 1}
-  isFading: 0
-  isFadeFinished: 1
 --- !u!114 &114941091748966398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -66,7 +64,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ed3f7fdd2375a140bb04bab702164b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardManager: {fileID: 114754180833410524, guid: b9f22b5c3eb9e9b45ab66327d0eec6fe,
+  boardManager: {fileID: 114495202622571110, guid: b9f22b5c3eb9e9b45ab66327d0eec6fe,
     type: 2}
   battleManager: {fileID: 114092044597895758, guid: 6fed65c0566dc0241906264900248cdf,
     type: 2}

@@ -6,6 +6,7 @@ public abstract class MovingObject : MonoBehaviour
 {
     public int HP;
     public int attack;
+    [HideInInspector]
     public float moveTime = 0.1f;
     public LayerMask blockingLayer;
     private BoxCollider2D boxCollider;
@@ -120,7 +121,7 @@ public abstract class MovingObject : MonoBehaviour
         bool canMove = Move(xDir, yDir, out hit);
         
         //移動できないところに行こうとしたら音を出す
-        if (hit.transform != null)
+        if (tag == "Player" && hit.transform != null)
         {
             if(hit.transform.gameObject.tag == "Inmortal")
                 BoardManager.instance.soundBox.PlayOneShot(audioClass.notExecute, 1f);

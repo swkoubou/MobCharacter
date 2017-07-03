@@ -56,6 +56,14 @@ MonoBehaviour:
   playerHP: 0
   braverHP: 0
   braver: {fileID: 0}
+  audioClass: {fileID: 0}
+  soundBox: {fileID: 0}
+  logTextPath: UI/Content
+  textManager: {fileID: 0}
+  textManagerPath: UI/TextManager
+  nameText: {fileID: 0}
+  contentText: {fileID: 0}
+  levelImage: {fileID: 0}
 --- !u!114 &114716011148791286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -71,8 +79,22 @@ MonoBehaviour:
     min: 1
     max: 5
   player: {fileID: 1000010436180218, guid: 7c81f5a7d0bb2d14d9ec09181566279f, type: 2}
-  Braver: {fileID: 1130044153631480, guid: a653e89c9e295ed499f05f2090e8af77, type: 2}
+  braver: {fileID: 1130044153631480, guid: a653e89c9e295ed499f05f2090e8af77, type: 2}
+  princess: {fileID: 1067081213887890, guid: 4b0fcec84ec53a045a4074c8500b102c, type: 2}
   exit: {fileID: 1000010582145160, guid: 208f59688c089224b9d0659bde0f076b, type: 2}
+  item: {fileID: 1410377351328252, guid: 0cccf9d9041b5064d9ec5418287320d4, type: 2}
+  door: {fileID: 1396949235140354, guid: c2a8ab8f7a3a0734c85a9a66082223cf, type: 2}
+  bosses:
+  - {fileID: 1869767348938646, guid: 5442656348000f347ac5cdad429087a9, type: 2}
+  bossFloorTiles:
+  - {fileID: 1000010895860934, guid: 2bff0272317825e4286e6d7d7beee510, type: 2}
+  - {fileID: 1000010974470842, guid: 5945bf9d1431a3949a84b060722e0ecf, type: 2}
+  - {fileID: 1000011662971032, guid: ed86118043fbf964cbeaebd51f81f8f5, type: 2}
+  - {fileID: 1000011910923142, guid: e314d922004b08043ae8dac0ab77b094, type: 2}
+  - {fileID: 1000012429428530, guid: aaf24c25c10cb0340aee98a09e778253, type: 2}
+  - {fileID: 1000013510592602, guid: eb391bafc43a9bc48b720baa546e55b4, type: 2}
+  - {fileID: 1000012293746524, guid: bfe7a61b812bc0b42929af0edd992f2d, type: 2}
+  - {fileID: 1000014280885886, guid: f8bbf7a026f056e43870d163970e4f95, type: 2}
   floorTiles:
   - {fileID: 1000010895860934, guid: d3726324286d2a446a4d7d4d88c46dac, type: 2}
   - {fileID: 1000010974470842, guid: 74ff3f74b00949d40b94b74ff9ed7a23, type: 2}
@@ -97,6 +119,8 @@ MonoBehaviour:
   enemyTiles:
   - {fileID: 1000013351432694, guid: 76b973af7ab95b34bbdc665cfcbf2134, type: 2}
   - {fileID: 1000010727205398, guid: d70ca8dcb5fbdd3428f151c59373e2ca, type: 2}
+  - {fileID: 1750747275389260, guid: ca76c18f5b350e74d80cea0f80f6389a, type: 2}
+  - {fileID: 1256579367639112, guid: 48a14fd4eb10f5642a5cd7be2cc63e6b, type: 2}
   outerWallTiles:
   - {fileID: 1000011915103272, guid: b2a66b55304f5ef4aad28454d31ee28a, type: 2}
   - {fileID: 1000013276696084, guid: 2c79c14d89dba0740818668daecfd265, type: 2}
@@ -104,7 +128,5 @@ MonoBehaviour:
   backgroundTile: {fileID: 1026903277946022, guid: 60e644b2b9a17cf46876ee1eddabede9,
     type: 2}
   mapText:
-  - {fileID: 4900000, guid: 9c535de9243ebb7429d17e44e0075e1d, type: 3}
-  - {fileID: 4900000, guid: 28202efbb0629fa4ea57db4c6c643bec, type: 3}
-  - {fileID: 4900000, guid: 0e5711bb0a8b3dc45a0a049d11968679, type: 3}
+  - {fileID: 0}
   foldaName: MapText

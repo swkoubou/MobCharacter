@@ -11,7 +11,8 @@ public class BoardManager : MonoBehaviour
     public static BoardManager instance = null;
     private MapGenerator mapGenerator;
 
-    private int level = 10;
+    //private int level = 0;
+    
 
     [HideInInspector]
     public int playerHP;
@@ -28,6 +29,16 @@ public class BoardManager : MonoBehaviour
     public AudioClass audioClass;
     public AudioSource soundBox;
 
+    private Text[] logText;
+    public string logTextPath;
+
+    public GameObject textManager;
+    public string textManagerPath;
+    public Text nameText;
+    public Text contentText;
+
+
+    public Image levelImage;
 
     public enum WhoseTurn
     {
@@ -44,7 +55,6 @@ public class BoardManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
-
         enemies = new List<BoardEnemy>();
         mapGenerator = GetComponent<MapGenerator>();
         InitGame();
@@ -74,21 +84,80 @@ public class BoardManager : MonoBehaviour
     void InitGame()
     {
         enemies.Clear();
-        mapGenerator.SetupScene(level);
-        level += 10;
-        print(level);
+        //if(Loader.boardPlayerPos == new Vector2(-1, -1))
+            Loader.level++;
+        print(Loader.level);
+        Loader.isForceEvent = false;
+        mapGenerator.SetupScene(Loader.level);
         instance.audioClass = FindObjectOfType<AudioClass>();
         instance.soundBox = FindObjectOfType<AudioClass>().gameObject.GetComponent<AudioSource>();
+        instance.logText = GameObject.Find(logTextPath).GetComponentsInChildren<Text>();
+        for (int i = 0; i < logText.Length; i++)
+            logText[i].text = null;
+        instance.textManager = GameObject.Find(textManagerPath);
+        instance.nameText = instance.textManager.transform.FindChild("Name").GetComponentInChildren<Text>();
+        instance.contentText = instance.textManager.transform.FindChild("Content").GetComponentInChildren<Text>();
+        instance.levelImage = GameObject.Find("UI/LevelImage").GetComponent<Image>();
+        Invoke("Fade", 2f);
+        instance.levelImage.gameObject.GetComponentInChildren<Text>().text = "第" + Loader.level + "階層";
+
+        switch (Loader.level)
+        {
+            case 3:
+            case 4:
+                if (!Loader.isUseEscape[Loader.level])
+                {
+                    Loader.isForceEvent = true;
+                    FindObjectOfType<BoardStory>().Execute();
+                    enabled = false;
+                    instance.textManager.SetActive(true);
+                }
+                else
+                    instance.textManager.SetActive(false);
+                break;
+
+            default:
+                Loader.isForceEvent = false;
+                instance.textManager.SetActive(false);
+                break;
+        }
+    }
+
+    void Fade()
+    {
+        instance.levelImage.gameObject.SetActive(false);
     }
 
 
     void Update()
     {
-        if(whoseTurn == WhoseTurn.braver && !braverMoving)
-            StartCoroutine(MoveBraver());
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //    GameObject.FindGameObjectWithTag("Player").gameObject.transform.position = GameObject.FindGameObjectWithTag("Exit").gameObject.transform.position;
+        //}
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    Loader.level = 2;
+        //}
+        //if(whoseTurn == WhoseTurn.braver && !braverMoving)
+        //    StartCoroutine(MoveBraver());
 
         if (whoseTurn == WhoseTurn.enemy && !enemiesMoving)
             StartCoroutine(MoveEnemies());
+    }
+
+    //メッセージログ
+    public void AddMessage(string log)
+    {
+        if (log != null)
+        {
+            for (int i = 1; i < logText.Length; i++)
+            {
+                logText[i - 1].text = logText[i].text;
+                logText[i].text = null;
+            }
+            logText[logText.Length - 1].text = log;
+        }
     }
 
     public WhoseTurn GetWhoseTurn()
@@ -121,13 +190,13 @@ public class BoardManager : MonoBehaviour
     }
 
 
-    IEnumerator MoveBraver()
-    {
-        braverMoving = true;
-        yield return new WaitForSeconds(turnDelay);
-        braver.MoveBraver();
-        braverMoving = false;
-    }
+    //IEnumerator MoveBraver()
+    //{
+    //    braverMoving = true;
+    //    yield return new WaitForSeconds(turnDelay);
+    //    braver.MoveBraver();
+    //    braverMoving = false;
+    //}
 
 
     public void AddEnemy(BoardEnemy script)
@@ -139,7 +208,7 @@ public class BoardManager : MonoBehaviour
     IEnumerator MoveEnemies()
     {
         enemiesMoving = true;
-        yield return new WaitForSeconds(turnDelay);
+        //yield return new WaitForSeconds(turnDelay);
 
         if (enemies.Count == 0)
             yield break;
@@ -147,9 +216,10 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < enemies.Count; i++)
         {
             enemies[i].MoveEnemy();
-            yield return new WaitForSeconds(enemies[i].moveTime);
-        }
 
+        }
+        yield return new WaitForSeconds(enemies[0].moveTime);
+        ChangeTurnPlayer();
         enemiesMoving = false;
     }
 

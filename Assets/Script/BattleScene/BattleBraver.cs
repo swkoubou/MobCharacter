@@ -28,7 +28,7 @@ public class BattleBraver : CommonBattleChara
 
     public void SetOnClickAttack()
     {
-        UnityAction[] method = new UnityAction[] { OnHyperRay, OnDoubleSlash, OnBigban };
+        UnityAction[] method = new UnityAction[] { OnHyperRay, OnDoubleSlash, OnMeteorBurn };
         SetMethodAttack(method);
     }
 
@@ -41,6 +41,9 @@ public class BattleBraver : CommonBattleChara
     /*以下ボタン関数*/
     public void OnHyperRay()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.y = 1;
 
@@ -51,7 +54,9 @@ public class BattleBraver : CommonBattleChara
             return;
         }
 
+        isCommandPushed = true;
         BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(HyperRay);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -74,6 +79,9 @@ public class BattleBraver : CommonBattleChara
 
     public void OnDoubleSlash()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 target = ConvertObjectToVector(gameObject);
         target.y = 1;
 
@@ -93,7 +101,9 @@ public class BattleBraver : CommonBattleChara
             return;
         }
 
+        isCommandPushed = true;
         BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(DoubleSlash);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
@@ -117,8 +127,11 @@ public class BattleBraver : CommonBattleChara
         MoveGrid(gameObject, target, movedPos);
     }
 
-    public void OnBigban()
+    public void OnMeteorBurn()
     {
+        if (isCommandPushed)
+            return;
+
         Vector2 movedPos = ConvertObjectToVector(gameObject);
         movedPos.x += 1;
 
@@ -138,11 +151,13 @@ public class BattleBraver : CommonBattleChara
             return;
         }
 
-        BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(Bigban);
+        isCommandPushed = true;
+        BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(MeteorBurn);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
-    private void Bigban()
+    private void MeteorBurn()
     {
         Vector2 target = ConvertObjectToVector(gameObject);
         target.y = 1;
@@ -155,7 +170,7 @@ public class BattleBraver : CommonBattleChara
             GameObject effect = Instantiate(Resources.Load("Effecter")) as GameObject;
             effect.transform.position = ConvertVectorToObject(target).transform.position;
             Destroy(effect, 2f);
-            OnlyAnim(effect, controller[2], null, objectName + "の" + attackText[2] + "!");
+            OnlyAnim(effect, controller[2], audioClass.meteorBurn, objectName + "の" + attackText[2] + "!");
             ConvertVectorToObject(target).GetComponent<CommonBattleChara>().DamagedAnim(attack);
         }
         ChangeGrid(gameObject, movedPos);
@@ -164,13 +179,18 @@ public class BattleBraver : CommonBattleChara
 
     public void OnIdle()
     {
+        if (isCommandPushed)
+            return;
+
+        isCommandPushed = true;
         BattleManager.instance.stackCommandBraver = new BattleManager.StackCommandBraver(Idle);
+        BattleManager.instance.soundBox.PlayOneShot(audioClass.decide, 1f);
         BattleManager.instance.ChangeTurnNext();
     }
 
     private void Idle()
     {
-        BattleManager.instance.OnReadyDetails();
+        //BattleManager.instance.OnReadyDetails();
         BattleManager.instance.AddMessage(objectName + "は素振りを始めた");
     }
 }

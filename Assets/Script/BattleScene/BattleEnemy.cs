@@ -191,7 +191,10 @@ public abstract class BattleEnemy : CommonBattleChara
         {
             print("5");
             if (!canMove)
+            {
+                BattleManager.instance.AddMessage(objectName + "は何もしなかった");
                 return;
+            }
             else
             {
                 canMove = false;
