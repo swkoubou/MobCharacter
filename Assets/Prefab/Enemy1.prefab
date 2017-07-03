@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4000010822715026}
   - component: {fileID: 212000010278841518}
-  - component: {fileID: 95000014075012570}
   - component: {fileID: 50000010530164626}
   - component: {fileID: 61000011335382680}
   - component: {fileID: 114533079834132436}
@@ -78,23 +77,6 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
---- !u!95 &95000014075012570
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000013351432694}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9fe416838ffb0cb4fbe27548961f9908, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114533079834132436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -107,11 +89,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 10
+  attack: 0
   moveTime: 0.1
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  playerDamage: 10
+  attackDamage: 0
 --- !u!212 &212000010278841518
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -143,7 +126,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -218137185
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300012, guid: fbe1e7b94bb1a4a099d5bcb15a00141c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0f5c8e8e7a957234d88145a9b48b6e34, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

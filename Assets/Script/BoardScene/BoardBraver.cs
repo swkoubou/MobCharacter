@@ -22,7 +22,7 @@ public class BoardBraver : MovingObject
     protected override void Start()
     {
         HP = 50;
-        attack = 50;
+        attack = 10;
         BoardManager.instance.AddBraver(this);
         animator = GetComponent<Animator>();
         mapGenerator = FindObjectOfType<MapGenerator>();
@@ -32,7 +32,7 @@ public class BoardBraver : MovingObject
 
     void Update()
     {
-        
+
     }
 
     private void OnDisable()
@@ -50,10 +50,10 @@ public class BoardBraver : MovingObject
             .Where(e => Vector2.Distance(e.transform.position, transform.position) < searchRange)
             .OrderBy(e => Vector2.Distance(e.transform.position, transform.position))
             .ToArray();
-        
+
         //上位を確保しておく
         int serchCount = 2;
-        if(enemies.Length < serchCount)
+        if (enemies.Length < serchCount)
         {
             for (int i = 0; i < enemies.Length; i++)
             {
@@ -86,6 +86,7 @@ public class BoardBraver : MovingObject
 
     protected override void AttemptMove<T, U>(int xDir, int yDir)
     {
+        BoardManager.instance.ChangeTurnEnemy();
         if (skipMove)
         {
             skipMove = false;
@@ -93,8 +94,19 @@ public class BoardBraver : MovingObject
         }
 
         base.AttemptMove<T, U>(xDir, yDir);
-        BoardManager.instance.ChangeTurnEnemy();
         skipMove = true;
+
+        string animStr = null;
+        if (yDir == 1)
+            animStr = "Up";
+        else if (xDir == 1)
+            animStr = "Right";
+        else if (yDir == -1)
+            animStr = "Down";
+        else if (xDir == -1)
+            animStr = "Left";
+
+        animator.SetTrigger(animStr);
     }
 
 
@@ -127,19 +139,21 @@ public class BoardBraver : MovingObject
 
     protected override void OnCantMove<T>(T component)
     {
-        if(component.GetComponent<BoardEnemy>())
+        if (component.GetComponent<BoardEnemy>())
         {
             BoardEnemy other = component as BoardEnemy;
             other.LoseHP(attack);
             print("OnCantMove: Enemy");
+            BoardManager.instance.DamagedAnim(other.GetComponent<SpriteRenderer>());
         }
         else if (component.GetComponent<Wall>())
         {
             Wall other = component as Wall;
 
             //WallスクリプトのDamageWallメソッド呼び出し
-            other.DamageWall(attack);
+            other.DamageWall(attack/2);
             print("OnCantMove: Wall");
+            BoardManager.instance.DamagedAnim(other.GetComponent<SpriteRenderer>());
         }
     }
 

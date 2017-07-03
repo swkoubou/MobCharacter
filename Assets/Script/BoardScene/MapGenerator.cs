@@ -25,8 +25,13 @@ public class MapGenerator : MonoBehaviour
 
     public Count foodCount = new Count(1, 5);
     public GameObject player;
-    public GameObject Braver;
+    public GameObject braver;
+    public GameObject princess;
     public GameObject exit;
+    public GameObject item;
+    public GameObject door;
+    public GameObject[] bosses;
+    public GameObject[] bossFloorTiles;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
     public GameObject[] foodTiles;
@@ -82,7 +87,7 @@ public class MapGenerator : MonoBehaviour
         textBuffer.Clear();
 
         //mapTextの配列からランダムに取得
-        var mapInfo = Resources.Load(foldaName +"/"+ mapText[Random.Range(0, mapText.Length)].name) as TextAsset;
+        var mapInfo = Resources.Load(foldaName +"/フロア" + Loader.level) as TextAsset;
 
         //try catchは使わずにusingを使う
         using (StringReader sr = new StringReader(mapInfo.text))
@@ -136,6 +141,75 @@ public class MapGenerator : MonoBehaviour
                 else if (textMark == '-')
                     allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
 
+                //_のとき bossFloorTilesを生成
+                else if (textMark == '_')
+                    allObjectData[y, x] = bossFloorTiles[Random.Range(0, bossFloorTiles.Length)];
+
+                //Dのとき doorを生成
+                else if (textMark == 'D')
+                {
+                    allObjectData[y, x] = bossFloorTiles[Random.Range(0, bossFloorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = door;
+                }
+
+                //Bのとき bossを生成
+                else if (textMark == 'B')
+                {
+                    allObjectData[y, x] = bossFloorTiles[Random.Range(0, bossFloorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = bosses[Random.Range(0, bosses.Length)];
+                }
+
+                //Gのとき exitを生成
+                else if (textMark == 'G')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = exit;
+                }
+
+                //Sのとき playerを生成
+                else if (textMark == 'S')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    Vector2 pos = Loader.boardPlayerPos;
+                    if (pos == new Vector2(-1, -1))
+                        allObjectData[y, x] = player;
+                }
+
+                //bのときbraverを生成
+                else if (textMark == 'b')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = braver;
+                }
+
+                //pのときprincessを生成
+                else if (textMark == 'p')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = princess;
+                }
+
+                //Iのとき itemを生成
+                else if (textMark == 'I')
+                {
+                    allObjectData[y, x] = floorTiles[Random.Range(0, floorTiles.Length)];
+                    GameObject tmp = Instantiate(allObjectData[y, x], new Vector3(x, -y, 0f), Quaternion.identity) as GameObject;
+                    tmp.transform.SetParent(mapHolder);
+                    allObjectData[y, x] = item;
+                }
+
                 //0のときbackgroundTilesを生成
                 else
                     allObjectData[y, x] = backgroundTile;
@@ -157,6 +231,14 @@ public class MapGenerator : MonoBehaviour
     //配列用ランダムに位置を決める　*ただし何もないところにしか出現させない
     void LayoutObjectRandom(GameObject[] tileArray, int min, int max)
     {
+        //配置する場所がないならやめる
+        int spaceCount = 0;
+        foreach (var e in allObjectData)
+        {
+            if (e.tag == "Floor")
+                spaceCount++;
+        }
+
         int objectCount = Random.Range(min, max + 1);
         for (int i = 0; i < objectCount; i++)
         {
@@ -166,6 +248,9 @@ public class MapGenerator : MonoBehaviour
             int randomY;
             GameObject randomObject;
 
+            if (spaceCount <= 0)
+                return;
+
             //tagがFloorが出るまで繰り返す
             do
             {
@@ -174,6 +259,8 @@ public class MapGenerator : MonoBehaviour
                 randomObject = allObjectData[randomY, randomX];
             }
             while (randomObject.tag != "Floor");
+
+            spaceCount--;
 
             //同じ場所に出現させないよう、存在を上書き
             allObjectData[randomY, randomX] = tileChoice;
@@ -189,6 +276,16 @@ public class MapGenerator : MonoBehaviour
         int randomX;
         int randomY;
         GameObject randomObject;
+
+        //配置する場所がないならやめる
+        int spaceCount = 0;
+        foreach(var e in allObjectData)
+        {
+            if (e.tag == "Floor")
+                spaceCount++;
+        }
+        if (spaceCount <= 0)
+            return;
 
         //tagがFloorが出るまで繰り返す
         do
@@ -224,19 +321,36 @@ public class MapGenerator : MonoBehaviour
         MapGenerate();
 
         //敵は対数的に増加
-        int enemyCount = (int)Mathf.Log(level, 2f);
+        //int enemyCount = (int)Mathf.Log(level, 2f);
+        int enemyCount = level+10;
 
         //ref修飾子を使うのでtmpを使い初期化してから
-        tmpTile = player;
-        LayoutObjectRandom(ref tmpTile);
-        tmpTile = Braver;
-        LayoutObjectRandom(ref tmpTile);
-        tmpTile = exit;
-        LayoutObjectRandom(ref tmpTile);
-        lastExit = tmpTile;
+        //tmpTile = player;
+        //LayoutObjectRandom(ref tmpTile);
+        //tmpTile = Braver;
+        //LayoutObjectRandom(ref tmpTile);
+        //tmpTile = exit;
+        //LayoutObjectRandom(ref tmpTile);
+        //lastExit = tmpTile;
+
+        Vector2 pos = Loader.boardPlayerPos;
+        if (pos != new Vector2(-1, -1))
+        {
+            if (allObjectData[(int)pos.x, -(int)pos.y] == null)
+            {
+                tmpTile = player;
+                LayoutObjectRandom(ref tmpTile);
+            }
+            else
+            {
+                allObjectData[(int)pos.x, -(int)pos.y] = player;
+                GameObject instance = Instantiate(allObjectData[(int)pos.x, -(int)pos.y], new Vector3((int)pos.x, (int)pos.y, 0f), Quaternion.identity) as GameObject;
+                allObjectData[(int)pos.x, -(int)pos.y] = instance;
+            }
+        }
 
         //ランダムに位置を決める
         LayoutObjectRandom(enemyTiles, enemyCount, enemyCount);
-        LayoutObjectRandom(foodTiles, foodCount.min, foodCount.max);
+        //LayoutObjectRandom(foodTiles, foodCount.min, foodCount.max);
     }
 }

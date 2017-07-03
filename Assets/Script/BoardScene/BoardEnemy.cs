@@ -13,11 +13,11 @@ public class BoardEnemy : MovingObject
 
     protected override void Start()
     {
-        HP = 3;
-        attack = 1;
+        HP = 20;
+        attack = 5;
         BoardManager.instance.AddEnemy(this);
         animator = GetComponent<Animator>();
-        target = GameObject.FindGameObjectWithTag("Braver").transform;
+        target = GameObject.FindGameObjectWithTag("Player").transform;
         base.Start();
     }
 
@@ -49,7 +49,6 @@ public class BoardEnemy : MovingObject
         }
 
         base.AttemptMove<T>(xDir, yDir);
-        BoardManager.instance.ChangeTurnPlayer();
         skipMove = true;
     }
 
@@ -73,6 +72,14 @@ public class BoardEnemy : MovingObject
             {
                 //プレイヤーが右にいれば+1、左にいれば-1する
                 xDir = target.position.x > transform.position.x ? 1 : -1;
+
+                //向きを変える
+                Vector3 scale = transform.localScale;
+                if (xDir > 0 && transform.localScale.x < 0)
+                    scale.x = transform.localScale.x * -1;
+                else if (xDir < 0 && transform.localScale.x > 0)
+                    scale.x = transform.localScale.x * -1;
+                transform.localScale = scale;
             }
         }
         catch (Exception e)
@@ -92,6 +99,7 @@ public class BoardEnemy : MovingObject
         {
             BoardPlayer other = component as BoardPlayer;
             other.LoseHP(attackDamage);
+            iTween.MoveFrom(gameObject, iTween.Hash("position", other.transform.position, "time", 0.5f));
         }
         else if (component.GetComponent<BoardBraver>())
         {

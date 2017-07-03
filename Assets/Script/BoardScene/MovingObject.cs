@@ -6,14 +6,18 @@ public abstract class MovingObject : MonoBehaviour
 {
     public int HP;
     public int attack;
+    [HideInInspector]
     public float moveTime = 0.1f;
     public LayerMask blockingLayer;
     private BoxCollider2D boxCollider;
     private Rigidbody2D rb2D;
     protected bool isMoving;
+    protected bool isOnce = false;
 
     //moveTimeを計算するのを単純化するための変数
     private float inverseMoveTime;
+
+    protected AudioClass audioClass;
 
 
     protected virtual void Start()
@@ -23,6 +27,7 @@ public abstract class MovingObject : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         isMoving = false;
         inverseMoveTime = 1f / moveTime;
+        audioClass = FindObjectOfType<AudioClass>();
     }
 
 
@@ -35,6 +40,7 @@ public abstract class MovingObject : MonoBehaviour
     public virtual void LoseHP(int dmg)
     {
         HP -= dmg;
+        BoardManager.instance.DamagedAnim(GetComponent<SpriteRenderer>());
     }
 
 
@@ -113,6 +119,15 @@ public abstract class MovingObject : MonoBehaviour
         
         //Moveメソッド実行 戻り値がtrueなら移動成功、falseなら移動失敗
         bool canMove = Move(xDir, yDir, out hit);
+        
+        //移動できないところに行こうとしたら音を出す
+        if (tag == "Player" && hit.transform != null)
+        {
+            if(hit.transform.gameObject.tag == "Inmortal")
+                BoardManager.instance.soundBox.PlayOneShot(audioClass.notExecute, 1f);
+            else if(hit.transform.gameObject.tag == "Wall")
+                BoardManager.instance.soundBox.PlayOneShot(audioClass.notExecute, 1f);
+        }
 
         //Moveメソッドで確認した障害物が何も無ければメソッド終了
         if (hit.transform == null)
